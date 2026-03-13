@@ -664,6 +664,7 @@ function isIPv6(ip) {
   const DOH_PRIMARY = 'https://cloudflare-dns.com/dns-query';
   const DOH_FALLBACK = 'https://dns.google/resolve';
   const DKIM_SELECTORS = ['google', 'google2048', 'googlemail', 'selector1', 'selector2', 'k1', 'default', 'mail', 'smtp', 'dkim', 's1', 's2', 'key1', 'key2', 'sendgrid', 'mailgun', 'postmark', 'ses', 'em', '20230601', '20240101', '20221208', 'mx', 'protonmail', 'pm', 'zoho'];
+  const SPAMHAUS_DQS_KEY = '4rfecrabtq44vk3qyjbfheayr4';
 
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
   const DOH_TIMEOUT_MS = 10000;
@@ -987,7 +988,7 @@ function isIPv6(ip) {
     let totalPenalty = 0;
     const listResults = [];
     const lists = [
-      { suffix: 'zen.spamhaus.org', name: 'Spamhaus', penalties: { '127.0.0.2': 40, '127.0.0.3': 40, '127.0.0.4': 35, '127.0.0.10': 25 }, blockResolver: '127.255.255.254' },
+      { suffix: SPAMHAUS_DQS_KEY + '.zen.dq.spamhaus.net', name: 'Spamhaus', penalties: { '127.0.0.2': 40, '127.0.0.3': 40, '127.0.0.4': 35, '127.0.0.10': 25 }, blockResolver: '127.255.255.254' },
       { suffix: 'bl.spamcop.net', name: 'SpamCop', penalties: { '127.0.0.2': 30 } },
       { suffix: 'b.barracudacentral.org', name: 'Barracuda', penalties: { '127.0.0.2': 30 } }
     ];
