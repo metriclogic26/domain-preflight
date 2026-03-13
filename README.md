@@ -33,10 +33,11 @@ pre-flight check.
 - Deployed on Vercel
 
 ## Run Locally
-
+```bash
 git clone https://github.com/metriclogic26/domain-preflight.git
 cd domain-preflight
 python3 -m http.server 3000
+```
 
 Open http://localhost:3000
 
