@@ -37,7 +37,8 @@ pre-flight check.
 git clone https://github.com/metriclogic26/domain-preflight.git
 cd domain-preflight
 python3 -m http.server 3000
-# Open http://localhost:3000
+
+Open http://localhost:3000
 
 ## Part of MetricLogic
 
