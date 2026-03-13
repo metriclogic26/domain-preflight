@@ -43,7 +43,7 @@
       padding: 0.75rem 1.5rem;
     }
     .header-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -81,7 +81,12 @@
       opacity: 0.4;
     }
     /* Main */
-    main { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+    main { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+    .hero {
+      text-align: center;
+      padding-top: 3rem;
+      padding-bottom: 2.5rem;
+    }
     .hero-label {
       font-size: 0.7rem;
       text-transform: uppercase;
@@ -99,27 +104,97 @@
       color: var(--text2);
       font-size: 0.9rem;
       margin-bottom: 2rem;
-      max-width: 540px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) 340px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .col-input-score {
+      position: sticky;
+      top: 70px;
+      width: 100%;
+      min-width: 0;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+    .col-input-score .input-row {
+      grid-template-columns: 1fr;
+    }
+    .col-checks {
+      min-width: 0;
+    }
+    .col-checks .check-card {
+      padding: 0.875rem 1rem;
+      min-height: auto;
+      height: auto;
+    }
+    .col-checks .check-card-title { font-size: 13px; }
+    .col-checks .check-card-detail { font-size: 12px; line-height: 1.5; }
+    .checks-column-results {
+      display: none;
+    }
+    .checks-column-results.visible {
+      display: block;
+    }
+    .col-checks .check-card-badge { display: none; }
+    .col-actions {
+      min-width: 0;
+    }
+    .col-actions .action-card { min-width: 0; overflow-wrap: break-word; }
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text2);
+      margin-bottom: 0.5rem;
+    }
+    .right-column-results {
+      display: none;
+    }
+    .right-column-results.visible {
+      display: block;
+    }
+    .all-checks-passed {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      color: var(--green);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+    .all-checks-passed.hidden { display: none !important; }
+    @media (max-width: 1024px) {
+      .main-grid { grid-template-columns: 1fr 1fr; }
+      .col-input-score { grid-column: 1 / -1; position: static; }
+    }
+    @media (max-width: 640px) {
+      .main-grid { grid-template-columns: 1fr; }
     }
     .input-group {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1rem 1.25rem;
       display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: center;
+      flex-direction: column;
+      gap: 0;
     }
     .input-row {
-      display: flex;
-      gap: 1rem;
-      flex: 1;
-      min-width: 200px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
     }
     .input-wrap {
-      flex: 1;
-      min-width: 140px;
+      min-width: 0;
     }
     .input-wrap label {
       display: block;
@@ -129,6 +204,7 @@
     }
     .input-wrap input {
       width: 100%;
+      box-sizing: border-box;
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -142,7 +218,16 @@
       outline: none;
       border-color: var(--purple);
     }
-    .btn-row { display: flex; align-items: center; gap: 1rem; }
+    .btn-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .btn-row .btn-primary,
+    .btn-row .btn-clear,
+    .btn-row .btn-text { flex-shrink: 0; }
     .btn-primary {
       background: var(--purple);
       color: white;
@@ -159,36 +244,53 @@
     .btn-text {
       background: none;
       border: none;
-      color: var(--purple);
+      color: var(--text2);
       font-family: inherit;
       font-size: 0.85rem;
       cursor: pointer;
       padding: 0.25rem 0;
     }
     .btn-text:hover { text-decoration: underline; }
+    .btn-clear {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn-clear:hover { border-color: var(--purple); color: var(--text); }
+    @media (max-width: 640px) {
+      .input-row { grid-template-columns: 1fr; }
+      .btn-row { margin-top: 0.75rem; }
+    }
     /* Results */
     #results { display: none; margin-top: 2.5rem; }
     #results.visible { display: block; }
     .results-header {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: stretch;
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
     .health-widget {
       display: flex;
+      flex-direction: row;
       align-items: center;
-      gap: 1.25rem;
-      flex-wrap: wrap;
+      gap: 1rem;
+      flex-wrap: nowrap;
     }
     .score-ring-wrap {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
     }
-    .score-ring-wrap svg { transform: rotate(-90deg); }
+    .score-ring-wrap svg { transform: rotate(-90deg); display: block; }
     .score-ring-bg { stroke: var(--bg3); }
     .score-ring-fill { stroke-linecap: round; transition: stroke-dashoffset 0.1s linear; }
     .score-ring-fill.ready { stroke: var(--green); }
@@ -203,12 +305,13 @@
       font-size: 1.5rem;
       font-weight: 600;
     }
-    .score-grade { font-size: 1rem; font-weight: 600; }
+    .score-grade { font-size: 14px; font-weight: 600; }
     .score-grade.ready { color: var(--green); }
     .score-grade.warn { color: var(--orange); }
     .score-grade.critical { color: var(--red); }
-    .score-summary { color: var(--text2); font-size: 0.85rem; max-width: 240px; }
+    .score-summary { color: var(--text2); font-size: 14px; max-width: 240px; }
     .btn-copy-link {
+      width: 100%;
       background: var(--bg2);
       border: 1px solid var(--border);
       color: var(--text);
@@ -331,7 +434,6 @@
       cursor: pointer;
     }
     .btn-copy-fix:hover { border-color: var(--purple); }
-    .disclaimer { color: var(--text2); font-size: 0.75rem; margin-top: 2rem; }
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -339,8 +441,20 @@
       background: var(--bg2);
     }
     .footer-inner {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
+    }
+    .footer-disclaimer {
+      text-align: center;
+      width: 100%;
+      font-size: 11px;
+      color: var(--text2);
+      opacity: 0.6;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .footer-links {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
@@ -392,89 +506,141 @@
       <div class="hero-label">DNS PREFLIGHT</div>
       <h1>Check before you send. Not after.</h1>
       <p class="hero-sub">Audit PTR records, IP reputation, SPF, DKIM, and DMARC in seconds. No sending required. No signup. Nothing leaves your browser.</p>
-      <div class="input-group">
-        <div class="input-row">
-          <div class="input-wrap">
-            <label for="domain">Domain</label>
-            <input type="text" id="domain" placeholder="example.com" autocomplete="off">
-          </div>
-          <div class="input-wrap">
-            <label for="ip">Sending IP (optional)</label>
-            <input type="text" id="ip" placeholder="Optional" autocomplete="off">
-          </div>
-        </div>
-        <div class="btn-row">
-          <button type="button" class="btn-primary" id="runBtn">Run Preflight</button>
-          <button type="button" class="btn-text" id="tryExample" onclick="loadExample()">Try an example</button>
-        </div>
-      </div>
     </section>
 
-    <section id="results">
-      <div class="results-header">
-        <div class="health-widget">
-          <div class="score-ring-wrap">
-            <svg width="100" height="100" viewBox="0 0 100 100">
-              <circle class="score-ring-bg" cx="50" cy="50" r="40" fill="none" stroke-width="8"/>
-              <circle class="score-ring-fill" id="scoreRing" cx="50" cy="50" r="40" fill="none" stroke-width="8"
-                stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
-            </svg>
-            <span class="score-value" id="scoreValue">0</span>
+    <div class="main-grid">
+      <div class="col-input-score">
+        <div class="input-group">
+          <div class="input-row">
+            <div class="input-wrap">
+              <label for="domain">Domain</label>
+              <input type="text" id="domain" placeholder="example.com" autocomplete="off">
+            </div>
+            <div class="input-wrap">
+              <label for="ip">Sending IP (optional)</label>
+              <input type="text" id="ip" placeholder="Optional" autocomplete="off">
+            </div>
           </div>
-          <div>
-            <div class="score-grade" id="scoreGrade">—</div>
-            <div class="score-summary" id="scoreSummary">Run a preflight to see your score.</div>
+          <div class="btn-row">
+            <button type="button" class="btn-primary" id="runBtn">Run Preflight</button>
+            <button type="button" class="btn-clear" id="clearBtn">✕ Clear</button>
+            <button type="button" class="btn-text" id="tryExample" onclick="loadExample()">Try an example</button>
           </div>
         </div>
-        <button type="button" class="btn-copy-link" id="copyLinkBtn">Copy link</button>
+        <section id="results">
+          <div class="results-header">
+            <div class="health-widget">
+              <div class="score-ring-wrap">
+                <svg viewBox="0 0 100 100" width="80" height="80">
+                  <circle class="score-ring-bg" cx="50" cy="50" r="50" fill="none" stroke-width="8"/>
+                  <circle class="score-ring-fill" id="scoreRing" cx="50" cy="50" r="50" fill="none" stroke-width="8"
+                    stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+                </svg>
+                <span class="score-value" id="scoreValue">0</span>
+              </div>
+              <div>
+                <div class="score-grade" id="scoreGrade">—</div>
+                <div class="score-summary" id="scoreSummary">Run a preflight to see your score.</div>
+              </div>
+            </div>
+            <button type="button" class="btn-copy-link" id="copyLinkBtn">Copy link</button>
+          </div>
+        </section>
       </div>
-      <div class="cards-grid" id="checks-grid"></div>
-      <div class="action-section" id="actionSection">
-        <h3>Recommended actions</h3>
-        <div class="action-cards" id="actionCards"></div>
+      <div class="col-checks">
+        <div class="checks-column-results" id="checksColumnResults">
+          <div class="section-label">Checks</div>
+          <div class="cards-grid" id="checks-grid"></div>
+        </div>
       </div>
-      <p class="disclaimer">This tool uses public DNS-over-HTTPS (DoH) only. Results are indicative; always verify critical config in your own environment.</p>
-    </section>
+      <div class="col-actions">
+        <div class="right-column-results" id="rightColumnResults">
+          <div class="section-label">Actions</div>
+          <div class="action-section" id="actionSection">
+            <div class="all-checks-passed" id="allChecksPassed">✓ No issues found — configuration looks healthy</div>
+            <div class="action-cards" id="actionCards"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer>
     <div class="footer-inner">
-      <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try configclarity.dev</span>
-      <span>
-        <a href="https://github.com/metriclogic26/domainpreflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
-        <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
-        <a href="https://github.com/metriclogic26/domainpreflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
-      </span>
+      <p class="footer-disclaimer">This tool uses public DNS-over-HTTPS (DoH) only. Results are indicative; always verify critical config in your own environment.</p>
+      <div class="footer-links">
+        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try configclarity.dev</span>
+        <span>
+          <a href="https://github.com/metriclogic26/domainpreflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
+          <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
+          <a href="https://github.com/metriclogic26/domainpreflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+        </span>
+      </div>
     </div>
   </footer>
 
   <div class="toast" id="toast" aria-live="polite"></div>
 
   <script>
+function normalizeDomain(input) {
+  if (typeof input !== 'string') return '';
+  let s = input.trim();
+  try {
+    if (/^https?:\/\//i.test(s)) {
+      s = new URL(s).hostname;
+    } else {
+      s = s.replace(/^https?:\/\//i, '').split('/')[0].trim();
+    }
+  } catch (_) {
+    s = s.replace(/^https?:\/\//i, '').split('/')[0].trim();
+  }
+  return s.replace(/\.+$/, '');
+}
+
+function isIPv6(ip) {
+  return typeof ip === 'string' && ip.trim().includes(':');
+}
+
 (function () {
   'use strict';
 
-  const CIRCUMFERENCE = 2 * Math.PI * 40;
+  const CIRCUMFERENCE = 2 * Math.PI * 50;
   const DOH_PRIMARY = 'https://cloudflare-dns.com/dns-query';
   const DOH_FALLBACK = 'https://dns.google/resolve';
   const DKIM_SELECTORS = ['google', 'google2048', 'googlemail', 'selector1', 'selector2', 'k1', 'default', 'mail', 'smtp', 'dkim', 's1', 's2', 'key1', 'key2', 'sendgrid', 'mailgun', 'postmark', 'ses', 'em', '20230601', '20240101', '20221208', 'mx', 'protonmail', 'pm', 'zoho'];
 
   const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const DOH_TIMEOUT_MS = 10000;
 
   async function doh(name, type) {
     const urlP = `${DOH_PRIMARY}?name=${encodeURIComponent(name)}&type=${type}`;
     const urlG = `${DOH_FALLBACK}?name=${encodeURIComponent(name)}&type=${type}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), DOH_TIMEOUT_MS);
+    const opts = { signal: controller.signal, headers: { Accept: 'application/dns-json' } };
     try {
-      const r = await fetch(urlP, { headers: { Accept: 'application/dns-json' } });
+      const r = await fetch(urlP, opts);
+      clearTimeout(timeoutId);
       if (!r.ok) throw new Error('Primary failed');
       const j = await r.json();
-      if (j.Status !== 0 && j.Status !== 3) throw new Error('DNS error ' + j.Status);
+      if (j.Status !== 0 && j.Status !== 3) throw new Error('DNS error ' + (j.Status === 2 ? 'SERVFAIL' : j.Status));
       return j;
     } catch (_) {
-      const r = await fetch(urlG);
-      if (!r.ok) throw new Error('DoH failed');
-      const j = await r.json();
-      return { Answer: (j.Answer || []).map(a => ({ name: a.name, type: a.type, data: a.data })), Status: 0 };
+      clearTimeout(timeoutId);
+      const c2 = new AbortController();
+      const t2 = setTimeout(() => c2.abort(), DOH_TIMEOUT_MS);
+      try {
+        const r = await fetch(urlG, { signal: c2.signal });
+        clearTimeout(t2);
+        if (!r.ok) throw new Error('DoH failed');
+        const j = await r.json();
+        const status = j.Status !== undefined ? j.Status : j.status;
+        if (status === 2 || (status !== 0 && status !== 3)) throw new Error('DNS error ' + (status === 2 ? 'SERVFAIL' : status));
+        return { Answer: (j.Answer || []).map(a => ({ name: a.name, type: a.type, data: a.data })), Status: 0 };
+      } catch (e2) {
+        clearTimeout(t2);
+        throw e2;
+      }
     }
   }
 
@@ -505,17 +671,23 @@
   const domainIn = $('domain');
   const ipIn = $('ip');
   const runBtn = $('runBtn');
+  const clearBtn = $('clearBtn');
   const tryExample = $('tryExample');
   const results = $('results');
+  const checksColumnResults = $('checksColumnResults');
+  const rightColumnResults = $('rightColumnResults');
   const cardsGrid = $('checks-grid');
   const actionSection = $('actionSection');
   const actionCards = $('actionCards');
+  const allChecksPassed = $('allChecksPassed');
   const scoreRing = $('scoreRing');
   const scoreValue = $('scoreValue');
   const scoreGrade = $('scoreGrade');
   const scoreSummary = $('scoreSummary');
   const copyLinkBtn = $('copyLinkBtn');
   const toast = $('toast');
+
+  let ipWasManuallyEntered = false;
 
   function toastShow(msg) {
     toast.textContent = msg;
@@ -592,8 +764,8 @@
         updateCard(loadingCard, 'warn', 'DKIM', "No TXT record for selector '" + selector + "'. Try another selector.", selector);
         return;
       }
-      const pMatch = record.match(/p=([^\s;]+)/i);
-      const pVal = pMatch ? pMatch[1].trim() : '';
+      const pMatch = record.match(/p=([^;]+)/i);
+      const pVal = pMatch ? pMatch[1].replace(/\s/g, '').trim() : '';
       if (!pVal || pVal === '') {
         addPenalty(-20);
         updateCard(loadingCard, 'fail', 'DKIM', 'DKIM key is revoked (empty p=). Rotate to a new key.', selector);
@@ -601,9 +773,9 @@
         return;
       }
       try {
-        const decoded = atob(pVal.replace(/\s/g, ''));
+        const decoded = atob(pVal);
         const bitLen = decoded.length * 8;
-        if (bitLen < 2048) {
+        if (bitLen < 1800) {
           addPenalty(-5);
           updateCard(loadingCard, 'warn', 'DKIM', 'Key is smaller than 2048 bits. Consider rotating to a stronger key.', selector + ' (~' + bitLen + 'b)');
           actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key and update ' + selector + '._domainkey.' + domain, null));
@@ -670,7 +842,7 @@
     const params = new URLSearchParams(location.search);
     const d = params.get('domain') || '';
     const i = params.get('ip') || '';
-    if (d) domainIn.value = d.trim();
+    if (d) domainIn.value = normalizeDomain(d);
     if (i) ipIn.value = i.trim();
     return { domain: domainIn.value.trim(), ip: ipIn.value.trim() };
   }
@@ -709,6 +881,10 @@
     await sleep(300);
     if (!ip) {
       updateCard(cardEl, 'info', 'PTR / rDNS', 'Skipped — no sending IP provided.', 'Skipped');
+      return;
+    }
+    if (isIPv6(ip)) {
+      updateCard(cardEl, 'info', 'PTR / rDNS', 'IPv6 not supported yet.', 'IPv6');
       return;
     }
     const rev = ip.split('.').reverse().join('.') + '.in-addr.arpa';
@@ -753,6 +929,10 @@
     await sleep(300);
     if (!ip) {
       updateCard(cardEl, 'info', 'IP Blocklist', 'Skipped — no sending IP provided.', 'Skipped');
+      return;
+    }
+    if (isIPv6(ip)) {
+      updateCard(cardEl, 'info', 'IP Blocklist', 'IPv6 not supported yet.', 'IPv6');
       return;
     }
     const rev = ip.split('.').reverse().join('.');
@@ -815,6 +995,12 @@
       const answers = j.Answer || [];
       const txtRecords = answers.filter(a => a.type === 16);
       console.log('[checkSPF] TXT records for ' + domain + ':', txtRecords.length, txtRecords);
+      const spfRecordCount = txtRecords.filter(a => stripTxtQuotes(String(a.data || '').trim()).toLowerCase().startsWith('v=spf1')).length;
+      if (spfRecordCount > 1) {
+        addPenalty(-5);
+        updateCard(cardEl, 'warn', 'SPF', 'Multiple SPF records found, only one allowed. Receivers may reject.', 'Multiple');
+        return;
+      }
       const raw = findSpfInTxtAnswers(answers);
       if (!raw || !raw.toLowerCase().startsWith('v=spf1')) {
         addPenalty(-20);
@@ -907,8 +1093,8 @@
         cardEl.replaceWith(dkimNotFoundCard(domain, cardIndex));
         return;
       }
-      const pMatch = found.match(/p=([^\s;]+)/i);
-      const pVal = pMatch ? pMatch[1].trim() : '';
+      const pMatch = found.match(/p=([^;]+)/i);
+      const pVal = pMatch ? pMatch[1].replace(/\s/g, '').trim() : '';
       if (!pVal || pVal === '') {
         addPenalty(-20);
         updateCard(cardEl, 'fail', 'DKIM', 'DKIM key is revoked (empty p=). Rotate to a new key.', selector);
@@ -916,9 +1102,9 @@
         return;
       }
       try {
-        const decoded = atob(pVal.replace(/\s/g, ''));
+        const decoded = atob(pVal);
         const bitLen = decoded.length * 8;
-        if (bitLen < 2048) {
+        if (bitLen < 1800) {
           addPenalty(-5);
           updateCard(cardEl, 'warn', 'DKIM', 'Key is smaller than 2048 bits. Consider rotating to a stronger key.', selector + ' (~' + bitLen + 'b)');
           actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key and update ' + selector + '._domainkey.' + domain, null));
@@ -1017,20 +1203,28 @@
   }
 
   async function run() {
-    const domain = domainIn.value.trim();
+    const rawDomain = domainIn.value.trim();
+    const domain = normalizeDomain(rawDomain);
     if (!domain) {
       toastShow('Enter a domain to check');
       return;
     }
+    if (!domain.includes('.')) {
+      toastShow('Enter a valid domain (e.g. example.com)');
+      return;
+    }
+    domainIn.value = domain;
     runBtn.disabled = true;
     runBtn.textContent = '⟳ Running…';
     try {
       results.classList.add('visible');
+      if (checksColumnResults) checksColumnResults.classList.add('visible');
+      if (rightColumnResults) rightColumnResults.classList.add('visible');
+      if (clearBtn) clearBtn.style.display = 'inline-block';
       console.log('[runPreflight] results section visible:', results.classList.contains('visible'), 'results element:', results);
 
       cardsGrid.innerHTML = '';
       actionCards.innerHTML = '';
-      actionSection.style.display = 'none';
       score = 100;
       actions.length = 0;
       scoreValue.textContent = '0';
@@ -1043,10 +1237,18 @@
       renderSkeletons();
       console.log('[runPreflight] #checks-grid exists:', !!cardsGrid, 'child count:', cardsGrid ? cardsGrid.children.length : 0);
 
+      if (!ipWasManuallyEntered) {
+        ipIn.value = '';
+      }
       let ip = ipIn.value.trim();
       if (!ip) {
         ip = await autoDetectIp(domain);
-        if (ip) ipIn.value = ip;
+        if (ip) ipIn.value = ip.trim();
+      } else {
+        ipIn.value = ip;
+      }
+      if (ip && isIPv6(ip)) {
+        toastShow('IPv6 not supported yet');
       }
       updateUrl(domain, ipIn.value.trim());
 
@@ -1059,8 +1261,10 @@
       renderScore();
       animateScore();
       if (actions.length) {
-        actionSection.style.display = 'block';
+        if (allChecksPassed) allChecksPassed.classList.add('hidden');
         actions.forEach(a => actionCards.appendChild(a));
+      } else {
+        if (allChecksPassed) allChecksPassed.classList.remove('hidden');
       }
     } catch (e) {
       console.error('[runPreflight] error', e);
@@ -1075,6 +1279,27 @@
     toastShow('Link copied');
   });
 
+  clearBtn.addEventListener('click', () => {
+    domainIn.value = '';
+    ipIn.value = '';
+    results.classList.remove('visible');
+    if (checksColumnResults) checksColumnResults.classList.remove('visible');
+    if (rightColumnResults) rightColumnResults.classList.remove('visible');
+    scoreValue.textContent = '—';
+    scoreGrade.textContent = '';
+    scoreGrade.className = 'score-grade';
+    scoreSummary.textContent = '';
+    scoreRing.setAttribute('class', 'score-ring-fill');
+    scoreRing.setAttribute('stroke-dashoffset', CIRCUMFERENCE);
+    cardsGrid.innerHTML = '';
+    actionCards.innerHTML = '';
+    if (allChecksPassed) allChecksPassed.classList.remove('hidden');
+    ipWasManuallyEntered = false;
+    history.replaceState(null, '', location.pathname);
+    if (clearBtn) clearBtn.style.display = 'none';
+    domainIn.focus();
+  });
+
   function loadExample() {
     console.log('loadExample called');
     domainIn.value = 'gmail.com';
@@ -1083,6 +1308,7 @@
   }
   window.loadExample = loadExample;
 
+  ipIn.addEventListener('input', () => { ipWasManuallyEntered = true; });
   runBtn.addEventListener('click', run);
   domainIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
   ipIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
