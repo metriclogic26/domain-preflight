@@ -1,0 +1,217 @@
+{
+  "providers": [
+    {
+      "id": "google_workspace",
+      "name": "Google Workspace",
+      "spf_includes": ["_spf.google.com", "spf.google.com"],
+      "alignment_cnames": [
+        {
+          "selector": "google",
+          "cname_host": "google._domainkey.{domain}",
+          "cname_value": "google._domainkey.googlemail.com",
+          "required": true,
+          "label": "DKIM alignment CNAME"
+        }
+      ],
+      "dashboard_url": "https://admin.google.com/ac/apps/gmail/authenticateemail",
+      "dashboard_label": "Google Admin → Apps → Gmail → Authenticate email",
+      "instructions": "In Google Admin, go to Apps → Gmail → Authenticate email. Generate a DKIM key and publish the CNAME record shown.",
+      "docs_url": "https://support.google.com/a/answer/174124"
+    },
+    {
+      "id": "microsoft_365",
+      "name": "Microsoft 365",
+      "spf_includes": ["spf.protection.outlook.com", "protection.outlook.com"],
+      "alignment_cnames": [
+        {
+          "selector": "selector1",
+          "cname_host": "selector1._domainkey.{domain}",
+          "cname_value": "selector1-{domain-hyphen}._domainkey.{tenant}.onmicrosoft.com",
+          "required": true,
+          "label": "DKIM selector 1"
+        },
+        {
+          "selector": "selector2",
+          "cname_host": "selector2._domainkey.{domain}",
+          "cname_value": "selector2-{domain-hyphen}._domainkey.{tenant}.onmicrosoft.com",
+          "required": true,
+          "label": "DKIM selector 2"
+        }
+      ],
+      "dashboard_url": "https://security.microsoft.com/dkimv2",
+      "dashboard_label": "Microsoft Defender → Email & collaboration → DKIM",
+      "instructions": "Go to Microsoft Defender portal → Email & collaboration → Policies → DKIM. Select your domain and enable DKIM signing. Publish the two CNAME records shown.",
+      "docs_url": "https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/email-authentication-dkim-configure"
+    },
+    {
+      "id": "sendgrid",
+      "name": "SendGrid",
+      "spf_includes": ["sendgrid.net"],
+      "alignment_cnames": [
+        {
+          "selector": "s1",
+          "cname_host": "s1._domainkey.{domain}",
+          "cname_value": "s1.domainkey.u{uid}.wl.sendgrid.net",
+          "required": true,
+          "label": "DKIM CNAME 1"
+        },
+        {
+          "selector": "s2",
+          "cname_host": "s2._domainkey.{domain}",
+          "cname_value": "s2.domainkey.u{uid}.wl.sendgrid.net",
+          "required": true,
+          "label": "DKIM CNAME 2"
+        }
+      ],
+      "dashboard_url": "https://app.sendgrid.com/settings/sender_auth",
+      "dashboard_label": "SendGrid → Settings → Sender Authentication",
+      "instructions": "In SendGrid, go to Settings → Sender Authentication → Authenticate Your Domain. Follow the wizard and publish the CNAME records provided.",
+      "docs_url": "https://docs.sendgrid.com/ui/account-and-settings/how-to-set-up-domain-authentication"
+    },
+    {
+      "id": "mailgun",
+      "name": "Mailgun",
+      "spf_includes": ["mailgun.org"],
+      "alignment_cnames": [
+        {
+          "selector": "pic",
+          "cname_host": "pic._domainkey.{domain}",
+          "cname_value": "pic.mailgun.org",
+          "required": true,
+          "label": "DKIM CNAME"
+        }
+      ],
+      "dashboard_url": "https://app.mailgun.com/app/sending/domains",
+      "dashboard_label": "Mailgun → Sending → Domains",
+      "instructions": "In Mailgun, go to Sending → Domains → Add Domain. Publish the DKIM CNAME record shown.",
+      "docs_url": "https://documentation.mailgun.com/en/latest/user_manual.html#verifying-your-domain-1"
+    },
+    {
+      "id": "postmark",
+      "name": "Postmark",
+      "spf_includes": ["spf.mtasv.net"],
+      "alignment_cnames": [
+        {
+          "selector": "pm",
+          "cname_host": "pm._domainkey.{domain}",
+          "cname_value": "pm.mtasv.net",
+          "required": true,
+          "label": "DKIM CNAME"
+        }
+      ],
+      "dashboard_url": "https://account.postmarkapp.com/signature_domains",
+      "dashboard_label": "Postmark → Sender Signatures → your domain",
+      "instructions": "In Postmark, go to Sender Signatures, find your domain, and click 'View DNS Records'. Publish the DKIM CNAME shown.",
+      "docs_url": "https://postmarkapp.com/support/article/1091-how-do-i-set-up-dkim-authentication"
+    },
+    {
+      "id": "amazon_ses",
+      "name": "Amazon SES",
+      "spf_includes": ["amazonses.com"],
+      "alignment_cnames": [
+        {
+          "cname_host": "{token1}._domainkey.{domain}",
+          "cname_value": "{token1}.dkim.amazonses.com",
+          "required": true,
+          "label": "DKIM CNAME 1"
+        },
+        {
+          "cname_host": "{token2}._domainkey.{domain}",
+          "cname_value": "{token2}.dkim.amazonses.com",
+          "required": true,
+          "label": "DKIM CNAME 2"
+        },
+        {
+          "cname_host": "{token3}._domainkey.{domain}",
+          "cname_value": "{token3}.dkim.amazonses.com",
+          "required": true,
+          "label": "DKIM CNAME 3"
+        }
+      ],
+      "dashboard_url": "https://console.aws.amazon.com/ses/home#/verified-identities",
+      "dashboard_label": "AWS SES Console → Verified identities → your domain",
+      "instructions": "In AWS SES console, go to Verified identities → your domain → Authentication tab. Publish the 3 DKIM CNAME records shown.",
+      "docs_url": "https://docs.aws.amazon.com/ses/latest/dg/send-email-authentication-dkim-easy.html"
+    },
+    {
+      "id": "hubspot",
+      "name": "HubSpot",
+      "spf_includes": ["spf.hubspotemail.net", "hubspotemail.net", "_hspf.hubspot.com"],
+      "alignment_cnames": [
+        {
+          "cname_host": "hs1._domainkey.{domain}",
+          "cname_value": "hs1.domainkey.hubspotemail.net",
+          "required": true,
+          "label": "DKIM CNAME 1"
+        },
+        {
+          "cname_host": "hs2._domainkey.{domain}",
+          "cname_value": "hs2.domainkey.hubspotemail.net",
+          "required": true,
+          "label": "DKIM CNAME 2"
+        }
+      ],
+      "dashboard_url": "https://app.hubspot.com/settings/email/sending-domains",
+      "dashboard_label": "HubSpot → Settings → Marketing Email → Sending Domains",
+      "instructions": "In HubSpot, go to Settings → Marketing → Email → Sending Domains. Connect your domain and publish the CNAME records shown.",
+      "docs_url": "https://knowledge.hubspot.com/email/connect-your-email-sending-domain"
+    },
+    {
+      "id": "klaviyo",
+      "name": "Klaviyo",
+      "spf_includes": ["klaviyomail.com"],
+      "alignment_cnames": [
+        {
+          "cname_host": "m1._domainkey.{domain}",
+          "cname_value": "dkim1.klaviyomail.com",
+          "required": true,
+          "label": "DKIM CNAME 1"
+        },
+        {
+          "cname_host": "m2._domainkey.{domain}",
+          "cname_value": "dkim2.klaviyomail.com",
+          "required": true,
+          "label": "DKIM CNAME 2"
+        }
+      ],
+      "dashboard_url": "https://www.klaviyo.com/account#setting-sending-domain-tab",
+      "dashboard_label": "Klaviyo → Account → Settings → Sending Domain",
+      "instructions": "In Klaviyo, go to Account → Settings → Sending Domain. Add your domain and publish the CNAME records shown.",
+      "docs_url": "https://help.klaviyo.com/hc/en-us/articles/4407098549275"
+    },
+    {
+      "id": "brevo",
+      "name": "Brevo (Sendinblue)",
+      "spf_includes": ["spf.sendinblue.com", "spf.brevo.com"],
+      "alignment_cnames": [
+        {
+          "cname_host": "mail._domainkey.{domain}",
+          "cname_value": "mail.domainkey.{code}.brevo.com",
+          "required": true,
+          "label": "DKIM CNAME"
+        }
+      ],
+      "dashboard_url": "https://app.brevo.com/senders/domain/list",
+      "dashboard_label": "Brevo → Senders & IP → Domains",
+      "instructions": "In Brevo, go to Senders & IP → Domains → Add a domain. Publish the CNAME records shown.",
+      "docs_url": "https://help.brevo.com/hc/en-us/articles/12163873383186"
+    },
+    {
+      "id": "mailchimp",
+      "name": "Mailchimp / Mandrill",
+      "spf_includes": ["spf.mandrillapp.com", "mc.sendgrid.net"],
+      "alignment_cnames": [
+        {
+          "cname_host": "mandrill._domainkey.{domain}",
+          "cname_value": "dkim.mandrillapp.com",
+          "required": true,
+          "label": "DKIM CNAME"
+        }
+      ],
+      "dashboard_url": "https://mandrillapp.com/settings/sending-domains",
+      "dashboard_label": "Mandrill → Settings → Sending Domains",
+      "instructions": "In Mandrill, go to Settings → Sending Domains. Add your domain and publish the DKIM CNAME record shown.",
+      "docs_url": "https://mailchimp.com/developer/transactional/docs/authentication-delivery/"
+    }
+  ]
+}

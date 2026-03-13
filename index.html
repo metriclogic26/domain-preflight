@@ -110,7 +110,7 @@
     main { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 4rem; }
     .hero {
       text-align: center;
-      padding-top: 3rem;
+      padding-top: 1.5rem;
       padding-bottom: 2.5rem;
     }
     .hero-label {
@@ -368,7 +368,7 @@
     .check-card.loading { border-left-color: var(--text2); }
     .check-card-content { flex: 1; min-width: 0; }
     .check-card-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
-    .check-card-detail { color: var(--text2); font-size: 0.8rem; }
+    .check-card-detail { color: var(--text2); font-size: 0.85rem; }
     .check-card-badge {
       font-size: 0.75rem;
       color: var(--text2);
@@ -430,7 +430,7 @@
     .action-card.warning { background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.3); }
     .action-card.info { background: rgba(108, 99, 255, 0.08); border-color: rgba(108, 99, 255, 0.3); }
     .action-card-title { font-weight: 500; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-    .action-card-body { color: var(--text2); font-size: 0.85rem; margin-bottom: 0.75rem; }
+    .action-card-body { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
     .fix-block {
       background: var(--bg3);
       border-radius: 8px;
@@ -460,6 +460,16 @@
       cursor: pointer;
     }
     .btn-copy-fix:hover { border-color: var(--purple); }
+    .btn-dashboard {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: var(--purple);
+      font-size: 0.8rem;
+      text-decoration: none;
+      border: 1px solid var(--purple);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+    }
     .faq-section {
       max-width: 700px;
       margin: 0 auto;
@@ -857,20 +867,28 @@ function isIPv6(ip) {
     }
   }
 
-  function actionCard(severity, title, body, fixText) {
+  function actionCard(severity, title, body, fixText, dashboardUrl, dashboardLabel) {
     const icons = { critical: '✗', warning: '⚠', info: 'ℹ' };
+    const hasFix = !!fixText;
+    const hasDashboard = !!dashboardUrl && !!dashboardLabel;
     const el = document.createElement('div');
     el.className = `action-card ${severity}`;
-    el.innerHTML = `
-      <div class="action-card-title">${icons[severity] || 'ℹ'} ${escapeHtml(title)}</div>
-      <div class="action-card-body">${escapeHtml(body)}</div>
-      ${fixText ? `
+    const bodyHtml = escapeHtml(body);
+    const fixHtml = hasFix ? `
         <div class="fix-block">
           <span class="fix-label">FIX</span>
           <pre>${escapeHtml(fixText)}</pre>
           <button type="button" class="btn-copy-fix">Copy fix</button>
         </div>
-      ` : ''}
+      ` : '';
+    const dashboardHtml = hasDashboard ? `
+        <a href="${dashboardUrl}" target="_blank" rel="noopener" class="btn-dashboard">Open ${escapeHtml(dashboardLabel)} →</a>
+      ` : '';
+    el.innerHTML = `
+      <div class="action-card-title">${icons[severity] || 'ℹ'} ${escapeHtml(title)}</div>
+      <div class="action-card-body">${bodyHtml}</div>
+      ${fixHtml}
+      ${dashboardHtml}
     `;
     const copyBtn = el.querySelector('.btn-copy-fix');
     if (copyBtn && fixText) {
@@ -1030,7 +1048,7 @@ function isIPv6(ip) {
     }
   }
 
-  async function runCheck3_SPF(domain, cardIndex) {
+  async function runCheck3_SPF(domain, cardIndex, onSpfDetected) {
     const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
     if (!cardEl) {
       return;
@@ -1059,6 +1077,7 @@ function isIPv6(ip) {
         actions.push(actionCard('critical', 'Replace +all in SPF', 'Use ~all (softfail) or -all (fail) instead of +all.', 'v=spf1 include:_spf.google.com -all'));
         return;
       }
+      if (typeof onSpfDetected === 'function') onSpfDetected(raw);
       let lookupCount = 0;
       const seen = new Set();
       async function countSpfRecursive(txt, depth) {
@@ -1197,6 +1216,120 @@ function isIPv6(ip) {
     }
   }
 
+  function extractSpfIncludes(spf) {
+    if (typeof spf !== 'string') return [];
+    const parts = spf.split(/\s+/);
+    const includes = [];
+    for (const part of parts) {
+      const m = part.toLowerCase();
+      if (m.startsWith('include:')) {
+        const val = m.slice(8).trim();
+        if (val) includes.push(val);
+      } else if (m.startsWith('redirect=')) {
+        const val = m.slice('redirect='.length).trim();
+        if (val) includes.push(val);
+      }
+    }
+    return includes;
+  }
+
+  function cnameHasPlaceholder(str) {
+    if (typeof str !== 'string') return false;
+    return /\{(token\d*|uid|code|tenant)\}/i.test(str);
+  }
+
+  async function runAlignmentEngine(domain, spfRecord) {
+    console.log('[alignment] called with spf:', spfRecord);
+    if (!spfRecord || typeof spfRecord !== 'string') return;
+    try {
+      const res = await fetch('./alignment-providers.json');
+      if (!res.ok) return;
+      const data = await res.json();
+      const providers = Array.isArray(data.providers) ? data.providers : [];
+      if (!providers.length) return;
+      console.log('[alignment] providers loaded:', providers.length);
+
+      const includes = extractSpfIncludes(spfRecord);
+      if (!includes.length) return;
+      const includesLower = includes.map(v => v.toLowerCase());
+
+      for (const provider of providers) {
+        const spfIncludes = Array.isArray(provider.spf_includes) ? provider.spf_includes : [];
+        if (!spfIncludes.length) continue;
+        const match = spfIncludes.some(inc =>
+          includesLower.some(v => v.includes(String(inc).toLowerCase()))
+        );
+        if (!match) continue;
+
+        console.log('[alignment] checking provider:', provider.id, 'includes:', provider.spf_includes);
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'section-label';
+        labelEl.textContent = '── ' + provider.name + ' detected ──';
+        actionCards.appendChild(labelEl);
+
+        const cnames = Array.isArray(provider.alignment_cnames) ? provider.alignment_cnames : [];
+        const checkable = cnames.filter(c => c && c.required && !cnameHasPlaceholder(c.cname_host || '') && !cnameHasPlaceholder(c.cname_value || ''));
+
+        const hasCheckable = checkable.length > 0;
+        if (hasCheckable) {
+          for (const c of checkable) {
+            const host = String(c.cname_host || '').replace('{domain}', domain);
+            let exists = false;
+            try {
+              const j = await doh(host, 'CNAME');
+              const ans = (j.Answer || []).some(a => a.type === 5);
+              exists = ans;
+            } catch (_) {
+              exists = false;
+            }
+            if (exists) {
+              actions.push(
+                actionCard(
+                  'info',
+                  '✓ ' + c.label + ' configured',
+                  'DKIM alignment CNAME is present.',
+                  null,
+                  null,
+                  null
+                )
+              );
+            } else {
+              addPenalty(-15);
+              const hostText = String(c.cname_host || '').replace('{domain}', domain);
+              const valueText = String(c.cname_value || '').replace('{domain}', domain);
+              const fix = `Add CNAME record:
+Host: ${hostText}
+Value: ${valueText}`;
+              actions.push(
+                actionCard(
+                  'critical',
+                  provider.name + ' DKIM alignment missing',
+                  provider.instructions || '',
+                  fix,
+                  provider.dashboard_url,
+                  provider.dashboard_label
+                )
+              );
+            }
+          }
+        } else {
+          actions.push(
+            actionCard(
+              'info',
+              provider.name + ' detected — verify alignment',
+              provider.instructions || '',
+              null,
+              provider.dashboard_url,
+              provider.dashboard_label
+            )
+          );
+        }
+      }
+    } catch (_) {
+    }
+  }
+
   function renderScore() {
     const tier = score >= 80 ? 'ready' : score >= 60 ? 'warn' : 'critical';
     const grade = score >= 80 ? 'Ready to send' : score >= 60 ? 'Needs attention' : 'Critical issues';
@@ -1236,6 +1369,7 @@ function isIPv6(ip) {
   }
 
   async function run() {
+    let detectedSpfRecord = '';
     const rawDomain = domainIn.value.trim();
     const domain = normalizeDomain(rawDomain);
     if (!domain) {
@@ -1288,9 +1422,10 @@ function isIPv6(ip) {
 
       await runCheck1_PTR(domain, ip, 0);
       await runCheck2_Blocklist(domain, ip, 1);
-      await runCheck3_SPF(domain, 2);
+      await runCheck3_SPF(domain, 2, (spf) => { detectedSpfRecord = spf; });
       await runCheck4_DKIM(domain, 3);
       await runCheck5_DMARC(domain, 4);
+      await runAlignmentEngine(domain, detectedSpfRecord);
 
       renderScore();
       animateScore();
