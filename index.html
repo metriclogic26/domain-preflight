@@ -470,6 +470,40 @@
       padding: 0.3rem 0.6rem;
       border-radius: 6px;
     }
+    .alignment-diagram {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.75rem 0;
+      flex-wrap: wrap;
+    }
+    .align-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      min-width: 140px;
+    }
+    .align-label {
+      font-size: 0.65rem;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+    .align-value {
+      font-size: 0.8rem;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .align-arrow {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .align-status {
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
     .faq-section {
       max-width: 700px;
       margin: 0 auto;
@@ -921,6 +955,7 @@ function isIPv6(ip) {
 
   let score = 100;
   const actions = [];
+  let lastDmarcPolicy = null;
 
   function addPenalty(p) {
     score = Math.max(0, score + p);
@@ -1188,6 +1223,7 @@ function isIPv6(ip) {
       const rec = (j.Answer || []).find(a => a.type === 16 && (a.data || '').toLowerCase().includes('v=dmarc1'));
       const raw = rec ? stripTxtQuotes(rec.data) : '';
       if (!raw || !raw.toLowerCase().includes('v=dmarc1')) {
+        lastDmarcPolicy = null;
         addPenalty(-25);
         updateCard(cardEl, 'fail', 'DMARC', 'No DMARC policy found. Anyone can spoof your domain and you won\'t know about it.', 'Missing');
         actions.push(actionCard('critical', 'Add DMARC record', 'Add a DNS TXT record for ' + dmarcDomain + ' so you can receive reports and eventually block fake mail.', 'v=DMARC1; p=none; rua=mailto:dmarc@' + domain));
@@ -1195,6 +1231,7 @@ function isIPv6(ip) {
       }
       const pMatch = raw.match(/p=(\w+)/i);
       const p = (pMatch ? pMatch[1] : '').toLowerCase();
+      lastDmarcPolicy = p;
       const hasRua = /rua=/i.test(raw);
       if (p === 'none') {
         addPenalty(-10);
@@ -1211,6 +1248,7 @@ function isIPv6(ip) {
         actions.push(actionCard('warning', 'Add rua= to DMARC', 'Add a report address (rua=mailto:...) so you receive daily summaries of who\'s sending as your domain.', 'rua=mailto:dmarc@' + domain));
       }
     } catch (e) {
+      lastDmarcPolicy = null;
       addPenalty(-25);
       updateCard(cardEl, 'fail', 'DMARC', 'Could not look up DMARC: ' + (e.message || 'error'), '—');
     }
@@ -1238,7 +1276,7 @@ function isIPv6(ip) {
     return /\{(token\d*|uid|code|tenant)\}/i.test(str);
   }
 
-  async function runAlignmentEngine(domain, spfRecord) {
+  async function runAlignmentEngine(domain, spfRecord, dmarcPolicy) {
     console.log('[alignment] called with spf:', spfRecord);
     if (!spfRecord || typeof spfRecord !== 'string') return;
     try {
@@ -1253,6 +1291,10 @@ function isIPv6(ip) {
       if (!includes.length) return;
       const includesLower = includes.map(v => v.toLowerCase());
 
+      let spfProviders = [];
+      let allAlignmentCnamesPassed = true;
+      let firstMatchedProviderName = '';
+
       for (const provider of providers) {
         const spfIncludes = Array.isArray(provider.spf_includes) ? provider.spf_includes : [];
         if (!spfIncludes.length) continue;
@@ -1260,6 +1302,9 @@ function isIPv6(ip) {
           includesLower.some(v => v.includes(String(inc).toLowerCase()))
         );
         if (!match) continue;
+
+        spfProviders.push(provider);
+        if (!firstMatchedProviderName) firstMatchedProviderName = provider.name || provider.id || '';
 
         console.log('[alignment] checking provider:', provider.id, 'includes:', provider.spf_includes);
 
@@ -1295,6 +1340,7 @@ function isIPv6(ip) {
                 )
               );
             } else {
+              allAlignmentCnamesPassed = false;
               addPenalty(-15);
               const hostText = String(c.cname_host || '').replace('{domain}', domain);
               const valueText = String(c.cname_value || '').replace('{domain}', domain);
@@ -1324,6 +1370,44 @@ Value: ${valueText}`;
               provider.dashboard_label
             )
           );
+        }
+      }
+
+      if (spfProviders.length > 0 && dmarcPolicy !== 'reject') {
+        const visual = document.createElement('div');
+        visual.className = 'action-card info alignment-visual';
+        const fromVal = 'you@' + domain;
+        visual.innerHTML = `
+          <div class="action-card-title">ℹ Alignment check</div>
+          <div class="alignment-diagram">
+            <div class="align-box">
+              <div class="align-label">FROM header</div>
+              <div class="align-value" id="alignFromVal">${escapeHtml(fromVal)}</div>
+            </div>
+            <div class="align-arrow" id="alignArrow">⟷</div>
+            <div class="align-box">
+              <div class="align-label">SPF / Return-Path</div>
+              <div class="align-value" id="alignSpfVal">${escapeHtml(firstMatchedProviderName)}</div>
+            </div>
+          </div>
+          <div class="align-status" id="alignStatus"></div>
+        `;
+        const arrowEl = visual.querySelector('#alignArrow');
+        const statusEl = visual.querySelector('#alignStatus');
+        if (dmarcPolicy === null) {
+          arrowEl.style.color = 'var(--orange)';
+          statusEl.textContent = '⚠ No DMARC policy — alignment can\'t be enforced yet.';
+        } else if (!allAlignmentCnamesPassed) {
+          arrowEl.style.color = 'var(--red)';
+          statusEl.textContent = '✗ Domains don\'t match — emails may fail DMARC. Add the missing CNAMEs below.';
+        } else {
+          arrowEl.style.color = 'var(--green)';
+          statusEl.textContent = '✓ Domains are aligned — DMARC will pass';
+        }
+        if (actionCards.firstChild) {
+          actionCards.insertBefore(visual, actionCards.firstChild);
+        } else {
+          actionCards.appendChild(visual);
         }
       }
     } catch (_) {
@@ -1397,6 +1481,7 @@ Value: ${valueText}`;
       actionCards.innerHTML = '';
       score = 100;
       actions.length = 0;
+      lastDmarcPolicy = null;
       scoreValue.textContent = '0';
       scoreGrade.textContent = '—';
       scoreGrade.className = 'score-grade';
@@ -1425,7 +1510,7 @@ Value: ${valueText}`;
       await runCheck3_SPF(domain, 2, (spf) => { detectedSpfRecord = spf; });
       await runCheck4_DKIM(domain, 3);
       await runCheck5_DMARC(domain, 4);
-      await runAlignmentEngine(domain, detectedSpfRecord);
+      await runAlignmentEngine(domain, detectedSpfRecord, lastDmarcPolicy);
 
       renderScore();
       animateScore();
