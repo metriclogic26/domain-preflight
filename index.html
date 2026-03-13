@@ -4,8 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DNS Preflight Checker — DomainPreflight</title>
-  <meta name="description" content="Check PTR records, blocklists, SPF, DKIM, and DMARC before your first email sends. Free DNS pre-flight audit. No signup. No backend.">
-  <link rel="canonical" href="https://domainpreflight.dev">
+  <meta name="description" content="Free DNS pre-flight checker. Audit PTR/rDNS, IP reputation, SPF, DKIM, and DMARC before you send email. No signup required. Nothing leaves your browser.">
+  <meta name="keywords" content="SPF checker, DKIM checker, DMARC checker, DNS preflight, email deliverability, PTR record check, IP reputation, MXToolbox alternative">
+  <link rel="canonical" href="https://domainpreflight.dev/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DomainPreflight — Check before you send. Not after.">
+  <meta property="og:description" content="Free DNS pre-flight checker. Audit SPF, DKIM, DMARC and IP reputation in seconds. No sending required.">
+  <meta property="og:url" content="https://domainpreflight.dev">
+  <meta property="og:site_name" content="DomainPreflight">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="DomainPreflight — Check before you send. Not after.">
+  <meta name="twitter:description" content="Free DNS pre-flight checker for SPF, DKIM, DMARC and IP reputation. No sending required.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DomainPreflight",
+    "url": "https://domainpreflight.dev",
+    "description": "Free browser-based DNS pre-flight checker. Audit PTR/rDNS, IP reputation, SPF, DKIM, and DMARC before sending email.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -434,6 +460,25 @@
       cursor: pointer;
     }
     .btn-copy-fix:hover { border-color: var(--purple); }
+    .faq-section {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+      border-top: 1px solid var(--border);
+    }
+    .faq-section h2 {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .faq-section h2:first-child { margin-top: 0; }
+    .faq-section p {
+      color: var(--text2);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -532,9 +577,9 @@
             <div class="health-widget">
               <div class="score-ring-wrap">
                 <svg viewBox="0 0 100 100" width="80" height="80">
-                  <circle class="score-ring-bg" cx="50" cy="50" r="50" fill="none" stroke-width="8"/>
-                  <circle class="score-ring-fill" id="scoreRing" cx="50" cy="50" r="50" fill="none" stroke-width="8"
-                    stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+                  <circle class="score-ring-bg" cx="50" cy="50" r="42" fill="none" stroke-width="8"/>
+                  <circle class="score-ring-fill" id="scoreRing" cx="50" cy="50" r="42" fill="none" stroke-width="8"
+                    stroke-dasharray="263.89" stroke-dashoffset="263.89"/>
                 </svg>
                 <span class="score-value" id="scoreValue">0</span>
               </div>
@@ -557,7 +602,7 @@
         <div class="right-column-results" id="rightColumnResults">
           <div class="section-label">Actions</div>
           <div class="action-section" id="actionSection">
-            <div class="all-checks-passed" id="allChecksPassed">✓ No issues found — configuration looks healthy</div>
+            <div class="all-checks-passed hidden" id="allChecksPassed">✓ No issues found — configuration looks healthy</div>
             <div class="action-cards" id="actionCards"></div>
           </div>
         </div>
@@ -565,11 +610,22 @@
     </div>
   </main>
 
+  <section class="faq-section">
+    <h2>What does DomainPreflight check?</h2>
+    <p>DomainPreflight checks PTR/rDNS records, IP reputation against Spamhaus ZEN and SpamCop blocklists, SPF record validity and lookup count, DKIM key existence and strength, and DMARC policy level — before you send a single email.</p>
+    
+    <h2>How is this different from MXToolbox?</h2>
+    <p>MXToolbox tells you what's wrong. DomainPreflight tells you exactly how to fix it, with copy-paste config for your specific setup. No account required.</p>
+    
+    <h2>Does anything leave my browser?</h2>
+    <p>No. All checks use DNS-over-HTTPS queries made directly from your browser. No data is sent to any DomainPreflight server.</p>
+  </section>
+
   <footer>
     <div class="footer-inner">
       <p class="footer-disclaimer">This tool uses public DNS-over-HTTPS (DoH) only. Results are indicative; always verify critical config in your own environment.</p>
       <div class="footer-links">
-        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try configclarity.dev</span>
+        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try <a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a></span>
         <span>
           <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
           <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
@@ -604,7 +660,7 @@ function isIPv6(ip) {
 (function () {
   'use strict';
 
-  const CIRCUMFERENCE = 2 * Math.PI * 50;
+  const CIRCUMFERENCE = 263.89;
   const DOH_PRIMARY = 'https://cloudflare-dns.com/dns-query';
   const DOH_FALLBACK = 'https://dns.google/resolve';
   const DKIM_SELECTORS = ['google', 'google2048', 'googlemail', 'selector1', 'selector2', 'k1', 'default', 'mail', 'smtp', 'dkim', 's1', 's2', 'key1', 'key2', 'sendgrid', 'mailgun', 'postmark', 'ses', 'em', '20230601', '20240101', '20221208', 'mx', 'protonmail', 'pm', 'zoho'];
@@ -717,7 +773,6 @@ function isIPv6(ip) {
   }
 
   function updateCard(cardEl, status, title, detail, badge) {
-    console.log('[updateCard]', { status, title, detail, badge });
     if (!cardEl || !cardEl.replaceWith) return;
     const newCard = card(status, title, detail, badge, status);
     cardEl.replaceWith(newCard);
@@ -786,14 +841,12 @@ function isIPv6(ip) {
         updateCard(loadingCard, 'pass', 'DKIM', 'DKIM record found.', selector);
       }
     } catch (e) {
-      console.error('[checkDKIM] custom selector', e);
       updateCard(loadingCard, 'warn', 'DKIM', "Lookup failed for '" + selector + "': " + (e.message || 'error'), selector);
     }
   }
 
   function renderSkeletons() {
     if (!cardsGrid) {
-      console.warn('[renderSkeletons] #checks-grid not found in DOM');
       return;
     }
     cardsGrid.innerHTML = '';
@@ -872,10 +925,8 @@ function isIPv6(ip) {
   }
 
   async function runCheck1_PTR(domain, ip, cardIndex) {
-    console.log('[checkPTR] started', { domain, ip, cardIndex });
     const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
     if (!cardEl) {
-      console.warn('[checkPTR] no card element at index', cardIndex);
       return;
     }
     await sleep(300);
@@ -913,17 +964,14 @@ function isIPv6(ip) {
         updateCard(cardEl, 'pass', 'PTR / rDNS', 'PTR record found (forward verification skipped).', ptrHost);
       }
     } catch (e) {
-      console.error('[checkPTR]', e);
       addPenalty(-25);
       updateCard(cardEl, 'fail', 'PTR / rDNS', 'Lookup failed: ' + (e.message || 'error'), ip);
     }
   }
 
   async function runCheck2_Blocklist(domain, ip, cardIndex) {
-    console.log('[checkBlocklist] started', { domain, ip, cardIndex });
     const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
     if (!cardEl) {
-      console.warn('[checkBlocklist] no card element at index', cardIndex);
       return;
     }
     await sleep(300);
@@ -962,7 +1010,6 @@ function isIPv6(ip) {
           listResults.push({ list: list.name, status: 'ok' });
         }
       } catch (e) {
-        console.error('[checkBlocklist] list error', list.name, e);
         listResults.push({ list: list.name, status: 'error' });
       }
     }
@@ -983,10 +1030,8 @@ function isIPv6(ip) {
   }
 
   async function runCheck3_SPF(domain, cardIndex) {
-    console.log('[checkSPF] started', { domain, cardIndex });
     const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
     if (!cardEl) {
-      console.warn('[checkSPF] no card element at index', cardIndex);
       return;
     }
     await sleep(300);
@@ -994,7 +1039,6 @@ function isIPv6(ip) {
       const j = await doh(domain, 'TXT');
       const answers = j.Answer || [];
       const txtRecords = answers.filter(a => a.type === 16);
-      console.log('[checkSPF] TXT records for ' + domain + ':', txtRecords.length, txtRecords);
       const spfRecordCount = txtRecords.filter(a => stripTxtQuotes(String(a.data || '').trim()).toLowerCase().startsWith('v=spf1')).length;
       if (spfRecordCount > 1) {
         addPenalty(-5);
@@ -1050,17 +1094,14 @@ function isIPv6(ip) {
         updateCard(cardEl, 'pass', 'SPF', 'Valid SPF record within lookup limit.', lookupCount + ' lookups');
       }
     } catch (e) {
-      console.error('[checkSPF]', e);
       addPenalty(-20);
       updateCard(cardEl, 'fail', 'SPF', 'Lookup failed: ' + (e.message || 'error'), '—');
     }
   }
 
   async function runCheck4_DKIM(domain, cardIndex) {
-    console.log('[checkDKIM] started', { domain, cardIndex });
     const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
     if (!cardEl) {
-      console.warn('[checkDKIM] no card element at index', cardIndex);
       return;
     }
     await sleep(300);
@@ -1075,17 +1116,12 @@ function isIPv6(ip) {
           const answers = j.Answer || [];
           const txtAnswers = answers.filter(a => a.type === 16);
           const record = getTxtFromAnswer(answers);
-          console.log('[checkDKIM] selector=' + sel + ' name=' + name + ' answers=' + txtAnswers.length, 'raw Answer:', answers);
-          if (sel === 'google') {
-            console.log('[checkDKIM] google._domainkey.' + domain + ' full raw response:', JSON.stringify(j));
-          }
           if (record) {
             found = record;
             selector = sel;
             break;
           }
         } catch (e) {
-          console.log('[checkDKIM] selector=' + sel + ' query failed', e);
         }
       }
       if (!found) {
@@ -1115,17 +1151,14 @@ function isIPv6(ip) {
         updateCard(cardEl, 'pass', 'DKIM', 'DKIM record found.', selector);
       }
     } catch (e) {
-      console.error('[checkDKIM]', e);
       addPenalty(-10);
       updateCard(cardEl, 'fail', 'DKIM', 'Lookup failed: ' + (e.message || 'error'), '—');
     }
   }
 
   async function runCheck5_DMARC(domain, cardIndex) {
-    console.log('[checkDMARC] started', { domain, cardIndex });
     const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
     if (!cardEl) {
-      console.warn('[checkDMARC] no card element at index', cardIndex);
       return;
     }
     await sleep(300);
@@ -1158,7 +1191,6 @@ function isIPv6(ip) {
         actions.push(actionCard('warning', 'Add rua= to DMARC', 'Include rua=mailto:... to receive aggregate reports.', 'rua=mailto:dmarc@' + domain));
       }
     } catch (e) {
-      console.error('[checkDMARC]', e);
       addPenalty(-25);
       updateCard(cardEl, 'fail', 'DMARC', 'Lookup failed: ' + (e.message || 'error'), '—');
     }
@@ -1221,8 +1253,6 @@ function isIPv6(ip) {
       if (checksColumnResults) checksColumnResults.classList.add('visible');
       if (rightColumnResults) rightColumnResults.classList.add('visible');
       if (clearBtn) clearBtn.style.display = 'inline-block';
-      console.log('[runPreflight] results section visible:', results.classList.contains('visible'), 'results element:', results);
-
       cardsGrid.innerHTML = '';
       actionCards.innerHTML = '';
       score = 100;
@@ -1235,8 +1265,6 @@ function isIPv6(ip) {
       scoreRing.setAttribute('stroke-dashoffset', CIRCUMFERENCE);
 
       renderSkeletons();
-      console.log('[runPreflight] #checks-grid exists:', !!cardsGrid, 'child count:', cardsGrid ? cardsGrid.children.length : 0);
-
       if (!ipWasManuallyEntered) {
         ipIn.value = '';
       }
@@ -1267,7 +1295,6 @@ function isIPv6(ip) {
         if (allChecksPassed) allChecksPassed.classList.remove('hidden');
       }
     } catch (e) {
-      console.error('[runPreflight] error', e);
     } finally {
       runBtn.disabled = false;
       runBtn.textContent = 'Run Preflight';
@@ -1293,7 +1320,7 @@ function isIPv6(ip) {
     scoreRing.setAttribute('stroke-dashoffset', CIRCUMFERENCE);
     cardsGrid.innerHTML = '';
     actionCards.innerHTML = '';
-    if (allChecksPassed) allChecksPassed.classList.remove('hidden');
+    if (allChecksPassed) allChecksPassed.classList.add('hidden');
     ipWasManuallyEntered = false;
     history.replaceState(null, '', location.pathname);
     if (clearBtn) clearBtn.style.display = 'none';
@@ -1301,7 +1328,6 @@ function isIPv6(ip) {
   });
 
   function loadExample() {
-    console.log('loadExample called');
     domainIn.value = 'gmail.com';
     ipIn.value = '';
     run();
