@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNS Preflight Checker — DomainPreflight</title>
+  <meta name="description" content="Check PTR records, blocklists, SPF, DKIM, and DMARC before your first email sends. Free DNS pre-flight audit. No signup. No backend.">
+  <link rel="canonical" href="https://domainpreflight.dev">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .logo-dot { color: var(--purple); }
+    .pill {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-left: 0.5rem;
+    }
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    nav a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    nav a.active { color: var(--text); font-weight: 500; }
+    nav a.disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+    /* Main */
+    main { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+    .hero-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    .hero-sub {
+      color: var(--text2);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      max-width: 540px;
+    }
+    .input-group {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+    .input-row {
+      display: flex;
+      gap: 1rem;
+      flex: 1;
+      min-width: 200px;
+    }
+    .input-wrap {
+      flex: 1;
+      min-width: 140px;
+    }
+    .input-wrap label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text2);
+      margin-bottom: 0.35rem;
+    }
+    .input-wrap input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    .input-wrap input::placeholder { color: var(--text2); opacity: 0.7; }
+    .input-wrap input:focus {
+      outline: none;
+      border-color: var(--purple);
+    }
+    .btn-row { display: flex; align-items: center; gap: 1rem; }
+    .btn-primary {
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-primary:disabled { cursor: not-allowed; opacity: 0.8; }
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--purple);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.25rem 0;
+    }
+    .btn-text:hover { text-decoration: underline; }
+    /* Results */
+    #results { display: none; margin-top: 2.5rem; }
+    #results.visible { display: block; }
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .health-widget {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .score-ring-wrap {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+    .score-ring-wrap svg { transform: rotate(-90deg); }
+    .score-ring-bg { stroke: var(--bg3); }
+    .score-ring-fill { stroke-linecap: round; transition: stroke-dashoffset 0.1s linear; }
+    .score-ring-fill.ready { stroke: var(--green); }
+    .score-ring-fill.warn { stroke: var(--orange); }
+    .score-ring-fill.critical { stroke: var(--red); }
+    .score-value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .score-grade { font-size: 1rem; font-weight: 600; }
+    .score-grade.ready { color: var(--green); }
+    .score-grade.warn { color: var(--orange); }
+    .score-grade.critical { color: var(--red); }
+    .score-summary { color: var(--text2); font-size: 0.85rem; max-width: 240px; }
+    .btn-copy-link {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .btn-copy-link:hover { border-color: var(--purple); color: var(--purple); }
+    /* Check cards */
+    .cards-grid { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
+    .check-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      border-left: 3px solid var(--border);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .check-card.pass { border-left-color: var(--green); }
+    .check-card.warn { border-left-color: var(--orange); }
+    .check-card.fail { border-left-color: var(--red); }
+    .check-card.info { border-left-color: var(--purple); }
+    .check-card.loading { border-left-color: var(--text2); }
+    .check-card-content { flex: 1; min-width: 0; }
+    .check-card-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
+    .check-card-detail { color: var(--text2); font-size: 0.8rem; }
+    .check-card-badge {
+      font-size: 0.75rem;
+      color: var(--text2);
+      background: var(--bg3);
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .check-card.loading .check-card-detail {
+      background: linear-gradient(90deg, var(--text2) 25%, var(--bg3) 50%, var(--text2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 4px;
+      height: 1em;
+      width: 60%;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .dkim-selector-retry {
+      margin-top: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .dkim-selector-retry input {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.8rem;
+      width: 10rem;
+    }
+    .dkim-selector-retry input::placeholder { color: var(--text2); }
+    .dkim-selector-retry input:focus { outline: none; border-color: var(--purple); }
+    .dkim-selector-retry .btn-check-selector {
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .dkim-selector-retry .btn-check-selector:hover { filter: brightness(1.1); }
+    /* Action cards */
+    .action-section { margin-bottom: 1.5rem; }
+    .action-section h3 { font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text2); }
+    .action-cards { display: grid; gap: 1rem; }
+    .action-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+    .action-card.critical { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); }
+    .action-card.warning { background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.3); }
+    .action-card.info { background: rgba(108, 99, 255, 0.08); border-color: rgba(108, 99, 255, 0.3); }
+    .action-card-title { font-weight: 500; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .action-card-body { color: var(--text2); font-size: 0.85rem; margin-bottom: 0.75rem; }
+    .fix-block {
+      background: var(--bg3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      position: relative;
+      padding-top: 1.5rem;
+    }
+    .fix-label {
+      position: absolute;
+      top: 0.5rem;
+      left: 1rem;
+      font-size: 0.65rem;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .fix-block pre { font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; color: var(--text2); }
+    .btn-copy-fix {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn-copy-fix:hover { border-color: var(--purple); }
+    .disclaimer { color: var(--text2); font-size: 0.75rem; margin-top: 2rem; }
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      background: var(--bg2);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    footer a:hover { color: var(--purple); }
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        DomainPreflight.dev<span class="logo-dot">.</span>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="#" class="active">DNS Preflight</a>
+        <a href="#" class="disabled" title="Coming soon">Email</a>
+        <a href="#" class="disabled" title="Coming soon">WHOIS</a>
+        <a href="#" class="disabled" title="Coming soon">Dangling Records</a>
+        <a href="#" class="disabled" title="Coming soon">Typosquat</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-label">DNS PREFLIGHT</div>
+      <h1>Check before you send. Not after.</h1>
+      <p class="hero-sub">Audit PTR records, IP reputation, SPF, DKIM, and DMARC in seconds. No sending required. No signup. Nothing leaves your browser.</p>
+      <div class="input-group">
+        <div class="input-row">
+          <div class="input-wrap">
+            <label for="domain">Domain</label>
+            <input type="text" id="domain" placeholder="example.com" autocomplete="off">
+          </div>
+          <div class="input-wrap">
+            <label for="ip">Sending IP (optional)</label>
+            <input type="text" id="ip" placeholder="Optional" autocomplete="off">
+          </div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn-primary" id="runBtn">Run Preflight</button>
+          <button type="button" class="btn-text" id="tryExample" onclick="loadExample()">Try an example</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="results-header">
+        <div class="health-widget">
+          <div class="score-ring-wrap">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle class="score-ring-bg" cx="50" cy="50" r="40" fill="none" stroke-width="8"/>
+              <circle class="score-ring-fill" id="scoreRing" cx="50" cy="50" r="40" fill="none" stroke-width="8"
+                stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+            </svg>
+            <span class="score-value" id="scoreValue">0</span>
+          </div>
+          <div>
+            <div class="score-grade" id="scoreGrade">—</div>
+            <div class="score-summary" id="scoreSummary">Run a preflight to see your score.</div>
+          </div>
+        </div>
+        <button type="button" class="btn-copy-link" id="copyLinkBtn">Copy link</button>
+      </div>
+      <div class="cards-grid" id="checks-grid"></div>
+      <div class="action-section" id="actionSection">
+        <h3>Recommended actions</h3>
+        <div class="action-cards" id="actionCards"></div>
+      </div>
+      <p class="disclaimer">This tool uses public DNS-over-HTTPS (DoH) only. Results are indicative; always verify critical config in your own environment.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try configclarity.dev</span>
+      <span>
+        <a href="https://github.com/metriclogic26/domainpreflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
+        <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
+        <a href="https://github.com/metriclogic26/domainpreflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+      </span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+(function () {
+  'use strict';
+
+  const CIRCUMFERENCE = 2 * Math.PI * 40;
+  const DOH_PRIMARY = 'https://cloudflare-dns.com/dns-query';
+  const DOH_FALLBACK = 'https://dns.google/resolve';
+  const DKIM_SELECTORS = ['google', 'google2048', 'googlemail', 'selector1', 'selector2', 'k1', 'default', 'mail', 'smtp', 'dkim', 's1', 's2', 'key1', 'key2', 'sendgrid', 'mailgun', 'postmark', 'ses', 'em', '20230601', '20240101', '20221208', 'mx', 'protonmail', 'pm', 'zoho'];
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  async function doh(name, type) {
+    const urlP = `${DOH_PRIMARY}?name=${encodeURIComponent(name)}&type=${type}`;
+    const urlG = `${DOH_FALLBACK}?name=${encodeURIComponent(name)}&type=${type}`;
+    try {
+      const r = await fetch(urlP, { headers: { Accept: 'application/dns-json' } });
+      if (!r.ok) throw new Error('Primary failed');
+      const j = await r.json();
+      if (j.Status !== 0 && j.Status !== 3) throw new Error('DNS error ' + j.Status);
+      return j;
+    } catch (_) {
+      const r = await fetch(urlG);
+      if (!r.ok) throw new Error('DoH failed');
+      const j = await r.json();
+      return { Answer: (j.Answer || []).map(a => ({ name: a.name, type: a.type, data: a.data })), Status: 0 };
+    }
+  }
+
+  function stripTxtQuotes(s) {
+    if (typeof s !== 'string') return s;
+    return s.replace(/^["']|["']$/g, '').trim();
+  }
+
+  function getTxtFromAnswer(answers) {
+    const txt = (answers || []).filter(a => a.type === 16);
+    if (!txt.length) return '';
+    const chunks = txt.map(a => stripTxtQuotes((a.data != null ? String(a.data) : '').trim()));
+    return chunks.join('');
+  }
+
+  function findSpfInTxtAnswers(answers) {
+    const txt = (answers || []).filter(a => a.type === 16);
+    const combined = getTxtFromAnswer(answers);
+    if (combined && combined.toLowerCase().startsWith('v=spf1')) return combined;
+    for (const a of txt) {
+      const s = stripTxtQuotes((a.data != null ? String(a.data) : '').trim());
+      if (s && s.toLowerCase().startsWith('v=spf1')) return s;
+    }
+    return '';
+  }
+
+  const $ = (id) => document.getElementById(id);
+  const domainIn = $('domain');
+  const ipIn = $('ip');
+  const runBtn = $('runBtn');
+  const tryExample = $('tryExample');
+  const results = $('results');
+  const cardsGrid = $('checks-grid');
+  const actionSection = $('actionSection');
+  const actionCards = $('actionCards');
+  const scoreRing = $('scoreRing');
+  const scoreValue = $('scoreValue');
+  const scoreGrade = $('scoreGrade');
+  const scoreSummary = $('scoreSummary');
+  const copyLinkBtn = $('copyLinkBtn');
+  const toast = $('toast');
+
+  function toastShow(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function card(status, title, detail, badge, icon) {
+    const icons = { pass: '✓', warn: '⚠', fail: '✗', info: 'ℹ', loading: '⋯' };
+    const el = document.createElement('div');
+    el.className = `check-card ${status}`;
+    el.innerHTML = `
+      <div class="check-card-content">
+        <div class="check-card-title">${icons[status] || '⋯'} ${escapeHtml(title)}</div>
+        <div class="check-card-detail">${escapeHtml(detail)}</div>
+      </div>
+      ${badge != null ? `<span class="check-card-badge">${escapeHtml(String(badge))}</span>` : ''}
+    `;
+    return el;
+  }
+
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function updateCard(cardEl, status, title, detail, badge) {
+    console.log('[updateCard]', { status, title, detail, badge });
+    if (!cardEl || !cardEl.replaceWith) return;
+    const newCard = card(status, title, detail, badge, status);
+    cardEl.replaceWith(newCard);
+  }
+
+  function dkimNotFoundCard(domain, cardIndex) {
+    const el = document.createElement('div');
+    el.className = 'check-card warn';
+    el.innerHTML = `
+      <div class="check-card-content">
+        <div class="check-card-title">⚠ DKIM</div>
+        <div class="check-card-detail">DKIM selector not found with common selectors. If you know your selector, enter it below.</div>
+        <div class="dkim-selector-retry">
+          <input type="text" placeholder="e.g. 20230601" class="dkim-selector-input" spellcheck="false">
+          <button type="button" class="btn-check-selector">Check</button>
+        </div>
+      </div>
+      <span class="check-card-badge">Not found</span>
+    `;
+    const input = el.querySelector('.dkim-selector-input');
+    const btn = el.querySelector('.btn-check-selector');
+    btn.addEventListener('click', () => {
+      const sel = (input && input.value || '').trim();
+      if (!sel) {
+        toastShow('Enter a selector to check');
+        return;
+      }
+      runDKIMWithSelector(domain, sel, cardIndex);
+    });
+    return el;
+  }
+
+  async function runDKIMWithSelector(domain, selector, cardIndex) {
+    const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
+    if (!cardEl) return;
+    const loadingCard = card('loading', 'DKIM', 'Checking ' + selector + '…', null);
+    cardEl.replaceWith(loadingCard);
+    try {
+      const name = selector + '._domainkey.' + domain;
+      const j = await doh(name, 'TXT');
+      const answers = j.Answer || [];
+      const record = getTxtFromAnswer(answers);
+      if (!record) {
+        updateCard(loadingCard, 'warn', 'DKIM', "No TXT record for selector '" + selector + "'. Try another selector.", selector);
+        return;
+      }
+      const pMatch = record.match(/p=([^\s;]+)/i);
+      const pVal = pMatch ? pMatch[1].trim() : '';
+      if (!pVal || pVal === '') {
+        addPenalty(-20);
+        updateCard(loadingCard, 'fail', 'DKIM', 'DKIM key is revoked (empty p=). Rotate to a new key.', selector);
+        actions.push(actionCard('critical', 'Rotate revoked DKIM key', 'Generate a new key and publish the new TXT record for ' + selector + '._domainkey.' + domain, null));
+        return;
+      }
+      try {
+        const decoded = atob(pVal.replace(/\s/g, ''));
+        const bitLen = decoded.length * 8;
+        if (bitLen < 2048) {
+          addPenalty(-5);
+          updateCard(loadingCard, 'warn', 'DKIM', 'Key is smaller than 2048 bits. Consider rotating to a stronger key.', selector + ' (~' + bitLen + 'b)');
+          actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key and update ' + selector + '._domainkey.' + domain, null));
+        } else {
+          updateCard(loadingCard, 'pass', 'DKIM', 'DKIM record found with adequate key length.', selector);
+        }
+      } catch (_) {
+        updateCard(loadingCard, 'pass', 'DKIM', 'DKIM record found.', selector);
+      }
+    } catch (e) {
+      console.error('[checkDKIM] custom selector', e);
+      updateCard(loadingCard, 'warn', 'DKIM', "Lookup failed for '" + selector + "': " + (e.message || 'error'), selector);
+    }
+  }
+
+  function renderSkeletons() {
+    if (!cardsGrid) {
+      console.warn('[renderSkeletons] #checks-grid not found in DOM');
+      return;
+    }
+    cardsGrid.innerHTML = '';
+    const titles = ['PTR / rDNS', 'IP Blocklist', 'SPF', 'DKIM', 'DMARC'];
+    for (const t of titles) {
+      cardsGrid.appendChild(card('loading', t, 'Checking…', null));
+    }
+  }
+
+  function actionCard(severity, title, body, fixText) {
+    const icons = { critical: '✗', warning: '⚠', info: 'ℹ' };
+    const el = document.createElement('div');
+    el.className = `action-card ${severity}`;
+    el.innerHTML = `
+      <div class="action-card-title">${icons[severity] || 'ℹ'} ${escapeHtml(title)}</div>
+      <div class="action-card-body">${escapeHtml(body)}</div>
+      ${fixText ? `
+        <div class="fix-block">
+          <span class="fix-label">FIX</span>
+          <pre>${escapeHtml(fixText)}</pre>
+          <button type="button" class="btn-copy-fix">Copy fix</button>
+        </div>
+      ` : ''}
+    `;
+    const copyBtn = el.querySelector('.btn-copy-fix');
+    if (copyBtn && fixText) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(fixText);
+        copyBtn.textContent = '✓ Copied';
+        setTimeout(() => { copyBtn.textContent = 'Copy fix'; }, 2000);
+      });
+    }
+    return el;
+  }
+
+  function updateUrl(domain, ip) {
+    const params = new URLSearchParams();
+    if (domain) params.set('domain', domain);
+    if (ip) params.set('ip', ip);
+    const q = params.toString();
+    const url = q ? `${location.pathname}?${q}` : location.pathname;
+    history.replaceState(null, '', url);
+  }
+
+  function parseUrl() {
+    const params = new URLSearchParams(location.search);
+    const d = params.get('domain') || '';
+    const i = params.get('ip') || '';
+    if (d) domainIn.value = d.trim();
+    if (i) ipIn.value = i.trim();
+    return { domain: domainIn.value.trim(), ip: ipIn.value.trim() };
+  }
+
+  let score = 100;
+  const actions = [];
+
+  function addPenalty(p) {
+    score = Math.max(0, score + p);
+  }
+
+  async function autoDetectIp(domain) {
+    try {
+      const j = await doh(domain, 'MX');
+      const answers = (j.Answer || []).filter(a => a.type === 15);
+      if (!answers.length) return null;
+      const mx = answers
+        .map(a => ({ priority: parseInt(a.data.split(' ')[0], 10), host: a.data.replace(/^\d+\s+/, '').replace(/\.$/, '') }))
+        .sort((a, b) => a.priority - b.priority)[0];
+      if (!mx || !mx.host) return null;
+      const aRes = await doh(mx.host, 'A');
+      const aRec = (aRes.Answer || []).find(a => a.type === 1);
+      return aRec ? aRec.data : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  async function runCheck1_PTR(domain, ip, cardIndex) {
+    console.log('[checkPTR] started', { domain, ip, cardIndex });
+    const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
+    if (!cardEl) {
+      console.warn('[checkPTR] no card element at index', cardIndex);
+      return;
+    }
+    await sleep(300);
+    if (!ip) {
+      updateCard(cardEl, 'info', 'PTR / rDNS', 'Skipped — no sending IP provided.', 'Skipped');
+      return;
+    }
+    const rev = ip.split('.').reverse().join('.') + '.in-addr.arpa';
+    try {
+      const j = await doh(rev, 'PTR');
+      const ptrRec = (j.Answer || []).find(a => a.type === 12);
+      if (!ptrRec || !ptrRec.data) {
+        addPenalty(-25);
+        updateCard(cardEl, 'fail', 'PTR / rDNS', 'No PTR record found for this IP. Many receivers reject or deprioritize mail from IPs without reverse DNS.', ip);
+        actions.push(actionCard('critical', 'Add a PTR record', 'Create a PTR (reverse DNS) record for ' + ip + ' pointing to your mail hostname (e.g. mail.' + domain + ').', 'Contact your hosting provider or DNS host to add PTR for ' + ip + ' → mail.' + domain));
+        return;
+      }
+      let ptrHost = (ptrRec.data || '').replace(/\.$/, '').trim();
+      ptrHost = stripTxtQuotes(ptrHost);
+      try {
+        const aRes = await doh(ptrHost, 'A');
+        const aRec = (aRes.Answer || []).find(a => a.type === 1);
+        const forwardIp = aRec ? aRec.data : null;
+        if (forwardIp !== ip) {
+          addPenalty(-15);
+          updateCard(cardEl, 'warn', 'PTR / rDNS', 'PTR record exists but forward lookup does not match this IP. PTR: ' + ptrHost, ptrHost);
+        } else {
+          updateCard(cardEl, 'pass', 'PTR / rDNS', 'PTR record matches forward lookup.', ptrHost);
+        }
+      } catch (_) {
+        updateCard(cardEl, 'pass', 'PTR / rDNS', 'PTR record found (forward verification skipped).', ptrHost);
+      }
+    } catch (e) {
+      console.error('[checkPTR]', e);
+      addPenalty(-25);
+      updateCard(cardEl, 'fail', 'PTR / rDNS', 'Lookup failed: ' + (e.message || 'error'), ip);
+    }
+  }
+
+  async function runCheck2_Blocklist(domain, ip, cardIndex) {
+    console.log('[checkBlocklist] started', { domain, ip, cardIndex });
+    const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
+    if (!cardEl) {
+      console.warn('[checkBlocklist] no card element at index', cardIndex);
+      return;
+    }
+    await sleep(300);
+    if (!ip) {
+      updateCard(cardEl, 'info', 'IP Blocklist', 'Skipped — no sending IP provided.', 'Skipped');
+      return;
+    }
+    const rev = ip.split('.').reverse().join('.');
+    let totalPenalty = 0;
+    const listResults = [];
+    const lists = [
+      { suffix: 'zen.spamhaus.org', name: 'Spamhaus', penalties: { '127.0.0.2': 40, '127.0.0.3': 40, '127.0.0.4': 35, '127.0.0.10': 25 }, blockResolver: '127.255.255.254' },
+      { suffix: 'bl.spamcop.net', name: 'SpamCop', penalties: { '127.0.0.2': 30 } },
+      { suffix: 'b.barracudacentral.org', name: 'Barracuda', penalties: { '127.0.0.2': 30 } }
+    ];
+    for (const list of lists) {
+      await sleep(150);
+      const name = rev + '.' + list.suffix;
+      try {
+        const j = await doh(name, 'A');
+        const ans = (j.Answer || []).find(a => a.type === 1);
+        const result = ans ? ans.data : null;
+        if (result === list.blockResolver) {
+          listResults.push({ list: list.name, status: 'blocked', msg: 'Spamhaus blocked this query — open resolver detected. Results unreliable.' });
+          continue;
+        }
+        const penalty = result && list.penalties[result] ? Math.min(list.penalties[result], 35) : 0;
+        if (penalty) {
+          totalPenalty += penalty;
+          listResults.push({ list: list.name, status: 'listed', code: result });
+        } else {
+          listResults.push({ list: list.name, status: 'ok' });
+        }
+      } catch (e) {
+        console.error('[checkBlocklist] list error', list.name, e);
+        listResults.push({ list: list.name, status: 'error' });
+      }
+    }
+    totalPenalty = Math.min(totalPenalty, 35);
+    addPenalty(-totalPenalty);
+    const listed = listResults.filter(r => r.status === 'listed');
+    const blocked = listResults.filter(r => r.status === 'blocked');
+    if (blocked.length) {
+      updateCard(cardEl, 'warn', 'IP Blocklist', blocked[0].msg, 'Check blocked');
+      actions.push(actionCard('warning', 'Spamhaus resolver block', blocked[0].msg, null));
+    } else if (listed.length) {
+      const names = listed.map(l => l.list).join(', ');
+      updateCard(cardEl, 'fail', 'IP Blocklist', 'Listed on: ' + names + '. Delivering may be affected.', names);
+      actions.push(actionCard('critical', 'Remove IP from blocklists', 'Request delisting from: ' + names + '. Visit each provider\'s site to request removal.', null));
+    } else {
+      updateCard(cardEl, 'pass', 'IP Blocklist', 'Not listed on Spamhaus, SpamCop, or Barracuda.', 'OK');
+    }
+  }
+
+  async function runCheck3_SPF(domain, cardIndex) {
+    console.log('[checkSPF] started', { domain, cardIndex });
+    const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
+    if (!cardEl) {
+      console.warn('[checkSPF] no card element at index', cardIndex);
+      return;
+    }
+    await sleep(300);
+    try {
+      const j = await doh(domain, 'TXT');
+      const answers = j.Answer || [];
+      const txtRecords = answers.filter(a => a.type === 16);
+      console.log('[checkSPF] TXT records for ' + domain + ':', txtRecords.length, txtRecords);
+      const raw = findSpfInTxtAnswers(answers);
+      if (!raw || !raw.toLowerCase().startsWith('v=spf1')) {
+        addPenalty(-20);
+        updateCard(cardEl, 'fail', 'SPF', 'No SPF record found. Receivers may reject or flag mail.', 'Missing');
+        actions.push(actionCard('critical', 'Add SPF record', 'Publish a TXT record for ' + domain + ' with v=spf1. Example for Google Workspace:', 'v=spf1 include:_spf.google.com ~all'));
+        return;
+      }
+      if (/\+all\b/i.test(raw)) {
+        addPenalty(-30);
+        updateCard(cardEl, 'fail', 'SPF', 'Critical: +all allows any server to send for your domain.', 'Critical');
+        actions.push(actionCard('critical', 'Replace +all in SPF', 'Use ~all (softfail) or -all (fail) instead of +all.', 'v=spf1 include:_spf.google.com -all'));
+        return;
+      }
+      let lookupCount = 0;
+      const seen = new Set();
+      async function countSpfRecursive(txt, depth) {
+        if (depth > 5) return 0;
+        let n = 0;
+        const parts = txt.replace(/^v=spf1\s+/i, '').split(/\s+/);
+        for (const p of parts) {
+          const m = p.toLowerCase();
+          if (m === 'ip4:' || m.startsWith('ip4:') || m === 'ip6:' || m.startsWith('ip6:') || m === 'all' || m === '-all' || m === '~all') continue;
+          if (m.startsWith('include:')) {
+            const subDomain = m.slice(8).trim();
+            if (seen.has(subDomain)) continue;
+            seen.add(subDomain);
+            n += 1;
+            try {
+              const subJ = await doh(subDomain, 'TXT');
+              const subRaw = findSpfInTxtAnswers(subJ.Answer || []);
+              if (subRaw) n += await countSpfRecursive(subRaw, depth + 1);
+            } catch (_) {}
+          } else if (m.startsWith('redirect=')) n += 1;
+          else if (m === 'a' || m === 'mx' || m === 'ptr' || m.startsWith('a:') || m.startsWith('mx:') || m.startsWith('ptr:') || m.startsWith('exists:')) n += 1;
+        }
+        return n;
+      }
+      lookupCount = await countSpfRecursive(raw, 0);
+      if (lookupCount > 10) {
+        addPenalty(-30);
+        updateCard(cardEl, 'fail', 'SPF', 'SPF PermError: more than 10 DNS lookups.', lookupCount + ' lookups');
+        actions.push(actionCard('critical', 'Reduce SPF lookups', 'Consolidate includes or use fewer mechanisms. Max 10 lookups.', null));
+      } else if (lookupCount >= 8) {
+        addPenalty(-5);
+        updateCard(cardEl, 'warn', 'SPF', 'Near 10 lookup limit. Adding more mechanisms may cause PermError.', lookupCount + ' lookups');
+      } else {
+        updateCard(cardEl, 'pass', 'SPF', 'Valid SPF record within lookup limit.', lookupCount + ' lookups');
+      }
+    } catch (e) {
+      console.error('[checkSPF]', e);
+      addPenalty(-20);
+      updateCard(cardEl, 'fail', 'SPF', 'Lookup failed: ' + (e.message || 'error'), '—');
+    }
+  }
+
+  async function runCheck4_DKIM(domain, cardIndex) {
+    console.log('[checkDKIM] started', { domain, cardIndex });
+    const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
+    if (!cardEl) {
+      console.warn('[checkDKIM] no card element at index', cardIndex);
+      return;
+    }
+    await sleep(300);
+    let found = null;
+    let selector = '';
+    try {
+      for (const sel of DKIM_SELECTORS) {
+        await sleep(100);
+        const name = sel + '._domainkey.' + domain;
+        try {
+          const j = await doh(name, 'TXT');
+          const answers = j.Answer || [];
+          const txtAnswers = answers.filter(a => a.type === 16);
+          const record = getTxtFromAnswer(answers);
+          console.log('[checkDKIM] selector=' + sel + ' name=' + name + ' answers=' + txtAnswers.length, 'raw Answer:', answers);
+          if (sel === 'google') {
+            console.log('[checkDKIM] google._domainkey.' + domain + ' full raw response:', JSON.stringify(j));
+          }
+          if (record) {
+            found = record;
+            selector = sel;
+            break;
+          }
+        } catch (e) {
+          console.log('[checkDKIM] selector=' + sel + ' query failed', e);
+        }
+      }
+      if (!found) {
+        addPenalty(-10);
+        cardEl.replaceWith(dkimNotFoundCard(domain, cardIndex));
+        return;
+      }
+      const pMatch = found.match(/p=([^\s;]+)/i);
+      const pVal = pMatch ? pMatch[1].trim() : '';
+      if (!pVal || pVal === '') {
+        addPenalty(-20);
+        updateCard(cardEl, 'fail', 'DKIM', 'DKIM key is revoked (empty p=). Rotate to a new key.', selector);
+        actions.push(actionCard('critical', 'Rotate revoked DKIM key', 'Generate a new key and publish the new TXT record for ' + selector + '._domainkey.' + domain, null));
+        return;
+      }
+      try {
+        const decoded = atob(pVal.replace(/\s/g, ''));
+        const bitLen = decoded.length * 8;
+        if (bitLen < 2048) {
+          addPenalty(-5);
+          updateCard(cardEl, 'warn', 'DKIM', 'Key is smaller than 2048 bits. Consider rotating to a stronger key.', selector + ' (~' + bitLen + 'b)');
+          actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key and update ' + selector + '._domainkey.' + domain, null));
+        } else {
+          updateCard(cardEl, 'pass', 'DKIM', 'DKIM record found with adequate key length.', selector);
+        }
+      } catch (_) {
+        updateCard(cardEl, 'pass', 'DKIM', 'DKIM record found.', selector);
+      }
+    } catch (e) {
+      console.error('[checkDKIM]', e);
+      addPenalty(-10);
+      updateCard(cardEl, 'fail', 'DKIM', 'Lookup failed: ' + (e.message || 'error'), '—');
+    }
+  }
+
+  async function runCheck5_DMARC(domain, cardIndex) {
+    console.log('[checkDMARC] started', { domain, cardIndex });
+    const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
+    if (!cardEl) {
+      console.warn('[checkDMARC] no card element at index', cardIndex);
+      return;
+    }
+    await sleep(300);
+    const dmarcDomain = '_dmarc.' + domain;
+    try {
+      const j = await doh(dmarcDomain, 'TXT');
+      const rec = (j.Answer || []).find(a => a.type === 16 && (a.data || '').toLowerCase().includes('v=dmarc1'));
+      const raw = rec ? stripTxtQuotes(rec.data) : '';
+      if (!raw || !raw.toLowerCase().includes('v=dmarc1')) {
+        addPenalty(-25);
+        updateCard(cardEl, 'fail', 'DMARC', 'No DMARC record found. You lose visibility and enforcement.', 'Missing');
+        actions.push(actionCard('critical', 'Add DMARC record', 'Publish a TXT record for ' + dmarcDomain, 'v=DMARC1; p=none; rua=mailto:dmarc@' + domain));
+        return;
+      }
+      const pMatch = raw.match(/p=(\w+)/i);
+      const p = (pMatch ? pMatch[1] : '').toLowerCase();
+      const hasRua = /rua=/i.test(raw);
+      if (p === 'none') {
+        addPenalty(-10);
+        updateCard(cardEl, 'warn', 'DMARC', 'Policy is p=none (monitoring only). Consider p=quarantine or p=reject.', p);
+        actions.push(actionCard('info', 'Upgrade DMARC policy', 'Move to p=quarantine or p=reject when ready.', 'v=DMARC1; p=quarantine; rua=mailto:dmarc@' + domain));
+      } else if (p === 'quarantine') {
+        updateCard(cardEl, 'warn', 'DMARC', 'Policy is quarantine. Reject is strongest.', p);
+      } else if (p === 'reject') {
+        updateCard(cardEl, 'pass', 'DMARC', 'Policy is reject. Strongest enforcement.', p);
+      } else {
+        updateCard(cardEl, 'warn', 'DMARC', 'DMARC record present.', p || '—');
+      }
+      if (!hasRua) {
+        actions.push(actionCard('warning', 'Add rua= to DMARC', 'Include rua=mailto:... to receive aggregate reports.', 'rua=mailto:dmarc@' + domain));
+      }
+    } catch (e) {
+      console.error('[checkDMARC]', e);
+      addPenalty(-25);
+      updateCard(cardEl, 'fail', 'DMARC', 'Lookup failed: ' + (e.message || 'error'), '—');
+    }
+  }
+
+  function renderScore() {
+    const tier = score >= 80 ? 'ready' : score >= 60 ? 'warn' : 'critical';
+    const grade = score >= 80 ? 'Ready to send' : score >= 60 ? 'Needs attention' : 'Critical issues';
+    const summary = score >= 80
+      ? 'Your DNS and mail config look good for sending.'
+      : score >= 60
+        ? 'Address the issues below to improve deliverability.'
+        : 'Fix critical issues before sending to avoid bounces and blocks.';
+    scoreValue.textContent = score;
+    scoreGrade.textContent = grade;
+    scoreGrade.className = 'score-grade ' + tier;
+    scoreSummary.textContent = summary;
+    scoreRing.setAttribute('class', 'score-ring-fill ' + tier);
+    const offset = CIRCUMFERENCE - (score / 100) * CIRCUMFERENCE;
+    scoreRing.setAttribute('stroke-dashoffset', offset);
+  }
+
+  function animateScore() {
+    const start = 0;
+    const end = score;
+    const duration = 1500;
+    const startTime = performance.now();
+    function step(now) {
+      const t = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 2);
+      const current = Math.round(start + (end - start) * eased);
+      scoreValue.textContent = current;
+      const tier = current >= 80 ? 'ready' : current >= 60 ? 'warn' : 'critical';
+      scoreGrade.textContent = current >= 80 ? 'Ready to send' : current >= 60 ? 'Needs attention' : 'Critical issues';
+      scoreGrade.className = 'score-grade ' + tier;
+      scoreSummary.textContent = current >= 80 ? 'Your DNS and mail config look good for sending.' : current >= 60 ? 'Address the issues below to improve deliverability.' : 'Fix critical issues before sending to avoid bounces and blocks.';
+      scoreRing.setAttribute('class', 'score-ring-fill ' + tier);
+      scoreRing.setAttribute('stroke-dashoffset', CIRCUMFERENCE - (current / 100) * CIRCUMFERENCE);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  async function run() {
+    const domain = domainIn.value.trim();
+    if (!domain) {
+      toastShow('Enter a domain to check');
+      return;
+    }
+    runBtn.disabled = true;
+    runBtn.textContent = '⟳ Running…';
+    try {
+      results.classList.add('visible');
+      console.log('[runPreflight] results section visible:', results.classList.contains('visible'), 'results element:', results);
+
+      cardsGrid.innerHTML = '';
+      actionCards.innerHTML = '';
+      actionSection.style.display = 'none';
+      score = 100;
+      actions.length = 0;
+      scoreValue.textContent = '0';
+      scoreGrade.textContent = '—';
+      scoreGrade.className = 'score-grade';
+      scoreSummary.textContent = 'Running checks…';
+      scoreRing.setAttribute('class', 'score-ring-fill');
+      scoreRing.setAttribute('stroke-dashoffset', CIRCUMFERENCE);
+
+      renderSkeletons();
+      console.log('[runPreflight] #checks-grid exists:', !!cardsGrid, 'child count:', cardsGrid ? cardsGrid.children.length : 0);
+
+      let ip = ipIn.value.trim();
+      if (!ip) {
+        ip = await autoDetectIp(domain);
+        if (ip) ipIn.value = ip;
+      }
+      updateUrl(domain, ipIn.value.trim());
+
+      await runCheck1_PTR(domain, ip, 0);
+      await runCheck2_Blocklist(domain, ip, 1);
+      await runCheck3_SPF(domain, 2);
+      await runCheck4_DKIM(domain, 3);
+      await runCheck5_DMARC(domain, 4);
+
+      renderScore();
+      animateScore();
+      if (actions.length) {
+        actionSection.style.display = 'block';
+        actions.forEach(a => actionCards.appendChild(a));
+      }
+    } catch (e) {
+      console.error('[runPreflight] error', e);
+    } finally {
+      runBtn.disabled = false;
+      runBtn.textContent = 'Run Preflight';
+    }
+  }
+
+  copyLinkBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(location.href);
+    toastShow('Link copied');
+  });
+
+  function loadExample() {
+    console.log('loadExample called');
+    domainIn.value = 'gmail.com';
+    ipIn.value = '';
+    run();
+  }
+  window.loadExample = loadExample;
+
+  runBtn.addEventListener('click', run);
+  domainIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
+  ipIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
+
+  const initial = parseUrl();
+  if (initial.domain) {
+    if (initial.ip) ipIn.value = initial.ip;
+    run();
+  }
+})();
+  </script>
+</body>
+</html>
