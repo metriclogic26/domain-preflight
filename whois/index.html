@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHOIS / Expiry Checker — DomainPreflight</title>
+  <link rel="canonical" href="https://domainpreflight.dev/whois/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .logo-dot { color: var(--purple); }
+    .pill {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-left: 0.5rem;
+    }
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    nav a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    nav a.active { color: var(--text); font-weight: 500; }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+    .hero {
+      text-align: center;
+      padding-top: 1.5rem;
+      padding-bottom: 2rem;
+    }
+    .hero-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    .hero-sub {
+      color: var(--text2);
+      font-size: 0.9rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .input-card {
+      margin-top: 2rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .input-wrap label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text2);
+      margin-bottom: 0.35rem;
+    }
+    .input-wrap input {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    .input-wrap input::placeholder { color: var(--text2); opacity: 0.7; }
+    .input-wrap input:focus {
+      outline: none;
+      border-color: var(--purple);
+    }
+    .btn-row {
+      margin-top: 0.75rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-primary:disabled { cursor: not-allowed; opacity: 0.8; }
+    .btn-clear {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn-clear:hover { border-color: var(--purple); color: var(--text); }
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.25rem 0;
+    }
+    .btn-text:hover { text-decoration: underline; }
+    .results {
+      margin-top: 2rem;
+      display: none;
+    }
+    .results.visible { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr); align-items: flex-start; }
+    @media (max-width: 800px) {
+      .results.visible { grid-template-columns: 1fr; }
+    }
+    .whois-card,
+    .action-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+    .whois-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text2);
+      margin-bottom: 0.75rem;
+    }
+    .whois-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+    }
+    .whois-label { color: var(--text2); }
+    .whois-value { color: var(--text); text-align: right; }
+    .status-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+    .status-tag {
+      font-size: 0.75rem;
+      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      border: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .expiry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      padding: 0.25rem 0.7rem;
+      margin-top: 0.5rem;
+    }
+    .expiry-pill.pass {
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: var(--green);
+    }
+    .expiry-pill.warn {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      color: var(--orange);
+    }
+    .expiry-pill.critical {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--red);
+    }
+    .action-card-title {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .action-card-body {
+      color: var(--text2);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    .btn-dashboard {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: var(--purple);
+      font-size: 0.8rem;
+      text-decoration: none;
+      border: 1px solid var(--purple);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      background: var(--bg2);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-disclaimer {
+      text-align: center;
+      width: 100%;
+      font-size: 11px;
+      color: var(--text2);
+      opacity: 0.6;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    footer a:hover { color: var(--purple); }
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/" style="color: inherit; text-decoration: none;">DomainPreflight.dev<span class="logo-dot">.</span></a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/" >DNS Preflight</a>
+        <a href="/whois/" class="active">WHOIS / Expiry</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-label">WHOIS / EXPIRY</div>
+      <h1>Check when your domain expires.</h1>
+      <p class="hero-sub">Look up WHOIS / RDAP data for a domain, see registrar, registration / expiry dates, and days until expiry — before it takes production down.</p>
+    </section>
+
+    <section class="input-card">
+      <div class="input-wrap">
+        <label for="domain">Domain</label>
+        <input type="text" id="domain" placeholder="example.com" autocomplete="off">
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn-primary" id="runBtn">Check WHOIS</button>
+        <button type="button" class="btn-clear" id="clearBtn">✕ Clear</button>
+        <button type="button" class="btn-text" id="tryExample">Try an example</button>
+      </div>
+    </section>
+
+    <section class="results" id="results">
+      <div class="whois-card" id="whoisCard">
+        <div class="whois-title">WHOIS / RDAP</div>
+        <div class="whois-row">
+          <div class="whois-label">Registrar</div>
+          <div class="whois-value" id="registrar">—</div>
+        </div>
+        <div class="whois-row">
+          <div class="whois-label">Registered on</div>
+          <div class="whois-value" id="registeredOn">—</div>
+        </div>
+        <div class="whois-row">
+          <div class="whois-label">Expires on</div>
+          <div class="whois-value" id="expiresOn">—</div>
+        </div>
+        <div class="whois-row">
+          <div class="whois-label">Days until expiry</div>
+          <div class="whois-value" id="daysLeft">—</div>
+        </div>
+        <div class="whois-row">
+          <div class="whois-label">Status</div>
+          <div class="whois-value">
+            <div class="status-tags" id="statusTags"></div>
+          </div>
+        </div>
+        <div class="expiry-pill" id="expiryPill" style="display:none;"></div>
+      </div>
+      <div class="action-card" id="actionCard" style="display:none;">
+        <div class="action-card-title" id="actionTitle"></div>
+        <div class="action-card-body" id="actionBody"></div>
+        <a href="#" target="_blank" rel="noopener" class="btn-dashboard" id="actionLink" style="display:none;">Open registrar →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">This tool uses public RDAP / WHOIS data only. Results are indicative; always verify critical config in your own registrar.</p>
+      <div class="footer-links">
+        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try <a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a></span>
+        <span>
+          <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
+          <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
+          <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+  function toastShow(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function normalizeDomain(input) {
+    if (typeof input !== 'string') return '';
+    let s = input.trim();
+    try {
+      if (/^https?:\/\//i.test(s)) {
+        s = new URL(s).hostname;
+      } else {
+        s = s.replace(/^https?:\/\//i, '').split('/')[0].trim();
+      }
+    } catch (_) {
+      s = s.replace(/^https?:\/\//i, '').split('/')[0].trim();
+    }
+    return s.replace(/\.+$/, '').toLowerCase();
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    try {
+      const dt = new Date(d);
+      if (Number.isNaN(dt.getTime())) return '—';
+      return dt.toISOString().slice(0, 10);
+    } catch (_) {
+      return '—';
+    }
+  }
+
+  function computeDaysUntil(dateStr) {
+    if (!dateStr) return null;
+    const dt = new Date(dateStr);
+    if (Number.isNaN(dt.getTime())) return null;
+    const now = new Date();
+    const diffMs = dt.getTime() - now.getTime();
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  }
+
+  async function run() {
+    const input = document.getElementById('domain');
+    const results = document.getElementById('results');
+    const registrarEl = document.getElementById('registrar');
+    const registeredEl = document.getElementById('registeredOn');
+    const expiresEl = document.getElementById('expiresOn');
+    const daysEl = document.getElementById('daysLeft');
+    const statusTags = document.getElementById('statusTags');
+    const expiryPill = document.getElementById('expiryPill');
+    const actionCard = document.getElementById('actionCard');
+    const actionTitle = document.getElementById('actionTitle');
+    const actionBody = document.getElementById('actionBody');
+    const actionLink = document.getElementById('actionLink');
+    const runBtn = document.getElementById('runBtn');
+
+    let domain = normalizeDomain(input.value);
+    if (!domain) {
+      toastShow('Enter a domain to check');
+      return;
+    }
+    if (!domain.includes('.')) {
+      toastShow('Enter a valid domain (e.g. example.com)');
+      return;
+    }
+    input.value = domain;
+
+    runBtn.disabled = true;
+    runBtn.textContent = '⟳ Checking…';
+
+    registrarEl.textContent = '—';
+    registeredEl.textContent = '—';
+    expiresEl.textContent = '—';
+    daysEl.textContent = '—';
+    statusTags.innerHTML = '';
+    expiryPill.style.display = 'none';
+    expiryPill.className = 'expiry-pill';
+    actionCard.style.display = 'none';
+    actionTitle.textContent = '';
+    actionBody.textContent = '';
+    actionLink.style.display = 'none';
+    actionLink.href = '#';
+
+    try {
+      const res = await fetch('https://rdap.org/domain/' + encodeURIComponent(domain));
+      if (!res.ok) {
+        registrarEl.textContent = 'Lookup failed (' + res.status + ')';
+        results.classList.add('visible');
+        return;
+      }
+      const data = await res.json();
+      const registrar =
+        (data.entities || []).find(e => (e.roles || []).includes('registrar')) ||
+        null;
+      const registrarName =
+        (registrar && registrar.vcardArray && Array.isArray(registrar.vcardArray[1])
+          ? (registrar.vcardArray[1].find(v => v[0] === 'fn') || [])[3]
+          : null) ||
+        data.registrarName ||
+        '—';
+      registrarEl.textContent = registrarName;
+
+      const events = Array.isArray(data.events) ? data.events : [];
+      const regEvent = events.find(e => e.eventAction === 'registration') || events.find(e => e.eventAction === 'registered');
+      const expEvent = events.find(e => e.eventAction === 'expiration') || events.find(e => e.eventAction === 'expiry');
+      const regDate = regEvent && regEvent.eventDate;
+      const expDate = expEvent && expEvent.eventDate;
+      registeredEl.textContent = formatDate(regDate);
+      expiresEl.textContent = formatDate(expDate);
+
+      const days = computeDaysUntil(expDate);
+      daysEl.textContent = days == null ? '—' : String(days);
+
+      const statuses = Array.isArray(data.status) ? data.status : [];
+      if (statuses.length) {
+        statuses.forEach(st => {
+          const tag = document.createElement('span');
+          tag.className = 'status-tag';
+          tag.textContent = st;
+          statusTags.appendChild(tag);
+        });
+      }
+
+      let tier = null;
+      let message = '';
+      if (typeof days === 'number') {
+        if (days < 30) {
+          tier = 'critical';
+          message = 'Renew immediately — domain expiry is critical.';
+        } else if (days < 90) {
+          tier = 'warn';
+          message = 'Renew soon — domain expires within 90 days.';
+        } else {
+          tier = 'pass';
+          message = 'Expiry looks fine — more than 90 days remaining.';
+        }
+      }
+
+      if (tier) {
+        expiryPill.style.display = 'inline-flex';
+        expiryPill.className = 'expiry-pill ' + tier;
+        expiryPill.textContent =
+          (tier === 'critical' ? 'Critical — renew immediately' :
+           tier === 'warn' ? 'Warn — renew soon' :
+           'OK — expiry looks fine');
+      }
+
+      if (tier === 'critical' || tier === 'warn') {
+        actionCard.style.display = 'block';
+        actionTitle.textContent = 'Renew at ' + registrarName;
+        actionBody.textContent = message;
+        if (data.links && Array.isArray(data.links)) {
+          const registrarLink = data.links.find(l => l.rel === 'registrar') || data.links.find(l => l.href && /registrar|whois|account/i.test(l.href));
+          if (registrarLink && registrarLink.href) {
+            actionLink.style.display = 'inline-block';
+            actionLink.href = registrarLink.href;
+            actionLink.textContent = 'Open registrar →';
+          }
+        }
+      }
+
+      results.classList.add('visible');
+    } catch (e) {
+      registrarEl.textContent = 'Lookup failed';
+      results.classList.add('visible');
+    } finally {
+      runBtn.disabled = false;
+      runBtn.textContent = 'Check WHOIS';
+    }
+  }
+
+  const runBtnEl = document.getElementById('runBtn');
+  const clearBtnEl = document.getElementById('clearBtn');
+  const tryExampleEl = document.getElementById('tryExample');
+  const domainInputEl = document.getElementById('domain');
+  const resultsEl = document.getElementById('results');
+
+  runBtnEl.addEventListener('click', run);
+  domainInputEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') run();
+  });
+  clearBtnEl.addEventListener('click', function () {
+    domainInputEl.value = '';
+    resultsEl.classList.remove('visible');
+  });
+  tryExampleEl.addEventListener('click', function () {
+    domainInputEl.value = 'github.com';
+    run();
+  });
+  </script>
+</body>
+</html>
+
