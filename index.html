@@ -795,7 +795,7 @@ function isIPv6(ip) {
     el.innerHTML = `
       <div class="check-card-content">
         <div class="check-card-title">⚠ DKIM</div>
-        <div class="check-card-detail">DKIM selector not found with common selectors. If you know your selector, enter it below.</div>
+        <div class="check-card-detail">No DKIM signature found with common selectors. Your emails may not be verifiable — enter your selector below if you know it.</div>
         <div class="dkim-selector-retry">
           <input type="text" placeholder="e.g. 20230601" class="dkim-selector-input" spellcheck="false">
           <button type="button" class="btn-check-selector">Check</button>
@@ -827,15 +827,15 @@ function isIPv6(ip) {
       const answers = j.Answer || [];
       const record = getTxtFromAnswer(answers);
       if (!record) {
-        updateCard(loadingCard, 'warn', 'DKIM', "No TXT record for selector '" + selector + "'. Try another selector.", selector);
+        updateCard(loadingCard, 'warn', 'DKIM', "No DKIM key found for selector '" + selector + "'. Try a different selector.", selector);
         return;
       }
       const pMatch = record.match(/p=([^;]+)/i);
       const pVal = pMatch ? pMatch[1].replace(/\s/g, '').trim() : '';
       if (!pVal || pVal === '') {
         addPenalty(-20);
-        updateCard(loadingCard, 'fail', 'DKIM', 'DKIM key is revoked (empty p=). Rotate to a new key.', selector);
-        actions.push(actionCard('critical', 'Rotate revoked DKIM key', 'Generate a new key and publish the new TXT record for ' + selector + '._domainkey.' + domain, null));
+        updateCard(loadingCard, 'fail', 'DKIM', 'This DKIM key has been revoked. Emails signed with it may fail verification.', selector);
+        actions.push(actionCard('critical', 'Rotate revoked DKIM key', 'Create a new DKIM key in your provider\'s dashboard and publish the new TXT record for ' + selector + '._domainkey.' + domain, null));
         return;
       }
       try {
@@ -843,16 +843,16 @@ function isIPv6(ip) {
         const bitLen = decoded.length * 8;
         if (bitLen < 1800) {
           addPenalty(-5);
-          updateCard(loadingCard, 'warn', 'DKIM', 'Key is smaller than 2048 bits. Consider rotating to a stronger key.', selector + ' (~' + bitLen + 'b)');
-          actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key and update ' + selector + '._domainkey.' + domain, null));
+          updateCard(loadingCard, 'warn', 'DKIM', 'Your DKIM key is weaker than recommended. Consider upgrading to a 2048-bit key for better security.', selector + ' (~' + bitLen + 'b)');
+          actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key in your provider\'s dashboard and update ' + selector + '._domainkey.' + domain, null));
         } else {
-          updateCard(loadingCard, 'pass', 'DKIM', 'DKIM record found with adequate key length.', selector);
+          updateCard(loadingCard, 'pass', 'DKIM', 'Your emails are cryptographically signed — receivers can verify they\'re from you.', selector);
         }
       } catch (_) {
-        updateCard(loadingCard, 'pass', 'DKIM', 'DKIM record found.', selector);
+        updateCard(loadingCard, 'pass', 'DKIM', 'Your emails are cryptographically signed — receivers can verify they\'re from you.', selector);
       }
     } catch (e) {
-      updateCard(loadingCard, 'warn', 'DKIM', "Lookup failed for '" + selector + "': " + (e.message || 'error'), selector);
+      updateCard(loadingCard, 'warn', 'DKIM', "Could not look up selector '" + selector + "': " + (e.message || 'error'), selector);
     }
   }
 
@@ -950,7 +950,7 @@ function isIPv6(ip) {
     }
     await sleep(300);
     if (!ip) {
-      updateCard(cardEl, 'info', 'PTR / rDNS', 'Skipped — no sending IP provided.', 'Skipped');
+      updateCard(cardEl, 'info', 'PTR / rDNS', 'No sending IP was entered — reverse DNS check skipped.', 'Skipped');
       return;
     }
     if (isIPv6(ip)) {
@@ -963,8 +963,8 @@ function isIPv6(ip) {
       const ptrRec = (j.Answer || []).find(a => a.type === 12);
       if (!ptrRec || !ptrRec.data) {
         addPenalty(-25);
-        updateCard(cardEl, 'fail', 'PTR / rDNS', 'No PTR record found for this IP. Many receivers reject or deprioritize mail from IPs without reverse DNS.', ip);
-        actions.push(actionCard('critical', 'Add a PTR record', 'Create a PTR (reverse DNS) record for ' + ip + ' pointing to your mail hostname (e.g. mail.' + domain + ').', 'Contact your hosting provider or DNS host to add PTR for ' + ip + ' → mail.' + domain));
+        updateCard(cardEl, 'fail', 'PTR / rDNS', 'Your sending IP has no reverse DNS. Many mail servers reject these outright.', ip);
+        actions.push(actionCard('critical', 'Add a PTR record', 'Ask your host or DNS provider to add reverse DNS for ' + ip + ' pointing to your mail hostname (e.g. mail.' + domain + ').', 'Contact your hosting provider or DNS host to add PTR for ' + ip + ' → mail.' + domain));
         return;
       }
       let ptrHost = (ptrRec.data || '').replace(/\.$/, '').trim();
@@ -975,16 +975,16 @@ function isIPv6(ip) {
         const forwardIp = aRec ? aRec.data : null;
         if (forwardIp !== ip) {
           addPenalty(-15);
-          updateCard(cardEl, 'warn', 'PTR / rDNS', 'PTR record exists but forward lookup does not match this IP. PTR: ' + ptrHost, ptrHost);
+          updateCard(cardEl, 'warn', 'PTR / rDNS', 'Reverse DNS points to ' + ptrHost + ', but that hostname doesn\'t point back to this IP. Receivers may treat it as suspicious.', ptrHost);
         } else {
-          updateCard(cardEl, 'pass', 'PTR / rDNS', 'PTR record matches forward lookup.', ptrHost);
+          updateCard(cardEl, 'pass', 'PTR / rDNS', 'Your sending IP has valid reverse DNS — good for inbox delivery.', ptrHost);
         }
       } catch (_) {
-        updateCard(cardEl, 'pass', 'PTR / rDNS', 'PTR record found (forward verification skipped).', ptrHost);
+        updateCard(cardEl, 'pass', 'PTR / rDNS', 'Reverse DNS record exists for this IP (full verification skipped).', ptrHost);
       }
     } catch (e) {
       addPenalty(-25);
-      updateCard(cardEl, 'fail', 'PTR / rDNS', 'Lookup failed: ' + (e.message || 'error'), ip);
+      updateCard(cardEl, 'fail', 'PTR / rDNS', 'Could not look up reverse DNS: ' + (e.message || 'error'), ip);
     }
   }
 
@@ -995,7 +995,7 @@ function isIPv6(ip) {
     }
     await sleep(300);
     if (!ip) {
-      updateCard(cardEl, 'info', 'IP Blocklist', 'Skipped — no sending IP provided.', 'Skipped');
+      updateCard(cardEl, 'info', 'IP Blocklist', 'No sending IP was entered — blocklist check skipped.', 'Skipped');
       return;
     }
     if (isIPv6(ip)) {
@@ -1018,7 +1018,7 @@ function isIPv6(ip) {
         const ans = (j.Answer || []).find(a => a.type === 1);
         const result = ans ? ans.data : null;
         if (result === list.blockResolver) {
-          listResults.push({ list: list.name, status: 'blocked', msg: 'Spamhaus blocked this query — open resolver detected. Results unreliable.' });
+          listResults.push({ list: list.name, status: 'blocked', msg: 'We couldn\'t check this list from your browser — results may be incomplete.' });
           continue;
         }
         const penalty = result && list.penalties[result] ? Math.min(list.penalties[result], 35) : 0;
@@ -1038,13 +1038,13 @@ function isIPv6(ip) {
     const blocked = listResults.filter(r => r.status === 'blocked');
     if (blocked.length) {
       updateCard(cardEl, 'warn', 'IP Blocklist', blocked[0].msg, 'Check blocked');
-      actions.push(actionCard('warning', 'Spamhaus resolver block', blocked[0].msg, null));
+      actions.push(actionCard('warning', 'Blocklist check limited', blocked[0].msg, null));
     } else if (listed.length) {
       const names = listed.map(l => l.list).join(', ');
-      updateCard(cardEl, 'fail', 'IP Blocklist', 'Listed on: ' + names + '. Delivering may be affected.', names);
-      actions.push(actionCard('critical', 'Remove IP from blocklists', 'Request delisting from: ' + names + '. Visit each provider\'s site to request removal.', null));
+      updateCard(cardEl, 'fail', 'IP Blocklist', 'Your IP is listed on ' + names + '. Many receivers will block or filter your mail until you\'re removed.', names);
+      actions.push(actionCard('critical', 'Remove IP from blocklists', 'Request delisting from ' + names + '. Go to each provider\'s website and follow their removal process.', null));
     } else {
-      updateCard(cardEl, 'pass', 'IP Blocklist', 'Not listed on Spamhaus, SpamCop, or Barracuda.', 'OK');
+      updateCard(cardEl, 'pass', 'IP Blocklist', 'Your IP isn\'t on any major spam blocklist — clear to send.', 'OK');
     }
   }
 
@@ -1061,20 +1061,20 @@ function isIPv6(ip) {
       const spfRecordCount = txtRecords.filter(a => stripTxtQuotes(String(a.data || '').trim()).toLowerCase().startsWith('v=spf1')).length;
       if (spfRecordCount > 1) {
         addPenalty(-5);
-        updateCard(cardEl, 'warn', 'SPF', 'Multiple SPF records found, only one allowed. Receivers may reject.', 'Multiple');
+        updateCard(cardEl, 'warn', 'SPF', 'You have more than one SPF record. Only one is allowed — receivers may reject or ignore your mail.', 'Multiple');
         return;
       }
       const raw = findSpfInTxtAnswers(answers);
       if (!raw || !raw.toLowerCase().startsWith('v=spf1')) {
         addPenalty(-20);
-        updateCard(cardEl, 'fail', 'SPF', 'No SPF record found. Receivers may reject or flag mail.', 'Missing');
-        actions.push(actionCard('critical', 'Add SPF record', 'Publish a TXT record for ' + domain + ' with v=spf1. Example for Google Workspace:', 'v=spf1 include:_spf.google.com ~all'));
+        updateCard(cardEl, 'fail', 'SPF', 'No SPF record found. Receiving servers can\'t verify your email is legitimate — expect spam folders or bounces.', 'Missing');
+        actions.push(actionCard('critical', 'Add SPF record', 'Add a DNS TXT record for ' + domain + ' that lists who is allowed to send mail for you. Example for Google:', 'v=spf1 include:_spf.google.com ~all'));
         return;
       }
       if (/\+all\b/i.test(raw)) {
         addPenalty(-30);
-        updateCard(cardEl, 'fail', 'SPF', 'Critical: +all allows any server to send for your domain.', 'Critical');
-        actions.push(actionCard('critical', 'Replace +all in SPF', 'Use ~all (softfail) or -all (fail) instead of +all.', 'v=spf1 include:_spf.google.com -all'));
+        updateCard(cardEl, 'fail', 'SPF', 'Your SPF record allows any server in the world to send as you — a major security risk.', 'Critical');
+        actions.push(actionCard('critical', 'Replace +all in SPF', 'Change the ending to ~all (softfail) or -all (reject) so only your listed servers can send.', 'v=spf1 include:_spf.google.com -all'));
         return;
       }
       if (typeof onSpfDetected === 'function') onSpfDetected(raw);
@@ -1105,17 +1105,17 @@ function isIPv6(ip) {
       lookupCount = await countSpfRecursive(raw, 0);
       if (lookupCount > 10) {
         addPenalty(-30);
-        updateCard(cardEl, 'fail', 'SPF', 'SPF PermError: more than 10 DNS lookups.', lookupCount + ' lookups');
-        actions.push(actionCard('critical', 'Reduce SPF lookups', 'Consolidate includes or use fewer mechanisms. Max 10 lookups.', null));
+        updateCard(cardEl, 'fail', 'SPF', 'Your SPF record triggers too many DNS lookups (over 10). Many receivers will reject it.', lookupCount + ' lookups');
+        actions.push(actionCard('critical', 'Reduce SPF lookups', 'Simplify your SPF — use fewer includes or a single redirect so it stays under the 10-lookup limit.', null));
       } else if (lookupCount >= 8) {
         addPenalty(-5);
-        updateCard(cardEl, 'warn', 'SPF', 'Near 10 lookup limit. Adding more mechanisms may cause PermError.', lookupCount + ' lookups');
+        updateCard(cardEl, 'warn', 'SPF', 'You\'re close to the 10-lookup limit. Adding more could break SPF for some receivers.', lookupCount + ' lookups');
       } else {
-        updateCard(cardEl, 'pass', 'SPF', 'Valid SPF record within lookup limit.', lookupCount + ' lookups');
+        updateCard(cardEl, 'pass', 'SPF', 'Servers allowed to send for your domain are correctly listed.', lookupCount + ' lookups');
       }
     } catch (e) {
       addPenalty(-20);
-      updateCard(cardEl, 'fail', 'SPF', 'Lookup failed: ' + (e.message || 'error'), '—');
+      updateCard(cardEl, 'fail', 'SPF', 'Could not fetch SPF: ' + (e.message || 'error'), '—');
     }
   }
 
@@ -1153,8 +1153,8 @@ function isIPv6(ip) {
       const pVal = pMatch ? pMatch[1].replace(/\s/g, '').trim() : '';
       if (!pVal || pVal === '') {
         addPenalty(-20);
-        updateCard(cardEl, 'fail', 'DKIM', 'DKIM key is revoked (empty p=). Rotate to a new key.', selector);
-        actions.push(actionCard('critical', 'Rotate revoked DKIM key', 'Generate a new key and publish the new TXT record for ' + selector + '._domainkey.' + domain, null));
+        updateCard(cardEl, 'fail', 'DKIM', 'This DKIM key has been revoked. Emails signed with it may fail verification.', selector);
+        actions.push(actionCard('critical', 'Rotate revoked DKIM key', 'Create a new DKIM key in your provider\'s dashboard and publish the new TXT record for ' + selector + '._domainkey.' + domain, null));
         return;
       }
       try {
@@ -1162,17 +1162,17 @@ function isIPv6(ip) {
         const bitLen = decoded.length * 8;
         if (bitLen < 1800) {
           addPenalty(-5);
-          updateCard(cardEl, 'warn', 'DKIM', 'Key is smaller than 2048 bits. Consider rotating to a stronger key.', selector + ' (~' + bitLen + 'b)');
-          actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key and update ' + selector + '._domainkey.' + domain, null));
+          updateCard(cardEl, 'warn', 'DKIM', 'Your DKIM key is weaker than recommended. Consider upgrading to a 2048-bit key for better security.', selector + ' (~' + bitLen + 'b)');
+          actions.push(actionCard('warning', 'Rotate to 2048-bit DKIM', 'Generate a new 2048-bit key in your provider\'s dashboard and update ' + selector + '._domainkey.' + domain, null));
         } else {
-          updateCard(cardEl, 'pass', 'DKIM', 'DKIM record found with adequate key length.', selector);
+          updateCard(cardEl, 'pass', 'DKIM', 'Your emails are cryptographically signed — receivers can verify they\'re from you.', selector);
         }
       } catch (_) {
-        updateCard(cardEl, 'pass', 'DKIM', 'DKIM record found.', selector);
+        updateCard(cardEl, 'pass', 'DKIM', 'Your emails are cryptographically signed — receivers can verify they\'re from you.', selector);
       }
     } catch (e) {
       addPenalty(-10);
-      updateCard(cardEl, 'fail', 'DKIM', 'Lookup failed: ' + (e.message || 'error'), '—');
+      updateCard(cardEl, 'fail', 'DKIM', 'Could not look up DKIM: ' + (e.message || 'error'), '—');
     }
   }
 
@@ -1189,8 +1189,8 @@ function isIPv6(ip) {
       const raw = rec ? stripTxtQuotes(rec.data) : '';
       if (!raw || !raw.toLowerCase().includes('v=dmarc1')) {
         addPenalty(-25);
-        updateCard(cardEl, 'fail', 'DMARC', 'No DMARC record found. You lose visibility and enforcement.', 'Missing');
-        actions.push(actionCard('critical', 'Add DMARC record', 'Publish a TXT record for ' + dmarcDomain, 'v=DMARC1; p=none; rua=mailto:dmarc@' + domain));
+        updateCard(cardEl, 'fail', 'DMARC', 'No DMARC policy found. Anyone can spoof your domain and you won\'t know about it.', 'Missing');
+        actions.push(actionCard('critical', 'Add DMARC record', 'Add a DNS TXT record for ' + dmarcDomain + ' so you can receive reports and eventually block fake mail.', 'v=DMARC1; p=none; rua=mailto:dmarc@' + domain));
         return;
       }
       const pMatch = raw.match(/p=(\w+)/i);
@@ -1198,21 +1198,21 @@ function isIPv6(ip) {
       const hasRua = /rua=/i.test(raw);
       if (p === 'none') {
         addPenalty(-10);
-        updateCard(cardEl, 'warn', 'DMARC', 'Policy is p=none (monitoring only). Consider p=quarantine or p=reject.', p);
-        actions.push(actionCard('info', 'Upgrade DMARC policy', 'Move to p=quarantine or p=reject when ready.', 'v=DMARC1; p=quarantine; rua=mailto:dmarc@' + domain));
+        updateCard(cardEl, 'warn', 'DMARC', 'You\'re collecting reports but failing emails aren\'t being blocked. Upgrade policy when ready.', p);
+        actions.push(actionCard('info', 'Upgrade DMARC policy', 'When you\'re ready to block or quarantine failing mail, change p=none to p=quarantine or p=reject.', 'v=DMARC1; p=quarantine; rua=mailto:dmarc@' + domain));
       } else if (p === 'quarantine') {
-        updateCard(cardEl, 'warn', 'DMARC', 'Policy is quarantine. Reject is strongest.', p);
+        updateCard(cardEl, 'warn', 'DMARC', 'Suspicious emails are being quarantined. Upgrade to reject for full enforcement.', p);
       } else if (p === 'reject') {
-        updateCard(cardEl, 'pass', 'DMARC', 'Policy is reject. Strongest enforcement.', p);
+        updateCard(cardEl, 'pass', 'DMARC', 'Full enforcement active — unauthorized emails are rejected outright.', p);
       } else {
-        updateCard(cardEl, 'warn', 'DMARC', 'DMARC record present.', p || '—');
+        updateCard(cardEl, 'warn', 'DMARC', 'DMARC is set up but policy is unclear.', p || '—');
       }
       if (!hasRua) {
-        actions.push(actionCard('warning', 'Add rua= to DMARC', 'Include rua=mailto:... to receive aggregate reports.', 'rua=mailto:dmarc@' + domain));
+        actions.push(actionCard('warning', 'Add rua= to DMARC', 'Add a report address (rua=mailto:...) so you receive daily summaries of who\'s sending as your domain.', 'rua=mailto:dmarc@' + domain));
       }
     } catch (e) {
       addPenalty(-25);
-      updateCard(cardEl, 'fail', 'DMARC', 'Lookup failed: ' + (e.message || 'error'), '—');
+      updateCard(cardEl, 'fail', 'DMARC', 'Could not look up DMARC: ' + (e.message || 'error'), '—');
     }
   }
 
@@ -1288,7 +1288,7 @@ function isIPv6(ip) {
                 actionCard(
                   'info',
                   '✓ ' + c.label + ' configured',
-                  'DKIM alignment CNAME is present.',
+                  'Your provider\'s DKIM CNAME is correctly set — alignment looks good.',
                   null,
                   null,
                   null
