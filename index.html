@@ -108,6 +108,30 @@
       cursor: not-allowed;
       opacity: 0.4;
     }
+    .spamhaus-banner {
+      background: rgba(249, 115, 22, 0.15);
+      border-left: 3px solid var(--orange);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .spamhaus-banner-text { flex: 1; min-width: 200px; }
+    .spamhaus-banner-link { color: var(--orange); text-decoration: none; font-weight: 500; }
+    .spamhaus-banner-link:hover { text-decoration: underline; }
+    .spamhaus-banner-dismiss {
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0 0.25rem;
+      line-height: 1;
+    }
+    .spamhaus-banner-dismiss:hover { color: var(--text); }
     /* Main */
     main { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 4rem; }
     .hero {
@@ -452,7 +476,8 @@
       letter-spacing: 0.05em;
     }
     .fix-block pre { font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; color: var(--text2); }
-    .btn-copy-fix {
+    .fix-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .btn-copy-fix, .btn-copy-provider, .btn-copy-namecheap {
       background: var(--bg2);
       border: 1px solid var(--border);
       color: var(--text);
@@ -462,7 +487,7 @@
       font-size: 0.75rem;
       cursor: pointer;
     }
-    .btn-copy-fix:hover { border-color: var(--purple); }
+    .btn-copy-fix:hover, .btn-copy-provider:hover, .btn-copy-namecheap:hover { border-color: var(--purple); }
     .btn-dashboard {
       display: inline-block;
       margin-top: 0.5rem;
@@ -473,6 +498,28 @@
       padding: 0.3rem 0.6rem;
       border-radius: 6px;
     }
+    .alignment-visual {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px 0;
+      flex-wrap: wrap;
+    }
+    .align-box {
+      background: #1A1E2E;
+      border: 1px solid #2A2D3E;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-family: JetBrains Mono, monospace;
+      color: #e2e4f0;
+    }
+    .align-arrow {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .align-arrow.aligned { color: #22C55E; }
+    .align-arrow.misaligned { color: #EF4444; }
     .alignment-diagram {
       display: flex;
       align-items: center;
@@ -480,13 +527,14 @@
       margin: 0.75rem 0;
       flex-wrap: wrap;
     }
-    .align-box {
+    .align-ghost-box {
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 0.5rem 0.75rem;
       min-width: 140px;
     }
+    .align-ghost-box { min-width: 180px; }
     .align-label {
       font-size: 0.65rem;
       color: var(--text2);
@@ -499,13 +547,93 @@
       color: var(--text);
       word-break: break-all;
     }
-    .align-arrow {
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
     .align-status {
       font-size: 0.85rem;
       margin-top: 0.25rem;
+      color: var(--text2);
+    }
+    .spf-tree-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .spf-tree-toggle {
+      background: none;
+      border: none;
+      color: var(--purple);
+      font-family: inherit;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 0;
+    }
+    .spf-tree-toggle:hover { text-decoration: underline; }
+    .spf-tree-content { margin-top: 0.5rem; }
+    .spf-tree-pre {
+      background: var(--bg3);
+      color: var(--text2);
+      font-size: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin: 0;
+      white-space: pre;
+    }
+    .spf-tree-section { margin-top: 0.5rem; }
+    .spf-tree-section .spf-tree-toggle {
+      cursor: pointer;
+      color: var(--purple);
+      font-size: 0.8rem;
+    }
+    .spf-tree-section .spf-tree-toggle:hover { text-decoration: underline; }
+    #spf-tree {
+      background: #161924;
+      color: #8a8fb5;
+      font-family: JetBrains Mono, monospace;
+      font-size: 11px;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-width: 100%;
+      word-break: break-all;
+      box-sizing: border-box;
+    }
+    #spf-tree .spf-tree-pre-inline {
+      margin: 0;
+      background: transparent;
+      border: none;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-width: 100%;
+      word-break: break-all;
+    }
+    .copy-cf-btn {
+      height: auto;
+      background: transparent;
+      border: 1px solid #6C63FF;
+      color: #6C63FF;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-family: JetBrains Mono, monospace;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .copy-cf-btn:hover {
+      background: #6C63FF;
+      color: white;
+    }
+    .copy-cf-btn.copy-cf-btn-block {
+      margin-top: 8px;
+      display: block;
+      transition: all 0.15s;
     }
     .faq-section {
       max-width: 700px;
@@ -592,6 +720,12 @@
       </nav>
     </div>
   </header>
+
+  <div id="spamhausBanner" class="spamhaus-banner" role="alert" style="display: none;">
+    <span class="spamhaus-banner-text">⚠️ Spamhaus is sunsetting public DNS mirrors on April 8, 2026. Mail servers using public resolvers for blocklist lookups will start failing. Check if your setup is affected.</span>
+    <a href="https://www.spamhaus.org/resource-hub/dns/using-our-public-mirrors-will-stop-working-in-2026/" target="_blank" rel="noopener" class="spamhaus-banner-link">Learn more →</a>
+    <button type="button" class="spamhaus-banner-dismiss" aria-label="Dismiss">×</button>
+  </div>
 
   <main>
     <section class="hero">
@@ -791,6 +925,22 @@ function isIPv6(ip) {
   const copyLinkBtn = $('copyLinkBtn');
   const toast = $('toast');
 
+  (function initSpamhausBanner() {
+    const banner = document.getElementById('spamhausBanner');
+    if (!banner) return;
+    const hideAfter = new Date('2026-04-09T00:00:00Z').getTime();
+    if (Date.now() >= hideAfter) return;
+    if (sessionStorage.getItem('spamhausBannerDismissed')) return;
+    banner.style.display = 'flex';
+    const dismissBtn = banner.querySelector('.spamhaus-banner-dismiss');
+    if (dismissBtn) {
+      dismissBtn.addEventListener('click', function () {
+        sessionStorage.setItem('spamhausBannerDismissed', '1');
+        banner.style.display = 'none';
+      });
+    }
+  })();
+
   let ipWasManuallyEntered = false;
 
   function toastShow(msg) {
@@ -799,6 +949,37 @@ function isIPv6(ip) {
     clearTimeout(toast._t);
     toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
   }
+
+  window.toggleSPFTree = function () {
+    const el = document.getElementById('spf-tree');
+    const toggle = document.querySelector('.spf-tree-section .spf-tree-toggle');
+    if (!el || !toggle) return;
+    const show = el.style.display === 'none';
+    el.style.display = show ? 'block' : 'none';
+    toggle.textContent = show ? 'Hide lookup tree ▼' : 'Show lookup tree ▶';
+  };
+
+  window.copyCloudflare = function (type, name, value) {
+    const text = 'Type: ' + (type || 'TXT') + '\nName: ' + (name || '@') + '\nValue: ' + (value || '') + '\nTTL: Auto';
+    navigator.clipboard.writeText(text);
+    toastShow('Copied Cloudflare format ✓');
+  };
+
+  window.copyCF = function (type) {
+    let text = '';
+    if (type === 'spf') {
+      const value = lastSpfRecordForCopy && lastSpfRecordForCopy.trim() ? lastSpfRecordForCopy : 'v=spf1 include:_spf.google.com ~all';
+      text = 'Type: TXT\nName: @\nValue: ' + value + '\nTTL: Auto';
+    } else if (type === 'dmarc') {
+      const domain = lastCheckedDomain || 'example.com';
+      const value = 'v=DMARC1; p=reject; rua=mailto:dmarc@' + domain;
+      text = 'Type: TXT\nName: _dmarc\nValue: ' + value + '\nTTL: Auto';
+    }
+    if (text) {
+      navigator.clipboard.writeText(text);
+      toastShow('Copied Cloudflare format ✓');
+    }
+  };
 
   function card(status, title, detail, badge, icon) {
     const icons = { pass: '✓', warn: '⚠', fail: '✗', info: 'ℹ', loading: '⋯' };
@@ -904,10 +1085,18 @@ function isIPv6(ip) {
     }
   }
 
-  function actionCard(severity, title, body, fixText, dashboardUrl, dashboardLabel) {
+  function actionCard(severity, title, body, fixText, dashboardUrl, dashboardLabel, isTxtRecord, recordName) {
     const icons = { critical: '✗', warning: '⚠', info: 'ℹ' };
     const hasFix = !!fixText;
     const hasDashboard = !!dashboardUrl && !!dashboardLabel;
+    const showProviderCopy = !!hasFix && !!isTxtRecord;
+    const name = (recordName != null && recordName !== '') ? recordName : '@';
+    const cloudflareCopy = showProviderCopy ? `
+          <button type="button" class="btn-copy-fix btn-copy-provider copy-cf-btn" data-type="TXT" data-name="${escapeHtml(name)}">Copy for Cloudflare →</button>
+      ` : '';
+    const namecheapCopy = showProviderCopy ? `
+          <button type="button" class="btn-copy-namecheap">Copy for Namecheap →</button>
+      ` : '';
     const el = document.createElement('div');
     el.className = `action-card ${severity}`;
     const bodyHtml = escapeHtml(body);
@@ -915,7 +1104,11 @@ function isIPv6(ip) {
         <div class="fix-block">
           <span class="fix-label">FIX</span>
           <pre>${escapeHtml(fixText)}</pre>
-          <button type="button" class="btn-copy-fix">Copy fix</button>
+          <div class="fix-buttons">
+            <button type="button" class="btn-copy-fix">Copy fix</button>
+            ${cloudflareCopy}
+            ${namecheapCopy}
+          </div>
         </div>
       ` : '';
     const dashboardHtml = hasDashboard ? `
@@ -934,6 +1127,30 @@ function isIPv6(ip) {
         copyBtn.textContent = '✓ Copied';
         setTimeout(() => { copyBtn.textContent = 'Copy fix'; }, 2000);
       });
+    }
+    if (showProviderCopy) {
+      const cfBtn = el.querySelector('.btn-copy-provider');
+      if (cfBtn) {
+        cfBtn.addEventListener('click', function () {
+          const pre = this.closest('.fix-block') && this.closest('.fix-block').querySelector('pre');
+          const value = pre ? pre.textContent : fixText;
+          if (typeof window.copyCloudflare === 'function') {
+            window.copyCloudflare('TXT', this.getAttribute('data-name') || name, value);
+          } else {
+            const text = 'Type: TXT\nName: ' + (this.getAttribute('data-name') || name) + '\nValue: ' + value + '\nTTL: Auto';
+            navigator.clipboard.writeText(text);
+            toastShow('Copied Cloudflare format ✓');
+          }
+        });
+      }
+      const ncBtn = el.querySelector('.btn-copy-namecheap');
+      if (ncBtn) {
+        ncBtn.addEventListener('click', () => {
+          const text = 'Type: TXT\nHost: ' + name + '\nValue: ' + fixText + '\nTTL: Automatic';
+          navigator.clipboard.writeText(text);
+          toastShow('Copied Namecheap format ✓');
+        });
+      }
     }
     return el;
   }
@@ -959,6 +1176,8 @@ function isIPv6(ip) {
   let score = 100;
   const actions = [];
   let lastDmarcPolicy = null;
+  let lastSpfRecordForCopy = '';
+  let lastCheckedDomain = '';
 
   function addPenalty(p) {
     score = Math.max(0, score + p);
@@ -1096,32 +1315,39 @@ function isIPv6(ip) {
       const j = await doh(domain, 'TXT');
       const answers = j.Answer || [];
       const txtRecords = answers.filter(a => a.type === 16);
+      console.log('TXT records for SPF:', txtRecords.map(a => (a.data || '').toString().slice(0, 80)));
       const spfRecordCount = txtRecords.filter(a => stripTxtQuotes(String(a.data || '').trim()).toLowerCase().startsWith('v=spf1')).length;
       if (spfRecordCount > 1) {
-        addPenalty(-5);
-        updateCard(cardEl, 'warn', 'SPF', 'You have more than one SPF record. Only one is allowed — receivers may reject or ignore your mail.', 'Multiple');
+        addPenalty(-30);
+        updateCard(cardEl, 'fail', 'SPF', 'You have ' + spfRecordCount + ' SPF records. Having more than one causes immediate PermError — receiving servers will reject or spam-folder all your mail. Only one SPF record is allowed per domain (RFC 7208).', spfRecordCount + ' records');
+        actions.unshift(actionCard('critical', '✗ Multiple SPF Records Detected', 'You have ' + spfRecordCount + ' SPF records. Only one is allowed. Receivers will reject all of them — this breaks email delivery entirely.', 'Merge all your SPF rules into a single record. Delete the extras.', null, null, true, '@'));
         return;
       }
       const raw = findSpfInTxtAnswers(answers);
       if (!raw || !raw.toLowerCase().startsWith('v=spf1')) {
         addPenalty(-20);
         updateCard(cardEl, 'fail', 'SPF', 'No SPF record found. Receiving servers can\'t verify your email is legitimate — expect spam folders or bounces.', 'Missing');
-        actions.push(actionCard('critical', 'Add SPF record', 'Add a DNS TXT record for ' + domain + ' that lists who is allowed to send mail for you. Example for Google:', 'v=spf1 include:_spf.google.com ~all'));
+        actions.push(actionCard('critical', 'Add SPF record', 'Add a DNS TXT record for ' + domain + ' that lists who is allowed to send mail for you. Example for Google:', 'v=spf1 include:_spf.google.com ~all', null, null, true, '@'));
         return;
       }
       if (/\+all\b/i.test(raw)) {
         addPenalty(-30);
         updateCard(cardEl, 'fail', 'SPF', 'Your SPF record allows any server in the world to send as you — a major security risk.', 'Critical');
-        actions.push(actionCard('critical', 'Replace +all in SPF', 'Change the ending to ~all (softfail) or -all (reject) so only your listed servers can send.', 'v=spf1 include:_spf.google.com -all'));
+        actions.push(actionCard('critical', 'Replace +all in SPF', 'Change the ending to ~all (softfail) or -all (reject) so only your listed servers can send.', 'v=spf1 include:_spf.google.com -all', null, null, true, '@'));
         return;
       }
       if (typeof onSpfDetected === 'function') onSpfDetected(raw);
+      lastSpfRecordForCopy = raw;
       let lookupCount = 0;
       const seen = new Set();
-      async function countSpfRecursive(txt, depth) {
-        if (depth > 5) return 0;
+      const treeLines = [raw];
+      async function countSpfRecursive(txt, depth, treeOpts) {
+        if (depth > 5) return treeOpts ? treeOpts.runningCount : 0;
         let n = 0;
+        let running = treeOpts ? treeOpts.runningCount : 0;
         const parts = txt.replace(/^v=spf1\s+/i, '').split(/\s+/);
+        const includes = parts.filter(x => x.toLowerCase().startsWith('include:'));
+        let idx = 0;
         for (const p of parts) {
           const m = p.toLowerCase();
           if (m === 'ip4:' || m.startsWith('ip4:') || m === 'ip6:' || m.startsWith('ip6:') || m === 'all' || m === '-all' || m === '~all') continue;
@@ -1130,26 +1356,93 @@ function isIPv6(ip) {
             if (seen.has(subDomain)) continue;
             seen.add(subDomain);
             n += 1;
-            try {
-              const subJ = await doh(subDomain, 'TXT');
-              const subRaw = findSpfInTxtAnswers(subJ.Answer || []);
-              if (subRaw) n += await countSpfRecursive(subRaw, depth + 1);
-            } catch (_) {}
-          } else if (m.startsWith('redirect=')) n += 1;
-          else if (m === 'a' || m === 'mx' || m === 'ptr' || m.startsWith('a:') || m.startsWith('mx:') || m.startsWith('ptr:') || m.startsWith('exists:')) n += 1;
+            running += 1;
+            if (treeOpts && treeOpts.treeLines) {
+              const isLast = idx === includes.length - 1;
+              const displayDomain = subDomain.length > 35 ? subDomain.slice(0, 32) + '...' : subDomain;
+              treeOpts.treeLines.push(treeOpts.prefix + (isLast ? '└──' : '├──') + ' ' + displayDomain + ' (' + running + ' lookup' + (running !== 1 ? 's' : '') + ')');
+              const subPrefix = treeOpts.prefix + (isLast ? '    ' : '│   ');
+              try {
+                const subJ = await doh(subDomain, 'TXT');
+                const subRaw = findSpfInTxtAnswers(subJ.Answer || []);
+                if (subRaw) {
+                  const subOpts = { treeLines: treeOpts.treeLines, prefix: subPrefix, runningCount: running };
+                  const subN = await countSpfRecursive(subRaw, depth + 1, subOpts);
+                  n += subN;
+                  running = subOpts.runningCount;
+                }
+              } catch (_) {}
+            } else {
+              try {
+                const subJ = await doh(subDomain, 'TXT');
+                const subRaw = findSpfInTxtAnswers(subJ.Answer || []);
+                if (subRaw) n += await countSpfRecursive(subRaw, depth + 1, null);
+              } catch (_) {}
+            }
+            idx++;
+          } else if (m.startsWith('redirect=')) { n += 1; running += 1; }
+          else if (m === 'a' || m === 'mx' || m === 'ptr' || m.startsWith('a:') || m.startsWith('mx:') || m.startsWith('ptr:') || m.startsWith('exists:')) { n += 1; running += 1; }
         }
+        if (treeOpts) treeOpts.runningCount = running;
         return n;
       }
-      lookupCount = await countSpfRecursive(raw, 0);
+      lookupCount = await countSpfRecursive(raw, 0, { treeLines: treeLines, prefix: '  ', runningCount: 0 });
+      treeLines.push('Total: ' + lookupCount + '/10 lookups used');
       if (lookupCount > 10) {
         addPenalty(-30);
         updateCard(cardEl, 'fail', 'SPF', 'Your SPF record triggers too many DNS lookups (over 10). Many receivers will reject it.', lookupCount + ' lookups');
-        actions.push(actionCard('critical', 'Reduce SPF lookups', 'Simplify your SPF — use fewer includes or a single redirect so it stays under the 10-lookup limit.', null));
+        const reduceCard = document.createElement('div');
+        reduceCard.className = 'action-card critical';
+        reduceCard.innerHTML = `
+          <div class="action-card-title">✗ Reduce SPF lookups</div>
+          <div class="action-card-body">Simplify your SPF — use fewer includes or a single redirect so it stays under the 10-lookup limit.</div>
+          <button class="copy-cf-btn copy-cf-btn-block" onclick="copyCF('spf')">Copy for Cloudflare →</button>
+        `;
+        const treeSection = document.createElement('div');
+        treeSection.className = 'spf-tree-section';
+        treeSection.innerHTML = `
+          <div class="spf-tree-toggle" onclick="toggleSPFTree()">Show lookup tree ▶</div>
+          <div id="spf-tree" style="display:none"><pre class="spf-tree-pre-inline"></pre><div class="spf-tree-total-inline"></div></div>
+        `;
+        const preEl = treeSection.querySelector('.spf-tree-pre-inline');
+        const totalLineEl = treeSection.querySelector('.spf-tree-total-inline');
+        if (preEl) preEl.textContent = treeLines.slice(0, -1).join('\n');
+        if (totalLineEl) totalLineEl.textContent = treeLines[treeLines.length - 1];
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(reduceCard);
+        wrapper.appendChild(treeSection);
+        actions.push(wrapper);
       } else if (lookupCount >= 8) {
         addPenalty(-5);
         updateCard(cardEl, 'warn', 'SPF', 'You\'re close to the 10-lookup limit. Adding more could break SPF for some receivers.', lookupCount + ' lookups');
       } else {
         updateCard(cardEl, 'pass', 'SPF', 'Servers allowed to send for your domain are correctly listed.', lookupCount + ' lookups');
+      }
+      if (lookupCount > 3 && lookupCount <= 10) {
+        const treeColor = lookupCount <= 7 ? 'var(--green)' : lookupCount <= 9 ? 'var(--orange)' : 'var(--red)';
+        const treeWrap = document.createElement('div');
+        treeWrap.className = 'spf-tree-wrap';
+        treeWrap.innerHTML = `
+          <button type="button" class="spf-tree-toggle" aria-expanded="false">Show lookup tree ▶</button>
+          <div class="spf-tree-content" hidden>
+            <pre class="spf-tree-pre"></pre>
+            <div class="spf-tree-total" style="color: ${treeColor}; font-weight: 500; margin-top: 0.35rem;"></div>
+          </div>
+        `;
+        const toggleBtn = treeWrap.querySelector('.spf-tree-toggle');
+        const content = treeWrap.querySelector('.spf-tree-content');
+        const pre = treeWrap.querySelector('.spf-tree-pre');
+        const totalEl = treeWrap.querySelector('.spf-tree-total');
+        const totalLine = treeLines[treeLines.length - 1];
+        pre.textContent = treeLines.slice(0, -1).join('\n');
+        totalEl.textContent = totalLine;
+        toggleBtn.addEventListener('click', function () {
+          const open = content.hidden;
+          content.hidden = !open;
+          toggleBtn.setAttribute('aria-expanded', String(!open));
+          toggleBtn.textContent = open ? 'Hide lookup tree ▼' : 'Show lookup tree ▶';
+        });
+        cardEl.insertAdjacentElement('afterend', treeWrap);
       }
     } catch (e) {
       addPenalty(-20);
@@ -1229,7 +1522,7 @@ function isIPv6(ip) {
         lastDmarcPolicy = null;
         addPenalty(-25);
         updateCard(cardEl, 'fail', 'DMARC', 'No DMARC policy found. Anyone can spoof your domain and you won\'t know about it.', 'Missing');
-        actions.push(actionCard('critical', 'Add DMARC record', 'Add a DNS TXT record for ' + dmarcDomain + ' so you can receive reports and eventually block fake mail.', 'v=DMARC1; p=none; rua=mailto:dmarc@' + domain));
+        actions.push(actionCard('critical', 'Add DMARC record', 'Add a DNS TXT record for ' + dmarcDomain + ' so you can receive reports and eventually block fake mail.', 'v=DMARC1; p=none; rua=mailto:dmarc@' + domain, null, null, true, '_dmarc'));
         return;
       }
       const pMatch = raw.match(/p=(\w+)/i);
@@ -1239,7 +1532,7 @@ function isIPv6(ip) {
       if (p === 'none') {
         addPenalty(-10);
         updateCard(cardEl, 'warn', 'DMARC', 'You\'re collecting reports but failing emails aren\'t being blocked. Upgrade policy when ready.', p);
-        actions.push(actionCard('info', 'Upgrade DMARC policy', 'When you\'re ready to block or quarantine failing mail, change p=none to p=quarantine or p=reject.', 'v=DMARC1; p=quarantine; rua=mailto:dmarc@' + domain));
+        actions.push(actionCard('info', 'Upgrade DMARC policy', 'When you\'re ready to block or quarantine failing mail, change p=none to p=quarantine or p=reject.', 'v=DMARC1; p=quarantine; rua=mailto:dmarc@' + domain, null, null, true, '_dmarc'));
       } else if (p === 'quarantine') {
         updateCard(cardEl, 'warn', 'DMARC', 'Suspicious emails are being quarantined. Upgrade to reject for full enforcement.', p);
       } else if (p === 'reject') {
@@ -1248,7 +1541,7 @@ function isIPv6(ip) {
         updateCard(cardEl, 'warn', 'DMARC', 'DMARC is set up but policy is unclear.', p || '—');
       }
       if (!hasRua) {
-        actions.push(actionCard('warning', 'Add rua= to DMARC', 'Add a report address (rua=mailto:...) so you receive daily summaries of who\'s sending as your domain.', 'rua=mailto:dmarc@' + domain));
+        actions.push(actionCard('warning', 'Add rua= to DMARC', 'Add a report address (rua=mailto:...) so you receive daily summaries of who\'s sending as your domain.', 'rua=mailto:dmarc@' + domain, null, null, true, '_dmarc'));
       }
     } catch (e) {
       lastDmarcPolicy = null;
@@ -1279,6 +1572,30 @@ function isIPv6(ip) {
     return /\{(token\d*|uid|code|tenant)\}/i.test(str);
   }
 
+  function getRootDomain(hostname) {
+    if (typeof hostname !== 'string' || !hostname) return hostname || '';
+    const parts = hostname.trim().toLowerCase().split('.');
+    if (parts.length >= 2) return parts.slice(-2).join('.');
+    return hostname;
+  }
+
+  function getSpfReturnPathDomain(spf) {
+    if (typeof spf !== 'string') return '';
+    const parts = spf.split(/\s+/);
+    for (const p of parts) {
+      const m = p.toLowerCase();
+      if (m.startsWith('include:')) {
+        const val = m.slice(8).trim();
+        if (val) return getRootDomain(val);
+      }
+      if (m.startsWith('redirect=')) {
+        const val = m.slice(9).trim();
+        if (val) return getRootDomain(val);
+      }
+    }
+    return '';
+  }
+
   async function runAlignmentEngine(domain, spfRecord, dmarcPolicy) {
     console.log('[alignment] called with spf:', spfRecord);
     if (!spfRecord || typeof spfRecord !== 'string') return;
@@ -1293,6 +1610,19 @@ function isIPv6(ip) {
       const includes = extractSpfIncludes(spfRecord);
       if (!includes.length) return;
       const includesLower = includes.map(v => v.toLowerCase());
+
+      const returnPathDomain = getSpfReturnPathDomain(spfRecord);
+      const fromRoot = getRootDomain(domain);
+      const returnRoot = returnPathDomain ? getRootDomain(returnPathDomain) : '';
+      const aligned = (fromRoot && returnRoot && fromRoot === returnRoot);
+      const alignmentVisual = document.createElement('div');
+      alignmentVisual.className = 'alignment-visual';
+      alignmentVisual.innerHTML = `
+        <div class="align-box" id="align-from">FROM: ${escapeHtml(domain)}</div>
+        <div class="align-arrow ${aligned ? 'aligned' : 'misaligned'}" id="align-arrow">${aligned ? '→ ✓' : '→ ✗'}</div>
+        <div class="align-box" id="align-return">Return-Path: ${escapeHtml(returnPathDomain || '—')}</div>
+      `;
+      actionCards.appendChild(alignmentVisual);
 
       let spfProviders = [];
       let allAlignmentCnamesPassed = true;
@@ -1385,6 +1715,10 @@ Value: ${valueText}`;
               <div class="action-card-helper" style="color: var(--text2); font-size: 0.85rem; margin-top: 0.5rem;">Look for: Authentication tab → DKIM signatures → 'Verified' ✓</div>
             `;
             actions.push(sesCard);
+          } else if (provider.id === 'vercel') {
+            actions.push(actionCard('info', 'Vercel detected — no SPF for email', 'Vercel doesn\'t send email on your behalf. If you\'re sending email from this domain, configure your email provider\'s SPF separately.', null));
+          } else if (provider.id === 'netlify') {
+            actions.push(actionCard('info', 'Netlify detected — add email SPF', 'Netlify detected — add your email provider\'s SPF include separately.', null));
           } else {
             actions.push(
               actionCard(
@@ -1397,44 +1731,6 @@ Value: ${valueText}`;
               )
             );
           }
-        }
-      }
-
-      if (spfProviders.length > 0 && dmarcPolicy !== 'reject') {
-        const visual = document.createElement('div');
-        visual.className = 'action-card info alignment-visual';
-        const fromVal = 'you@' + domain;
-        visual.innerHTML = `
-          <div class="action-card-title">ℹ Alignment check</div>
-          <div class="alignment-diagram">
-            <div class="align-box">
-              <div class="align-label">FROM header</div>
-              <div class="align-value" id="alignFromVal">${escapeHtml(fromVal)}</div>
-            </div>
-            <div class="align-arrow" id="alignArrow">⟷</div>
-            <div class="align-box">
-              <div class="align-label">SPF / Return-Path</div>
-              <div class="align-value" id="alignSpfVal">${escapeHtml(firstMatchedProviderName)}</div>
-            </div>
-          </div>
-          <div class="align-status" id="alignStatus"></div>
-        `;
-        const arrowEl = visual.querySelector('#alignArrow');
-        const statusEl = visual.querySelector('#alignStatus');
-        if (dmarcPolicy === null) {
-          arrowEl.style.color = 'var(--orange)';
-          statusEl.textContent = '⚠ No DMARC policy — alignment can\'t be enforced yet.';
-        } else if (!allAlignmentCnamesPassed) {
-          arrowEl.style.color = 'var(--red)';
-          statusEl.textContent = '✗ Domains don\'t match — emails may fail DMARC. Add the missing CNAMEs below.';
-        } else {
-          arrowEl.style.color = 'var(--green)';
-          statusEl.textContent = '✓ Domains are aligned — DMARC will pass';
-        }
-        if (actionCards.firstChild) {
-          actionCards.insertBefore(visual, actionCards.firstChild);
-        } else {
-          actionCards.appendChild(visual);
         }
       }
     } catch (_) {
@@ -1497,6 +1793,7 @@ Value: ${valueText}`;
       return;
     }
     domainIn.value = domain;
+    lastCheckedDomain = domain;
     runBtn.disabled = true;
     runBtn.textContent = '⟳ Running…';
     try {

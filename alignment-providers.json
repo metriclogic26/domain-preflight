@@ -212,6 +212,20 @@
       "dashboard_label": "Mandrill → Settings → Sending Domains",
       "instructions": "In Mandrill, go to Settings → Sending Domains. Add your domain and publish the DKIM CNAME record shown.",
       "docs_url": "https://mailchimp.com/developer/transactional/docs/authentication-delivery/"
+    },
+    {
+      "id": "vercel",
+      "name": "Vercel",
+      "spf_includes": ["vercel", "spf.vercel.com", "vercel.app"],
+      "alignment_cnames": [],
+      "instructions": "Vercel doesn't send email on your behalf. If you're sending email from this domain, configure your email provider's SPF separately."
+    },
+    {
+      "id": "netlify",
+      "name": "Netlify",
+      "spf_includes": ["netlify", "netlify.com"],
+      "alignment_cnames": [],
+      "instructions": "Add your email provider's SPF include separately."
     }
   ]
 }
