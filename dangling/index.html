@@ -310,13 +310,34 @@
         .catch(function () { return null; });
     }
 
-    function getSubdomainsFromCrtsh(domain) {
+    function fetchWithRetry(url, retries, delay, onRetry) {
+      retries = retries == null ? 3 : retries;
+      delay = delay == null ? 1500 : delay;
+      return new Promise(function (resolve, reject) {
+        function attempt(i) {
+          fetch(url)
+            .then(function (res) {
+              if (!res.ok) throw new Error('HTTP ' + res.status);
+              return res.json();
+            })
+            .then(resolve)
+            .catch(function (err) {
+              if (i === retries - 1) {
+                reject(new Error('crt.sh is temporarily unavailable. Try again in a moment.'));
+                return;
+              }
+              if (typeof onRetry === 'function') onRetry(i + 2, retries);
+              setTimeout(function () { attempt(i + 1); }, delay * (i + 1));
+            });
+        }
+        attempt(0);
+      });
+    }
+
+    function getSubdomainsFromCrtsh(domain, onRetry) {
       var q = encodeURIComponent('%.' + domain);
-      return fetch(CRT_SH_URL + q + '&output=json')
-        .then(function (r) {
-          if (!r.ok) throw new Error('crt.sh is temporarily unavailable. Try again in a moment.');
-          return r.json();
-        })
+      var url = CRT_SH_URL + q + '&output=json';
+      return fetchWithRetry(url, 3, 1500, onRetry)
         .then(function (arr) {
           if (!Array.isArray(arr)) return [];
           var seen = {};
@@ -329,9 +350,6 @@
             if (name !== domain && (name === domain || name.endsWith('.' + domain))) out.push(name);
           });
           return out.slice(0, MAX_SUBDOMAINS);
-        })
-        .catch(function () {
-          throw new Error('crt.sh is temporarily unavailable. Try again in a moment.');
         });
     }
 
@@ -382,7 +400,11 @@
 
       setProgress('Fetching subdomains from crt.sh…', 0);
 
-      Promise.all([loadFingerprints(), getSubdomainsFromCrtsh(domain)])
+      function onCrtshRetry(attempt, total) {
+        setProgress('crt.sh is slow — retrying... (attempt ' + attempt + '/' + total + ')', 0);
+      }
+
+      Promise.all([loadFingerprints(), getSubdomainsFromCrtsh(domain, onCrtshRetry)])
         .then(function (res) {
           var subdomains = res[1];
           if (!subdomains.length) {
