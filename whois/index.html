@@ -4,10 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WHOIS / Expiry Checker — DomainPreflight</title>
+  <meta name="description" content="Free WHOIS and RDAP lookup. Check domain expiry, registrar, registration and renewal dates. See days until expiry before it takes production down.">
+  <meta name="keywords" content="WHOIS lookup, domain expiry checker, RDAP, registrar lookup, domain expiration, renewal date, DomainPreflight">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MetricLogic">
   <link rel="canonical" href="https://domainpreflight.dev/whois/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="WHOIS / Expiry Checker — DomainPreflight">
+  <meta property="og:description" content="Look up WHOIS and RDAP for any domain. See expiry date, registrar, and days until renewal. Free, no signup.">
+  <meta property="og:url" content="https://domainpreflight.dev/whois/">
+  <meta property="og:site_name" content="DomainPreflight">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="WHOIS / Expiry Checker — DomainPreflight">
+  <meta name="twitter:description" content="WHOIS and RDAP lookup. Domain expiry, registrar, renewal dates. Free, no signup.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "WHOIS / Expiry Checker",
+    "url": "https://domainpreflight.dev/whois/",
+    "description": "Look up WHOIS and RDAP data for a domain. Check expiry date, registrar, and days until renewal. Free browser-based tool.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0" }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="/_vercel/insights/script.js"></script>
   <style>
     :root {
       --bg: #0b0d14;
@@ -288,6 +313,9 @@
     }
     footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
     footer a:hover { color: var(--purple); }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; }
+    .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
     .toast {
       position: fixed;
       bottom: 1.5rem;
@@ -317,9 +345,9 @@
       </div>
       <nav>
         <a href="/">DNS Preflight</a>
-        <a href="#" class="disabled" title="Coming soon">Email</a>
+        <a href="/email/">Email</a>
         <a href="/whois/" class="active">WHOIS</a>
-        <a href="#" class="disabled" title="Coming soon">Dangling Records</a>
+        <a href="/dangling/">Dangling Records</a>
         <a href="#" class="disabled" title="Coming soon">Typosquat</a>
       </nav>
     </div>
@@ -378,6 +406,15 @@
       </div>
     </section>
   </main>
+
+  <section class="how-to-use">
+    <div class="how-to-use-label">HOW TO USE</div>
+    <ol class="how-to-use-steps">
+      <li>Enter your domain name</li>
+      <li>Click Check WHOIS — expiry and registrar loaded</li>
+      <li>Set a reminder if expiry is under 60 days</li>
+    </ol>
+  </section>
 
   <footer>
     <div class="footer-inner">

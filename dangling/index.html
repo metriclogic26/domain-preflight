@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dangling DNS & Subdomain Takeover Checker — DomainPreflight</title>
+  <meta name="description" content="Find dangling DNS records and subdomain takeover risks. Check CNAMEs pointing to unclaimed services. Free, no signup, nothing leaves your browser.">
+  <meta name="keywords" content="subdomain takeover, dangling DNS, CNAME hijacking, subdomain security, DNS misconfiguration checker">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MetricLogic">
+  <link rel="canonical" href="https://domainpreflight.dev/dangling/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dangling DNS & Subdomain Takeover Checker — DomainPreflight">
+  <meta property="og:description" content="Find dangling DNS records and subdomain takeover risks. Free, no signup, nothing leaves your browser.">
+  <meta property="og:url" content="https://domainpreflight.dev/dangling/">
+  <meta property="og:site_name" content="DomainPreflight">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Dangling DNS & Subdomain Takeover Checker — DomainPreflight">
+  <meta name="twitter:description" content="Detect CNAMEs pointing to unclaimed services. Subdomain takeover checker. Free, no signup.">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Dangling DNS & Subdomain Takeover Checker","url":"https://domainpreflight.dev/dangling/","description":"Find dangling DNS records and subdomain takeover risks. Free browser-based tool.","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0"}}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: inherit; text-decoration: none; }
+    .logo-dot { color: var(--purple); }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    nav a.active { color: var(--text); font-weight: 500; }
+    nav a.disabled { cursor: not-allowed; opacity: 0.4; }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero { text-align: center; padding-top: 1.5rem; padding-bottom: 2rem; }
+    .hero-label { font-size: 1.1rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.75rem; }
+    .hero h1 { font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    .hero-sub { color: var(--text2); font-size: 0.9rem; max-width: 700px; margin: 0 auto 1.5rem; }
+    .input-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .input-wrap label { display: block; font-size: 0.7rem; color: var(--text2); margin-bottom: 0.35rem; }
+    .input-wrap input {
+      width: 100%; box-sizing: border-box; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.5rem 0.75rem; color: var(--text); font-family: inherit; font-size: 0.9rem;
+    }
+    .input-wrap input::placeholder { color: var(--text2); opacity: 0.7; }
+    .input-wrap input:focus { outline: none; border-color: var(--purple); }
+    .btn-scan {
+      display: block; max-width: 300px; margin: 0.75rem auto 0; width: 100%;
+      background: var(--purple); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px;
+      font-family: inherit; font-weight: 500; font-size: 0.95rem; cursor: pointer;
+    }
+    .btn-scan:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-scan:disabled { cursor: not-allowed; opacity: 0.8; }
+    .hero-btns { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+    .btn-pill {
+      display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg2); color: var(--text2);
+      font-family: inherit; font-size: 0.85rem; cursor: pointer;
+    }
+    .btn-pill:focus { outline: none; border-color: var(--border); }
+    .btn-pill:hover { border-color: var(--purple); color: var(--text); }
+    #resultsSection { display: none; margin-top: 2rem; }
+    .progress-wrap { margin-bottom: 1.5rem; }
+    .progress-text { font-size: 0.9rem; color: var(--text2); margin-bottom: 0.5rem; }
+    .progress-bar {
+      height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden;
+    }
+    .progress-fill { height: 100%; background: var(--purple); border-radius: 4px; width: 0%; transition: width 0.2s; }
+    .summary-bar {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.75rem 1rem; font-size: 0.9rem; color: var(--text2); margin-bottom: 1.5rem;
+    }
+    .risk-cards { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
+    .risk-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem;
+    }
+    .risk-card.high { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); }
+    .risk-card.medium { background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.3); }
+    .risk-card.safe { background: rgba(34, 197, 94, 0.06); border-color: rgba(34, 197, 94, 0.25); }
+    .risk-card-title { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .risk-card.high .risk-card-title { color: var(--red); }
+    .risk-card.medium .risk-card-title { color: var(--orange); }
+    .risk-card.safe .risk-card-title { color: var(--green); }
+    .risk-card-body { font-size: 0.85rem; color: var(--text2); margin-bottom: 0.5rem; line-height: 1.5; }
+    .risk-card-body .subdomain { color: var(--text); }
+    .risk-card-actions { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .risk-card-actions a {
+      color: var(--purple); font-size: 0.85rem; text-decoration: none;
+    }
+    .risk-card-actions a:hover { text-decoration: underline; }
+    .no-cname-section { margin-top: 1.5rem; }
+    .no-cname-section h3 { font-size: 0.9rem; color: var(--text2); margin-bottom: 0.5rem; }
+    .no-cname-subtext { font-size: 0.85rem; color: var(--text2); margin-bottom: 0.5rem; line-height: 1.5; }
+    .no-cname-list { font-size: 0.85rem; color: var(--text2); list-style: none; }
+    .no-cname-list li { padding: 0.25rem 0; }
+    .active-service-item { font-size: 0.85rem; color: var(--text2); padding: 0.35rem 0; }
+    .empty-state {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem; text-align: center; color: var(--text2); font-size: 0.9rem; margin-bottom: 1rem;
+    }
+    .empty-state.success { border-color: rgba(34, 197, 94, 0.3); color: var(--green); }
+    .safe-collapsed { margin-bottom: 0.5rem; }
+    .safe-collapsed summary { cursor: pointer; font-size: 0.85rem; color: var(--text2); list-style: none; }
+    .safe-collapsed summary::-webkit-details-marker { display: none; }
+    .safe-collapsed .risk-card { padding: 0.75rem 1rem; }
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 1.5rem; background: var(--bg2); margin-top: 3rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-disclaimer {
+      text-align: center; width: 100%; font-size: 11px; color: var(--text2); opacity: 0.6;
+      padding-bottom: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem;
+    }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+    footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    footer a:hover { color: var(--purple); }
+    .footer-meta { text-align: center; font-size: 0.8rem; color: var(--text2); opacity: 0.8; }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; }
+    .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--bg3); border: 1px solid var(--border); padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem; z-index: 1000; transform: translateY(100px); opacity: 0; transition: transform 0.25s, opacity 0.25s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight<span class="logo-dot">.</span></a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/" class="active">Dangling Records</a>
+        <a href="#" class="disabled" title="Coming soon">Typosquat</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-label">DANGLING RECORDS</div>
+      <h1>Find subdomains attackers can claim.</h1>
+      <p class="hero-sub">Detect CNAMEs pointing to unclaimed services. Subdomain takeover lets attackers serve content on your domain. No signup. Nothing leaves your browser.</p>
+    </section>
+
+    <div class="input-card">
+      <div class="input-wrap">
+        <label for="domain">Domain</label>
+        <input type="text" id="domain" placeholder="yourdomain.com" autocomplete="off">
+      </div>
+      <button type="button" class="btn-scan" id="scanBtn">Scan Domain</button>
+      <div class="hero-btns">
+        <button type="button" class="btn-pill" id="clearBtn">× Clear</button>
+        <button type="button" class="btn-pill" id="tryExampleBtn">Try an example</button>
+      </div>
+    </div>
+
+    <div id="resultsSection">
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-text" id="progressText">Fetching subdomains from crt.sh…</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="summary-bar" id="summaryBar" style="display: none;"></div>
+      <div id="emptyState" class="empty-state" style="display: none;"></div>
+      <div id="riskCards" class="risk-cards"></div>
+      <details class="safe-collapsed" id="activeServicesSection" style="display: none;">
+        <summary id="activeServicesSummary">▶ Active services (0)</summary>
+        <div id="activeServicesList"></div>
+      </details>
+      <div class="no-cname-section" id="noCnameSection" style="display: none;">
+        <h3 id="noCnameHeading">Inactive subdomains (0)</h3>
+        <p class="no-cname-subtext" id="noCnameSubtext" style="display: none;"></p>
+        <ul class="no-cname-list" id="noCnameList"></ul>
+      </div>
+    </div>
+  </main>
+
+  <section class="how-to-use">
+    <div class="how-to-use-label">HOW TO USE</div>
+    <ol class="how-to-use-steps">
+      <li>Enter your domain name</li>
+      <li>Click Scan Domain — subdomains discovered via certificate logs</li>
+      <li>Review flagged CNAMEs — delete or claim the service to close the takeover risk</li>
+    </ol>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <div class="footer-links">
+        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try <a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a></span>
+        <span>
+          <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
+          <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
+          <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+        </span>
+      </div>
+      <p class="footer-meta">Takeover fingerprints via <a href="https://github.com/EdOverflow/can-i-take-over-xyz" target="_blank" rel="noopener">can-i-take-over-xyz</a> (MIT)</p>
+      <p class="footer-meta">Part of the DomainPreflight suite — <a href="https://domainpreflight.dev">domainpreflight.dev</a></p>
+      <p class="footer-meta"><a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a> · MIT · <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">github.com/metriclogic26</a></p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    var FINGERPRINTS_URL = 'https://raw.githubusercontent.com/EdOverflow/can-i-take-over-xyz/master/fingerprints.json';
+    var CRT_SH_URL = 'https://crt.sh/?q=';
+    var DOH_URL = 'https://cloudflare-dns.com/dns-query';
+    var BATCH_SIZE = 5;
+    var BATCH_DELAY = 200;
+    var MAX_SUBDOMAINS = 50;
+
+    var fingerprintCache = null;
+
+    function toastShow(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._tid);
+      t._tid = setTimeout(function () { t.classList.remove('show'); }, 3500);
+    }
+
+    function normalizeDomain(d) {
+      return (d || '').toLowerCase().replace(/^\s+|\s+$/g, '').replace(/^https?:\/\//, '').split('/')[0].replace(/^www\./, '');
+    }
+
+    function loadFingerprints() {
+      if (fingerprintCache) return Promise.resolve(fingerprintCache);
+      return fetch(FINGERPRINTS_URL)
+        .then(function (r) { return r.json(); })
+        .then(function (arr) {
+          fingerprintCache = Array.isArray(arr) ? arr : [];
+          return fingerprintCache;
+        })
+        .catch(function () {
+          fingerprintCache = [];
+          return [];
+        });
+    }
+
+    function matchFingerprint(cnameTarget) {
+      if (!cnameTarget) return null;
+      var t = (cnameTarget + '').toLowerCase().replace(/\.$/, '').trim();
+      if (t.endsWith('.github.io')) {
+        return { service: 'GitHub Pages', vulnerable: false, status: 'Edge case — verify the GitHub user/org still exists' };
+      }
+      var fingerprints = fingerprintCache;
+      if (!fingerprints || !fingerprints.length) return null;
+      var match = fingerprints.find(function (fp) {
+        var cnameArr = fp.cname;
+        if (!cnameArr || !cnameArr.length) return false;
+        return cnameArr.some(function (c) {
+          var s = (c && (c + '').trim()).toLowerCase().replace(/\.$/, '');
+          return s.length > 0 && t.endsWith(s);
+        });
+      });
+      return match ? { service: match.service || 'Unknown', vulnerable: !!match.vulnerable, status: match.status || '' } : null;
+    }
+
+    function dohCname(name) {
+      var url = DOH_URL + '?name=' + encodeURIComponent(name) + '&type=CNAME';
+      return fetch(url, { headers: { Accept: 'application/dns-json' } })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          var ans = (j.Answer || []).find(function (a) { return a.type === 5; });
+          if (!ans || !ans.data) return null;
+          return (ans.data + '').replace(/\.$/, '').trim();
+        })
+        .catch(function () { return null; });
+    }
+
+    function dohA(name) {
+      var url = DOH_URL + '?name=' + encodeURIComponent(name) + '&type=A';
+      return fetch(url, { headers: { Accept: 'application/dns-json' } })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          var answers = j.Answer || [];
+          var aRecord = answers.find(function (a) { return a.type === 1; });
+          return (aRecord && aRecord.data) ? aRecord.data : null;
+        })
+        .catch(function () { return null; });
+    }
+
+    function getSubdomainsFromCrtsh(domain) {
+      var q = encodeURIComponent('%.' + domain);
+      return fetch(CRT_SH_URL + q + '&output=json')
+        .then(function (r) {
+          if (!r.ok) throw new Error('crt.sh is temporarily unavailable. Try again in a moment.');
+          return r.json();
+        })
+        .then(function (arr) {
+          if (!Array.isArray(arr)) return [];
+          var seen = {};
+          var out = [];
+          arr.forEach(function (row) {
+            var name = (row.name_value || row.common_name || '').split(/\s+/)[0].toLowerCase().replace(/\.$/, '');
+            if (!name || name.indexOf('*') !== -1) return;
+            if (seen[name]) return;
+            seen[name] = true;
+            if (name !== domain && (name === domain || name.endsWith('.' + domain))) out.push(name);
+          });
+          return out.slice(0, MAX_SUBDOMAINS);
+        })
+        .catch(function () {
+          throw new Error('crt.sh is temporarily unavailable. Try again in a moment.');
+        });
+    }
+
+    var domainIn = document.getElementById('domain');
+    var scanBtn = document.getElementById('scanBtn');
+    var resultsSection = document.getElementById('resultsSection');
+    var progressWrap = document.getElementById('progressWrap');
+    var progressText = document.getElementById('progressText');
+    var progressFill = document.getElementById('progressFill');
+    var summaryBar = document.getElementById('summaryBar');
+    var emptyState = document.getElementById('emptyState');
+    var riskCards = document.getElementById('riskCards');
+    var activeServicesSection = document.getElementById('activeServicesSection');
+    var activeServicesSummary = document.getElementById('activeServicesSummary');
+    var activeServicesList = document.getElementById('activeServicesList');
+    var noCnameSection = document.getElementById('noCnameSection');
+    var noCnameHeading = document.getElementById('noCnameHeading');
+    var noCnameSubtext = document.getElementById('noCnameSubtext');
+    var noCnameList = document.getElementById('noCnameList');
+
+    function setProgress(text, pct) {
+      progressText.textContent = text;
+      progressFill.style.width = (pct == null ? progressFill.style.width : pct) + '%';
+    }
+
+    function runScan() {
+      var domain = normalizeDomain(domainIn.value);
+      if (!domain) {
+        toastShow('Enter a domain');
+        return;
+      }
+      if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(domain)) {
+        toastShow('Enter a valid domain');
+        return;
+      }
+
+      scanBtn.disabled = true;
+      scanBtn.textContent = '⟳ Scanning…';
+      resultsSection.style.display = 'block';
+      progressWrap.style.display = 'block';
+      summaryBar.style.display = 'none';
+      emptyState.style.display = 'none';
+      riskCards.innerHTML = '';
+      activeServicesSection.style.display = 'none';
+      activeServicesList.innerHTML = '';
+      noCnameSection.style.display = 'none';
+      noCnameList.innerHTML = '';
+
+      setProgress('Fetching subdomains from crt.sh…', 0);
+
+      Promise.all([loadFingerprints(), getSubdomainsFromCrtsh(domain)])
+        .then(function (res) {
+          var subdomains = res[1];
+          if (!subdomains.length) {
+            progressWrap.style.display = 'none';
+            emptyState.style.display = 'block';
+            emptyState.className = 'empty-state';
+            emptyState.textContent = 'No subdomains found in certificate logs for this domain. This domain may not have issued SSL certificates for subdomains, or subdomains may be too new to appear.';
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan Domain';
+            return;
+          }
+
+          setProgress('Found ' + subdomains.length + ' subdomains. Checking CNAMEs and A records…', 5);
+
+          var total = subdomains.length;
+          var results = [];
+
+          (async function runLoop() {
+            try {
+              for (var _i = 0; _i < subdomains.length; _i++) {
+                var subdomain = subdomains[_i];
+                var cname = await dohCname(subdomain).catch(function () { return null; });
+                var a = await dohA(subdomain).catch(function () { return null; });
+                console.log(subdomain + ': CNAME=' + (cname || 'none') + ', A=' + (a || 'none'));
+                results.push({ subdomain: subdomain, cname: cname, aRecord: a });
+                var i = _i + 1;
+                var pct = 5 + Math.round((i / total) * 90);
+                setProgress('Checking ' + subdomain + '… (' + i + '/' + total + ')', pct);
+                await new Promise(function (resolve) { setTimeout(resolve, 100); });
+              }
+              finish();
+            } catch (e) {
+              progressWrap.style.display = 'none';
+              emptyState.style.display = 'block';
+              emptyState.className = 'empty-state';
+              emptyState.textContent = e && e.message ? e.message : 'Scan failed.';
+              scanBtn.disabled = false;
+              scanBtn.textContent = 'Scan Domain';
+            }
+          })();
+
+          function finish() {
+            setProgress('Done.', 100);
+            progressWrap.style.display = 'none';
+            summaryBar.style.display = 'block';
+
+            var withCname = results.filter(function (r) { return r.cname; });
+            var risks = [];
+            var safe = [];
+            var activeServices = [];
+            withCname.forEach(function (r) {
+              var fp = matchFingerprint(r.cname);
+              if (fp) {
+                console.log('Matched fingerprint:', JSON.stringify(fp));
+                if (fp.vulnerable) risks.push({ subdomain: r.subdomain, cname: r.cname, service: fp.service, status: fp.status, level: 'high' });
+                else risks.push({ subdomain: r.subdomain, cname: r.cname, service: fp.service, status: fp.status, level: 'medium' });
+              } else {
+                activeServices.push({ subdomain: r.subdomain, cname: r.cname });
+              }
+            });
+
+            var noCname = results.filter(function (r) { return !r.cname && !r.aRecord; }).map(function (r) { return r.subdomain; });
+
+            summaryBar.textContent = subdomains.length + ' subdomains scanned · ' + withCname.length + ' CNAMEs found · ' + risks.length + ' risks detected';
+
+            if (risks.length === 0 && noCname.length === 0) {
+              emptyState.style.display = 'block';
+              emptyState.className = 'empty-state success';
+              emptyState.textContent = '✓ No dangling records detected across ' + subdomains.length + ' subdomains. All CNAMEs point to active or non-vulnerable services.';
+            }
+
+            function humanReadableStatus(status, level) {
+              var s = (status || '').toLowerCase().trim();
+              if (level === 'high') return 'HIGH RISK — service may be claimable';
+              if (s === 'edge case' || s === 'vulnerable: false') return 'Takeover unlikely — verify the service is still claimed';
+              if (s === 'vulnerable: true') return 'HIGH RISK — service may be claimable';
+              if (s === 'not vulnerable') return 'Service appears active — low risk';
+              return status || 'Verify if service is still in use';
+            }
+            risks.forEach(function (r) {
+              var card = document.createElement('div');
+              card.className = 'risk-card ' + (r.level === 'high' ? 'high' : 'medium');
+              var title = r.level === 'high' ? '🔴 HIGH RISK — Vulnerable service' : '🟡 CHECK MANUALLY';
+              var statusLine = humanReadableStatus(r.status, r.level);
+              var bodyExtra = r.level === 'high' ? 'Fix: Delete this DNS record or claim the service.<br>' + escapeHtml(statusLine) : escapeHtml(statusLine);
+              var links = '';
+              if (r.service.indexOf('GitHub') !== -1) links += '<a href="https://github.com" target="_blank" rel="noopener">Claim on GitHub →</a> ';
+              if (r.service.indexOf('Heroku') !== -1) links += '<a href="https://dashboard.heroku.com" target="_blank" rel="noopener">Check on Heroku →</a> ';
+              if (r.service.indexOf('AWS') !== -1 || r.service.indexOf('S3') !== -1) links += '<a href="https://console.aws.amazon.com" target="_blank" rel="noopener">AWS Console →</a> ';
+              if (r.service.indexOf('Netlify') !== -1) links += '<a href="https://app.netlify.com" target="_blank" rel="noopener">Netlify →</a> ';
+              card.innerHTML = '<div class="risk-card-title">' + title + '</div>' +
+                '<div class="risk-card-body">Subdomain: <span class="subdomain">' + escapeHtml(r.subdomain) + '</span><br>CNAME → ' + escapeHtml(r.cname) + '<br>Service: ' + escapeHtml(r.service) + '<br>' + bodyExtra + '</div>' +
+                '<div class="risk-card-actions">' + (links || '<a href="#">Delete DNS record</a>') + '</div>';
+              riskCards.appendChild(card);
+            });
+
+            if (activeServices.length > 0) {
+              activeServicesSection.style.display = 'block';
+              var activeCount = activeServices.length;
+              function updateActiveSummary() {
+                activeServicesSummary.textContent = (activeServicesSection.open ? '▼' : '▶') + ' Active services (' + activeCount + ')';
+              }
+              activeServicesSummary.textContent = '▶ Active services (' + activeCount + ')';
+              activeServicesSection.addEventListener('toggle', updateActiveSummary);
+              activeServicesList.innerHTML = '';
+              activeServices.forEach(function (r) {
+                var div = document.createElement('div');
+                div.className = 'active-service-item';
+                div.textContent = escapeHtml(r.subdomain) + ' → ' + escapeHtml(r.cname) + ' (no risk detected)';
+                activeServicesList.appendChild(div);
+              });
+            }
+
+            if (noCname.length > 0) {
+              noCnameSection.style.display = 'block';
+              noCnameHeading.textContent = 'Inactive subdomains (' + noCname.length + ')';
+              noCnameSubtext.textContent = 'Found in certificate logs but no DNS records detected. Low risk — these subdomains are not currently resolving.';
+              noCnameSubtext.style.display = 'block';
+              noCnameList.innerHTML = '';
+              noCname.forEach(function (s) {
+                var li = document.createElement('li');
+                li.textContent = s;
+                noCnameList.appendChild(li);
+              });
+            }
+
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan Domain';
+          }
+        })
+        .catch(function (err) {
+          progressWrap.style.display = 'none';
+          emptyState.style.display = 'block';
+          emptyState.className = 'empty-state';
+          emptyState.textContent = (err && err.message) ? err.message : 'crt.sh is temporarily unavailable. Try again in a moment.';
+          scanBtn.disabled = false;
+          scanBtn.textContent = 'Scan Domain';
+        });
+    }
+
+    function escapeHtml(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    scanBtn.addEventListener('click', runScan);
+    domainIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') runScan(); });
+    document.getElementById('clearBtn').addEventListener('click', function () {
+      domainIn.value = '';
+      resultsSection.style.display = 'none';
+    });
+    document.getElementById('tryExampleBtn').addEventListener('click', function () {
+      domainIn.value = 'hackerone.com';
+      runScan();
+    });
+
+    var params = new URLSearchParams(location.search);
+    var domainParam = params.get('domain');
+    if (domainParam && domainParam.trim()) {
+      domainIn.value = domainParam.trim();
+      runScan();
+    }
+  })();
+  </script>
+</body>
+</html>

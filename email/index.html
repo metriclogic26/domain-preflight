@@ -4,7 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Email Deliverability Checker — DomainPreflight</title>
+  <meta name="description" content="Check your sending IP reputation against abuse databases and diagnose email headers. Free, no signup, nothing leaves your browser.">
+  <meta name="keywords" content="email deliverability checker, IP reputation check, AbuseIPDB, email header analyzer, spam IP checker, MXToolbox alternative, sending IP blacklist">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MetricLogic">
   <link rel="canonical" href="https://domainpreflight.dev/email/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Email Deliverability Checker — DomainPreflight">
+  <meta property="og:description" content="Check your sending IP reputation and diagnose email headers. No signup. No sending required.">
+  <meta property="og:url" content="https://domainpreflight.dev/email/">
+  <meta property="og:site_name" content="DomainPreflight">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Email Deliverability Checker — DomainPreflight">
+  <meta name="twitter:description" content="IP reputation check + email header analyzer. Free, no signup, nothing leaves your browser.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Email Deliverability Checker",
+    "url": "https://domainpreflight.dev/email/",
+    "description": "Check sending IP reputation and diagnose email headers before sending. Free browser-based tool.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0" }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -357,6 +381,16 @@
       margin-top: 3rem;
     }
     .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-disclaimer {
+      text-align: center;
+      width: 100%;
+      font-size: 11px;
+      color: var(--text2);
+      opacity: 0.6;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
     .footer-links {
       display: flex;
       flex-wrap: wrap;
@@ -368,6 +402,10 @@
     footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
     footer a:hover { color: var(--purple); }
     .footer-meta { text-align: center; font-size: 0.8rem; color: var(--text2); opacity: 0.8; }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; }
+    .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
+    .how-to-use-note { color: var(--text2); font-size: 0.8rem; margin: 0 0 0 1.25rem; opacity: 0.9; }
     .toast {
       position: fixed;
       bottom: 1.5rem;
@@ -396,7 +434,7 @@
         <a href="/">DNS Preflight</a>
         <a href="/email/" class="active">Email</a>
         <a href="/whois/">WHOIS</a>
-        <a href="#" class="disabled" title="Coming soon">Dangling Records</a>
+        <a href="/dangling/">Dangling Records</a>
         <a href="#" class="disabled" title="Coming soon">Typosquat</a>
       </nav>
     </div>
@@ -462,15 +500,27 @@
     </div>
   </main>
 
+  <section class="how-to-use">
+    <div class="how-to-use-label">HOW TO USE</div>
+    <ol class="how-to-use-steps">
+      <li>Enter your mail server's sending IP address</li>
+      <li>Click Run Checks — reputation checked instantly</li>
+      <li>Paste raw email headers in the analyzer below to diagnose delivery issues</li>
+    </ol>
+    <p class="how-to-use-note">To get headers in Gmail: open email → ⋮ → Show original</p>
+  </section>
+
   <footer>
     <div class="footer-inner">
+      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
       <div class="footer-links">
-        <a href="/">← DNS Preflight</a>
-        <span style="color: var(--text2);">|</span>
-        <a href="/whois/">WHOIS / Expiry →</a>
+        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try <a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a></span>
+        <span>
+          <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
+          <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
+          <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+        </span>
       </div>
-      <p class="footer-meta">Part of the DomainPreflight suite — <a href="https://domainpreflight.dev">domainpreflight.dev</a></p>
-      <p class="footer-meta"><a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a> · MIT · <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">github.com/metriclogic26</a></p>
     </div>
   </footer>
 
