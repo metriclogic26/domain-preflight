@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Deliverability Checker — DomainPreflight</title>
+  <link rel="canonical" href="https://domainpreflight.dev/email/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .logo a { color: inherit; text-decoration: none; }
+    .logo-dot { color: var(--purple); }
+    .pill {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-left: 0.5rem;
+      color: var(--text2);
+    }
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    nav a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    nav a.active { color: var(--text); font-weight: 500; }
+    nav a.disabled { cursor: not-allowed; opacity: 0.4; }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero {
+      text-align: center;
+      padding-top: 1.5rem;
+      padding-bottom: 2rem;
+    }
+    .hero-label {
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    .hero-sub {
+      color: var(--text2);
+      font-size: 0.9rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+    }
+    .input-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 640px) {
+      .input-row { grid-template-columns: 1fr; }
+    }
+    .input-wrap label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text2);
+      margin-bottom: 0.35rem;
+    }
+    .input-wrap input {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    .input-wrap input::placeholder { color: var(--text2); opacity: 0.7; }
+    .input-wrap input:focus {
+      outline: none;
+      border-color: var(--purple);
+    }
+    .btn-run {
+      display: block;
+      max-width: 300px;
+      margin: 0.75rem auto 0;
+      width: 100%;
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-run:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-run:disabled { cursor: not-allowed; opacity: 0.8; }
+    .hero-btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--text2);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-pill:focus {
+      outline: none;
+      border-color: var(--border);
+    }
+    .btn-pill:hover { border-color: var(--purple); color: var(--text); }
+    .section-divider {
+      border-top: 1px solid var(--border);
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      padding-top: 1.5rem;
+    }
+    .section-divider-label {
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 1rem;
+    }
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .score-ring-wrap {
+      width: 56px;
+      height: 56px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .score-ring-wrap svg { transform: rotate(-90deg); display: block; }
+    #scoreRing { transition: stroke-dashoffset 0.6s ease-out, stroke 0.3s; }
+    .score-value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .score-label { font-size: 0.9rem; color: var(--text2); }
+    .score-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; }
+    .score-tier { font-size: 0.9rem; font-weight: 500; }
+    .score-tier.clean { color: var(--green); }
+    .score-tier.suspicious { color: var(--orange); }
+    .score-tier.highrisk { color: var(--red); }
+    .whitelist-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .ip-details-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    .ip-details-card .row { margin-bottom: 0.35rem; }
+    .ip-details-card .row:last-child { margin-bottom: 0; }
+    .ip-details-card .key { color: var(--text2); margin-right: 0.5rem; }
+    .abuseipdb-attribution { color: var(--text2); font-size: 0.8rem; margin-top: 1.5rem; }
+    .abuseipdb-attribution a { color: var(--text2); }
+    .abuseipdb-attribution a:hover { color: var(--purple); }
+    .action-cards { display: grid; gap: 1rem; }
+    .action-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+    .action-card.critical { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); }
+    .action-card.warning { background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.3); }
+    .action-card-title { font-weight: 500; margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .action-card-body { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .action-card a {
+      color: var(--purple);
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .action-card a:hover { text-decoration: underline; }
+    .header-analyzer textarea {
+      width: 100%;
+      min-height: 200px;
+      resize: vertical;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .header-analyzer textarea::placeholder { color: var(--text2); }
+    .header-analyzer textarea:focus { outline: none; border-color: var(--purple); }
+    .btn-analyze {
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+    }
+    .btn-analyze:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-analyze:disabled { opacity: 0.8; cursor: not-allowed; }
+    .header-analyzer-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .header-analyzer-btns .btn-analyze,
+    .header-analyzer-btns .btn-pill {
+      height: 36px;
+      line-height: 36px;
+      padding-top: 0;
+      padding-bottom: 0;
+      display: inline-flex;
+      align-items: center;
+    }
+    .header-analyzer-btns .btn-analyze {
+      padding-left: 16px;
+      padding-right: 16px;
+      margin-bottom: 0;
+    }
+    .header-analyzer-btns .btn-pill {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+    .parse-section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .parse-section h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text2);
+      margin-bottom: 0.75rem;
+    }
+    .parse-section .content { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+    .parse-section .content .pass { color: var(--green); }
+    .parse-section .content .fail { color: var(--red); }
+    .parse-section .content .none { color: var(--text2); }
+    .timeline-item { margin-bottom: 0.35rem; }
+    .btn-run-ip {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: var(--purple);
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .btn-run-ip:hover { filter: brightness(1.2); }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 1.5rem;
+      background: var(--bg2);
+      margin-top: 3rem;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    footer a:hover { color: var(--purple); }
+    .footer-meta { text-align: center; font-size: 0.8rem; color: var(--text2); opacity: 0.8; }
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight<span class="logo-dot">.</span></a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/" class="active">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="#" class="disabled" title="Coming soon">Dangling Records</a>
+        <a href="#" class="disabled" title="Coming soon">Typosquat</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-label">EMAIL DELIVERABILITY</div>
+      <h1>Is your IP clean before you send?</h1>
+      <p class="hero-sub">Check your sending IP reputation and diagnose email headers. No sending required. No signup.</p>
+    </section>
+
+    <div class="input-card">
+      <div class="input-row">
+        <div class="input-wrap">
+          <label for="ip">Sending IP (required)</label>
+          <input type="text" id="ip" placeholder="203.0.113.42 — your mail server IP" autocomplete="off">
+        </div>
+        <div class="input-wrap">
+          <label for="domain">Domain (optional)</label>
+          <input type="text" id="domain" placeholder="yourdomain.com — for VPS provider detection" autocomplete="off">
+        </div>
+      </div>
+      <button type="button" class="btn-run" id="runBtn">Run Checks</button>
+      <div class="hero-btns">
+        <button type="button" class="btn-pill" id="clearBtn">× Clear</button>
+        <button type="button" class="btn-pill" id="tryExampleBtn">Try an example</button>
+      </div>
+    </div>
+
+    <div id="iprep-results" style="display: none;">
+      <div class="score-row">
+        <div class="score-ring-wrap">
+          <svg viewBox="0 0 36 36" width="56" height="56">
+            <circle cx="18" cy="18" r="16" fill="none" stroke="var(--bg3)" stroke-width="3"/>
+            <circle id="scoreRing" cx="18" cy="18" r="16" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round"
+              stroke-dasharray="100.5" stroke-dashoffset="100.5"/>
+          </svg>
+          <span class="score-value" id="scoreValue">0</span>
+        </div>
+        <div class="score-meta">
+          <span class="score-label" id="scoreLabel">Reputation score</span>
+          <span class="score-tier" id="scoreTier"></span>
+          <span class="whitelist-badge" id="whitelistBadge" style="display: none;">Whitelisted</span>
+        </div>
+      </div>
+      <div id="ipDetailsCard" class="ip-details-card" style="display: none;"></div>
+      <div class="action-cards" id="actionCards"></div>
+      <p class="abuseipdb-attribution">IP reputation data by <a href="https://www.abuseipdb.com" target="_blank" rel="noopener">AbuseIPDB</a></p>
+    </div>
+
+    <div class="section-divider">
+      <div class="section-divider-label">EMAIL HEADER ANALYZER</div>
+    </div>
+
+    <div class="header-analyzer">
+      <textarea id="headerInput" placeholder="Paste raw email headers here...&#10;(In Gmail: ⋮ → Show original. In Outlook: File → Properties)"></textarea>
+      <div class="header-analyzer-btns">
+        <button type="button" class="btn-analyze" id="analyzeBtn">Analyze Headers</button>
+        <button type="button" class="btn-pill" id="clearHeadersBtn">× Clear</button>
+      </div>
+      <div id="headerResults" style="display: none;"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="/">← DNS Preflight</a>
+        <span style="color: var(--text2);">|</span>
+        <a href="/whois/">WHOIS / Expiry →</a>
+      </div>
+      <p class="footer-meta">Part of the DomainPreflight suite — <a href="https://domainpreflight.dev">domainpreflight.dev</a></p>
+      <p class="footer-meta"><a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a> · MIT · <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">github.com/metriclogic26</a></p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const WORKER_URL = 'https://dnsbl-check.metriclogicllc.workers.dev';
+    const VPS_ISP_MATCHES = [
+      { name: 'Hetzner', match: 'Hetzner', url: 'https://docs.hetzner.com/cloud/servers/faq/#why-can-t-i-send-any-mails-from-my-server' },
+      { name: 'DigitalOcean', match: 'DigitalOcean', url: 'https://www.digitalocean.com/community/questions/port-25-blocked' },
+      { name: 'Vultr', match: 'Vultr', url: 'https://www.vultr.com/docs/why-cant-i-send-emails-from-my-vps/' }
+    ];
+
+    function toastShow(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { toast.classList.remove('show'); }, 2500);
+    }
+
+    function isIPv4(ip) {
+      const parts = ip.trim().split('.');
+      if (parts.length !== 4) return false;
+      return parts.every(function (p) {
+        const n = parseInt(p, 10);
+        return n >= 0 && n <= 255 && String(n) === p;
+      });
+    }
+
+    var scoreRing = document.getElementById('scoreRing');
+    var scoreValue = document.getElementById('scoreValue');
+    var scoreLabel = document.getElementById('scoreLabel');
+    var scoreTier = document.getElementById('scoreTier');
+    var whitelistBadge = document.getElementById('whitelistBadge');
+    var ipDetailsCard = document.getElementById('ipDetailsCard');
+    var actionCards = document.getElementById('actionCards');
+    var iprepResults = document.getElementById('iprep-results');
+    var runBtn = document.getElementById('runBtn');
+    var ipIn = document.getElementById('ip');
+    var domainIn = document.getElementById('domain');
+
+    var CIRCUMFERENCE = 2 * Math.PI * 16;
+
+    function detectVpsFromIsp(isp) {
+      if (!isp || typeof isp !== 'string') return null;
+      var s = isp;
+      for (var i = 0; i < VPS_ISP_MATCHES.length; i++) {
+        if (s.indexOf(VPS_ISP_MATCHES[i].match) !== -1) return VPS_ISP_MATCHES[i];
+      }
+      return null;
+    }
+
+    function getTier(abuseScore) {
+      if (abuseScore <= 10) return { key: 'clean', label: 'Clean', color: 'var(--green)' };
+      if (abuseScore <= 50) return { key: 'suspicious', label: 'Suspicious', color: 'var(--orange)' };
+      return { key: 'highrisk', label: 'High risk', color: 'var(--red)' };
+    }
+
+    function animateScore(endScore, isWhitelisted, callback) {
+      scoreTier.className = 'score-tier ' + getTier(endScore).key;
+      scoreTier.textContent = getTier(endScore).label;
+      scoreRing.setAttribute('stroke', getTier(endScore).color);
+      whitelistBadge.style.display = isWhitelisted ? 'inline-block' : 'none';
+      var start = 0;
+      var duration = 600;
+      var startTime = null;
+      function step(now) {
+        if (!startTime) startTime = now;
+        var t = Math.min((now - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - t, 2);
+        var current = Math.round(start + (endScore - start) * eased);
+        scoreValue.textContent = current;
+        var offset = CIRCUMFERENCE - (current / 100) * CIRCUMFERENCE;
+        scoreRing.setAttribute('stroke-dashoffset', offset);
+        if (t < 1) requestAnimationFrame(step);
+        else if (callback) callback();
+      }
+      requestAnimationFrame(step);
+    }
+
+    function runIpChecks() {
+      var ip = ipIn.value.trim();
+      if (!ip) {
+        toastShow('Enter a sending IP');
+        return;
+      }
+      if (!isIPv4(ip)) {
+        toastShow('Enter a valid IPv4 address');
+        return;
+      }
+      runBtn.disabled = true;
+      runBtn.textContent = '⟳ Checking…';
+      iprepResults.style.display = 'block';
+      actionCards.innerHTML = '';
+      ipDetailsCard.style.display = 'none';
+      ipDetailsCard.innerHTML = '';
+      scoreTier.textContent = '';
+      scoreTier.className = 'score-tier';
+      whitelistBadge.style.display = 'none';
+
+      fetch(WORKER_URL + '?ip=' + encodeURIComponent(ip))
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var abuseScore = Math.min(100, Math.max(0, Number(data.abuseScore) || 0));
+          var totalReports = Number(data.totalReports) || 0;
+          var countryCode = data.countryCode != null ? String(data.countryCode) : '—';
+          var isp = data.isp != null ? String(data.isp) : '—';
+          var usageType = data.usageType != null ? String(data.usageType) : '—';
+          var domain = data.domain != null ? String(data.domain) : '—';
+          var isWhitelisted = !!data.isWhitelisted;
+
+          animateScore(abuseScore, isWhitelisted);
+
+          ipDetailsCard.innerHTML =
+            '<div class="row"><span class="key">ISP:</span>' + escapeHtml(isp) + '</div>' +
+            '<div class="row"><span class="key">Usage type:</span>' + escapeHtml(usageType) + '</div>' +
+            '<div class="row"><span class="key">Country:</span>' + escapeHtml(countryCode) + '</div>' +
+            '<div class="row"><span class="key">Domain:</span>' + escapeHtml(domain) + '</div>';
+          ipDetailsCard.style.display = 'block';
+
+          var abuseUrl = 'https://www.abuseipdb.com/check/' + encodeURIComponent(ip);
+          if (abuseScore > 50) {
+            var ac = document.createElement('div');
+            ac.className = 'action-card critical';
+            ac.innerHTML = '<div class="action-card-title">🔴 HIGH ABUSE SCORE</div>' +
+              '<div class="action-card-body">This IP has been reported ' + totalReports + ' times for malicious activity. Mail from this IP will likely be rejected or spam-foldered.</div>' +
+              '<a href="' + abuseUrl + '" target="_blank" rel="noopener">Check full report on AbuseIPDB →</a>';
+            actionCards.appendChild(ac);
+          } else if (abuseScore >= 11 && abuseScore <= 50) {
+            var ac2 = document.createElement('div');
+            ac2.className = 'action-card warning';
+            ac2.innerHTML = '<div class="action-card-title">🟡 SUSPICIOUS IP</div>' +
+              '<div class="action-card-body">This IP has ' + totalReports + ' abuse reports. Some mail providers may flag it. Monitor closely before sending.</div>' +
+              '<a href="' + abuseUrl + '" target="_blank" rel="noopener">Check full report on AbuseIPDB →</a>';
+            actionCards.appendChild(ac2);
+          }
+
+          if (abuseScore <= 10 && usageType.toLowerCase().indexOf('data center') !== -1) {
+            var dc = document.createElement('div');
+            dc.className = 'action-card warning';
+            dc.innerHTML = '<div class="action-card-title">🟡 DATA CENTER IP DETECTED</div>' +
+              '<div class="action-card-body">Your IP is identified as a data center/hosting IP. Some providers apply stricter filtering to hosting IPs regardless of reputation score.</div>';
+            actionCards.appendChild(dc);
+          }
+
+          var vps = detectVpsFromIsp(isp);
+          if (vps) {
+            var vc = document.createElement('div');
+            vc.className = 'action-card warning';
+            vc.innerHTML = '<div class="action-card-title">🟡 VPS PROVIDER WARNING</div>' +
+              '<div class="action-card-body">' + vps.name + ' often blocks outbound port 25 on new accounts. Your mail server may be silently dropping outbound email.</div>' +
+              '<a href="' + vps.url + '" target="_blank" rel="noopener">Check: ' + vps.name + ' port 25 policy →</a>';
+            actionCards.appendChild(vc);
+          }
+
+          runBtn.disabled = false;
+          runBtn.textContent = 'Run Checks';
+        })
+        .catch(function () {
+          runBtn.disabled = false;
+          runBtn.textContent = 'Run Checks';
+          toastShow('Reputation check failed');
+        });
+    }
+
+    function escapeHtml(s) {
+      var div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    document.getElementById('runBtn').addEventListener('click', runIpChecks);
+    ipIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') runIpChecks(); });
+
+    document.getElementById('clearBtn').addEventListener('click', function () {
+      ipIn.value = '';
+      domainIn.value = '';
+      iprepResults.style.display = 'none';
+      actionCards.innerHTML = '';
+      ipDetailsCard.innerHTML = '';
+      ipDetailsCard.style.display = 'none';
+      scoreValue.textContent = '0';
+      scoreTier.textContent = '';
+      scoreTier.className = 'score-tier';
+      whitelistBadge.style.display = 'none';
+      scoreRing.setAttribute('stroke', 'var(--green)');
+      scoreRing.setAttribute('stroke-dashoffset', String(CIRCUMFERENCE));
+    });
+
+    document.getElementById('tryExampleBtn').addEventListener('click', function () {
+      ipIn.value = '198.211.123.40';
+      runIpChecks();
+    });
+    domainIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') runIpChecks(); });
+
+    function isPrivateOrLoopback(ip) {
+      if (!ip) return true;
+      if (/^127\./.test(ip)) return true;
+      if (/^10\./.test(ip)) return true;
+      if (/^192\.168\./.test(ip)) return true;
+      if (/^172\.(1[6-9]|2\d|3[01])\./.test(ip)) return true;
+      return false;
+    }
+
+    function parseHeaders(raw) {
+      var lines = raw.split(/\r?\n/);
+      var folded = [];
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        if (/^\s/.test(line) && folded.length > 0) {
+          folded[folded.length - 1] += ' ' + line.trim();
+        } else {
+          folded.push(line);
+        }
+      }
+      var received = [];
+      var authResultsList = [];
+      var spamScore = '';
+      var spamStatus = '';
+      var messageId = '';
+      var from = '';
+      var replyTo = '';
+      for (var j = 0; j < folded.length; j++) {
+        var m = folded[j].match(/^([\w-]+):\s*(.*)/i);
+        if (m) {
+          var key = m[1].toLowerCase();
+          var val = m[2];
+          if (key === 'received') received.push(val);
+          else if (key === 'authentication-results') authResultsList.push(val);
+          else if (key === 'x-spam-score') spamScore = val;
+          else if (key === 'x-spam-status') spamStatus = val;
+          else if (key === 'message-id') messageId = val;
+          else if (key === 'from') from = val;
+          else if (key === 'reply-to') replyTo = val;
+        }
+      }
+      var authResults = authResultsList.join(' ');
+
+      var firstExternalIp = null;
+      for (var k = 0; k < received.length && !firstExternalIp; k++) {
+        var rec = received[k];
+        var bracketIpRe = /\[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]/g;
+        var bracketMatch;
+        while ((bracketMatch = bracketIpRe.exec(rec)) !== null) {
+          var ip = bracketMatch[1];
+          if (!isPrivateOrLoopback(ip)) {
+            firstExternalIp = ip;
+            break;
+          }
+        }
+      }
+
+      return {
+        received: received.reverse(),
+        authResults: authResults,
+        spamScore: spamScore,
+        spamStatus: spamStatus,
+        messageId: messageId,
+        from: from,
+        replyTo: replyTo,
+        firstIp: firstExternalIp
+      };
+    }
+
+    function analyzeHeaders() {
+      var raw = document.getElementById('headerInput').value.trim();
+      if (!raw) {
+        toastShow('Paste email headers first');
+        return;
+      }
+      var parsed = parseHeaders(raw);
+      var out = document.getElementById('headerResults');
+      out.style.display = 'block';
+      out.innerHTML = '';
+
+      function addSection(title, html) {
+        var sec = document.createElement('div');
+        sec.className = 'parse-section';
+        sec.innerHTML = '<h3>' + title + '</h3><div class="content">' + html + '</div>';
+        out.appendChild(sec);
+      }
+
+      if (parsed.received.length) {
+        var timeline = parsed.received.map(function (r) { return '<div class="timeline-item">' + r.replace(/</g, '&lt;') + '</div>'; }).join('');
+        addSection('Delivery path', timeline);
+      } else {
+        addSection('Delivery path', '<span class="none">No Received headers found</span>');
+      }
+
+      if (parsed.authResults) {
+        var ar = parsed.authResults;
+        var spf = ar.match(/spf=(\w+)/i) ? (ar.match(/spf=(\w+)/i)[1].toLowerCase() === 'pass' ? '<span class="pass">✓ pass</span>' : '<span class="fail">✗ ' + ar.match(/spf=(\w+)/i)[1] + '</span>') : '<span class="none">~ none</span>';
+        var dkim = ar.match(/dkim=(\w+)/i) ? (ar.match(/dkim=(\w+)/i)[1].toLowerCase() === 'pass' ? '<span class="pass">✓ pass</span>' : '<span class="fail">✗ ' + ar.match(/dkim=(\w+)/i)[1] + '</span>') : '<span class="none">~ none</span>';
+        var dmarc = ar.match(/dmarc=(\w+)/i) ? (ar.match(/dmarc=(\w+)/i)[1].toLowerCase() === 'pass' ? '<span class="pass">✓ pass</span>' : '<span class="fail">✗ ' + ar.match(/dmarc=(\w+)/i)[1] + '</span>') : '<span class="none">~ none</span>';
+        addSection('Authentication results', 'SPF: ' + spf + ' &middot; DKIM: ' + dkim + ' &middot; DMARC: ' + dmarc);
+      } else {
+        addSection('Authentication results', '<span class="none">No Authentication-Results header</span>');
+      }
+
+      if (parsed.spamScore || parsed.spamStatus) {
+        addSection('Spam score', (parsed.spamScore ? 'X-Spam-Score: ' + parsed.spamScore + ' ' : '') + (parsed.spamStatus ? 'X-Spam-Status: ' + parsed.spamStatus : ''));
+      }
+
+      if (parsed.firstIp) {
+        var safeIpDisplay = parsed.firstIp.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+        var safeIpAttr = parsed.firstIp.replace(/"/g, '&quot;');
+        var ipHtml = 'Sending server IP: ' + safeIpDisplay + ' <button type="button" class="btn-run-ip" data-ip="' + safeIpAttr + '">Run blocklist check on this IP →</button>';
+        addSection('Sending server', ipHtml);
+        var btn = out.querySelector('.btn-run-ip');
+        if (btn) btn.addEventListener('click', function () {
+          ipIn.value = this.getAttribute('data-ip');
+          runIpChecks();
+        });
+      } else {
+        addSection('Sending server', '<span class="none">Could not extract IP from Received headers</span>');
+      }
+
+      if (parsed.messageId) {
+        addSection('Message-ID', parsed.messageId.replace(/</g, '&lt;'));
+      } else {
+        addSection('Message-ID', '<span class="fail">Missing — can be a spam signal</span>');
+      }
+
+      if (parsed.from && parsed.replyTo) {
+        var fromDomain = (parsed.from.match(/@([^\s>]+)/) || [])[1] || '';
+        var replyDomain = (parsed.replyTo.match(/@([^\s>]+)/) || [])[1] || '';
+        if (fromDomain && replyDomain && fromDomain.toLowerCase() !== replyDomain.toLowerCase()) {
+          addSection('Reply-To mismatch', '<span class="fail">Reply-To domain differs from From domain — possible phishing signal</span>');
+        }
+      }
+    }
+
+    document.getElementById('analyzeBtn').addEventListener('click', analyzeHeaders);
+    document.getElementById('clearHeadersBtn').addEventListener('click', function () {
+      document.getElementById('headerInput').value = '';
+      var out = document.getElementById('headerResults');
+      out.innerHTML = '';
+      out.style.display = 'none';
+    });
+
+    var params = new URLSearchParams(location.search);
+    var ipParam = params.get('ip');
+    if (ipParam && ipParam.trim()) {
+      ipIn.value = ipParam.trim();
+      runIpChecks();
+    }
+  })();
+  </script>
+</body>
+</html>
