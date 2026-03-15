@@ -78,8 +78,7 @@
       font-weight: 600;
       font-size: 1rem;
     }
-    .logo a { color: inherit; text-decoration: none; }
-    .logo-dot { color: var(--purple); }
+    .logo a { color: var(--purple); text-decoration: none; }
     .pill {
       font-size: 0.65rem;
       padding: 0.2rem 0.5rem;
@@ -394,10 +393,9 @@
     .footer-links {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 0.75rem;
     }
     footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
     footer a:hover { color: var(--purple); }
@@ -427,7 +425,7 @@
   <header>
     <div class="header-inner">
       <div class="logo">
-        <a href="/">DomainPreflight<span class="logo-dot">.</span></a>
+        <a href="/">DomainPreflight.</a>
         <span class="pill">BETA</span>
       </div>
       <nav>

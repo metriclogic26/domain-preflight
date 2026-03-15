@@ -78,7 +78,7 @@
       font-weight: 600;
       font-size: 1rem;
     }
-    .logo-dot { color: var(--purple); }
+    .logo a { color: var(--purple); text-decoration: none; }
     .pill {
       font-size: 0.65rem;
       padding: 0.2rem 0.5rem;
@@ -98,7 +98,12 @@
       font-size: 0.85rem;
     }
     nav a.active { color: var(--text); font-weight: 500; }
-    main { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+    nav a.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 1rem; }
     .hero {
       text-align: center;
       padding-top: 1.5rem;
@@ -313,7 +318,7 @@
     }
     footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
     footer a:hover { color: var(--purple); }
-    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; margin-top: 2rem; }
     .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
     .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
     .toast {
@@ -340,7 +345,7 @@
   <header>
     <div class="header-inner">
       <div class="logo">
-        <a href="/" style="color: inherit; text-decoration: none;">DomainPreflight.dev<span class="logo-dot">.</span></a>
+        <a href="/">DomainPreflight.</a>
         <span class="pill">BETA</span>
       </div>
       <nav>
