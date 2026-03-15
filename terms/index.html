@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms — DomainPreflight</title>
+  <meta name="description" content="DomainPreflight terms of use. Informational tools only. No warranty.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MetricLogic">
+  <link rel="canonical" href="https://domainpreflight.dev/terms/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    nav a:hover { color: var(--text); }
+    nav a.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .page-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 1.5rem; }
+    .doc-section { margin-bottom: 1.5rem; }
+    .doc-section h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+    .doc-section p { color: var(--text2); font-size: 0.9rem; line-height: 1.6; margin-bottom: 0.5rem; }
+    .doc-section p:last-child { margin-bottom: 0; }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      background: var(--bg2);
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    footer a:hover { color: var(--text2); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight.</a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="#" class="disabled" title="Coming soon">Typosquat</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-label">TERMS</div>
+    <h1>Terms of use</h1>
+
+    <div class="doc-section">
+      <h2>Informational use only</h2>
+      <p>DomainPreflight tools are provided for informational purposes only. “Recommended” or suggested configuration is not a guaranteed fix. Always verify in your own environment and test in staging before deploying to production.</p>
+    </div>
+
+    <div class="doc-section">
+      <h2>No liability</h2>
+      <p>MetricLogic is not liable for any outages, misconfigurations, or security incidents resulting from use of these tools or from generated configs. Use at your own risk.</p>
+    </div>
+
+    <div class="doc-section">
+      <h2>Open source</h2>
+      <p>DomainPreflight is MIT licensed. Source: <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">github.com/metriclogic26/domain-preflight</a>.</p>
+    </div>
+
+    <div class="doc-section">
+      <h2>Feedback / questions</h2>
+      <p><a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Open an issue on GitHub →</a></p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try <a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></span>
+        <span>
+          <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
+          <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
+          <a href="https://github.com/metriclogic26/domain-preflight/issues/new/new" target="_blank" rel="noopener">Report issue →</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
