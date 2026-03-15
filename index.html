@@ -1360,16 +1360,28 @@ Value: ${valueText}`;
             }
           }
         } else {
-          actions.push(
-            actionCard(
-              'info',
-              provider.name + ' detected — verify alignment',
-              provider.instructions || '',
-              null,
-              provider.dashboard_url,
-              provider.dashboard_label
-            )
-          );
+          if (provider.id === 'amazon_ses') {
+            const sesCard = document.createElement('div');
+            sesCard.className = 'action-card info';
+            sesCard.innerHTML = `
+              <div class="action-card-title">ℹ ${escapeHtml('Amazon SES — verify DKIM in console')}</div>
+              <div class="action-card-body">${escapeHtml("SES uses account-specific DKIM tokens that can't be checked automatically. If you've already set up the 3 CNAME records from your SES console, you're all set.")}</div>
+              <a href="https://console.aws.amazon.com/ses/home#/verified-identities" target="_blank" rel="noopener" class="btn-dashboard">Go to AWS SES → Verified identities →</a>
+              <div class="action-card-helper" style="color: var(--text2); font-size: 0.85rem; margin-top: 0.5rem;">Look for: Authentication tab → DKIM signatures → 'Verified' ✓</div>
+            `;
+            actions.push(sesCard);
+          } else {
+            actions.push(
+              actionCard(
+                'info',
+                provider.name + ' detected — verify alignment',
+                provider.instructions || '',
+                null,
+                provider.dashboard_url,
+                provider.dashboard_label
+              )
+            );
+          }
         }
       }
 
