@@ -1321,42 +1321,54 @@ function isIPv6(ip) {
           for (const c of checkable) {
             const host = String(c.cname_host || '').replace('{domain}', domain);
             let exists = false;
-            try {
-              const j = await doh(host, 'CNAME');
-              const ans = (j.Answer || []).some(a => a.type === 5);
-              exists = ans;
-            } catch (_) {
-              exists = false;
-            }
-            if (exists) {
-              actions.push(
-                actionCard(
-                  'info',
-                  '✓ ' + c.label + ' configured',
-                  'Your provider\'s DKIM CNAME is correctly set — alignment looks good.',
-                  null,
-                  null,
-                  null
-                )
-              );
+            if (provider.id === 'google_workspace') {
+              const gwsCard = document.createElement('div');
+              gwsCard.className = 'action-card info';
+              gwsCard.innerHTML = `
+                <div class="action-card-title">ℹ ${escapeHtml('Google Workspace — verify DKIM in Google Admin')}</div>
+                <div class="action-card-body">${escapeHtml("Google Workspace DKIM uses a selector you configured in Google Admin. If you've already generated and published the TXT record, you're set.")}</div>
+                <a href="https://admin.google.com/ac/apps/gmail/authenticateemail" target="_blank" rel="noopener" class="btn-dashboard">Open Google Admin → Apps → Gmail → Authenticate email →</a>
+                <div class="action-card-helper" style="color: var(--text2); font-size: 0.85rem; margin-top: 0.5rem;">Look for: Status → Authenticating email ✓</div>
+              `;
+              actions.push(gwsCard);
             } else {
-              allAlignmentCnamesPassed = false;
-              addPenalty(-15);
-              const hostText = String(c.cname_host || '').replace('{domain}', domain);
-              const valueText = String(c.cname_value || '').replace('{domain}', domain);
-              const fix = `Add CNAME record:
+              try {
+                const j = await doh(host, 'CNAME');
+                const ans = (j.Answer || []).some(a => a.type === 5);
+                exists = ans;
+              } catch (_) {
+                exists = false;
+              }
+              if (exists) {
+                actions.push(
+                  actionCard(
+                    'info',
+                    '✓ ' + c.label + ' configured',
+                    'Your provider\'s DKIM CNAME is correctly set — alignment looks good.',
+                    null,
+                    null,
+                    null
+                  )
+                );
+              } else {
+                allAlignmentCnamesPassed = false;
+                addPenalty(-15);
+                const hostText = String(c.cname_host || '').replace('{domain}', domain);
+                const valueText = String(c.cname_value || '').replace('{domain}', domain);
+                const fix = `Add CNAME record:
 Host: ${hostText}
 Value: ${valueText}`;
-              actions.push(
-                actionCard(
-                  'critical',
-                  provider.name + ' DKIM alignment missing',
-                  provider.instructions || '',
-                  fix,
-                  provider.dashboard_url,
-                  provider.dashboard_label
-                )
-              );
+                actions.push(
+                  actionCard(
+                    'critical',
+                    provider.name + ' DKIM alignment missing',
+                    provider.instructions || '',
+                    fix,
+                    provider.dashboard_url,
+                    provider.dashboard_label
+                  )
+                );
+              }
             }
           }
         } else {
