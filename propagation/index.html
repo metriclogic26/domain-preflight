@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNS Propagation Checker — DomainPreflight</title>
+  <meta name="description" content="See if your DNS has propagated globally. Check your domain's A/AAAA/MX/TXT/CNAME records across 8 public resolvers simultaneously. No signup. Nothing leaves your browser.">
+  <meta name="keywords" content="DNS propagation checker, DoH, A record, AAAA record, MX record, TXT record, CNAME record, DomainPreflight">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MetricLogic">
+  <link rel="canonical" href="https://domainpreflight.dev/propagation/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DNS Propagation Checker — DomainPreflight">
+  <meta property="og:description" content="See if your DNS has propagated globally. Check your domain's DNS records across 8 public resolvers simultaneously.">
+  <meta property="og:url" content="https://domainpreflight.dev/propagation/">
+  <meta property="og:site_name" content="DomainPreflight">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="DNS Propagation Checker — DomainPreflight">
+  <meta name="twitter:description" content="See if your DNS has propagated globally.">
+  <script type="application/ld+json">
+  {\"@context\":\"https://schema.org\",\"@type\":\"WebApplication\",\"name\":\"DNS Propagation Checker\",\"url\":\"https://domainpreflight.dev/propagation/\",\"description\":\"See if your DNS has propagated globally across multiple public resolvers.\",\"applicationCategory\":\"DeveloperApplication\",\"operatingSystem\":\"Any\",\"offers\":{\"@type\":\"Offer\",\"price\":\"0\"}}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+      --muted: var(--text2);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    nav a.active { color: var(--text); font-weight: 500; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero { text-align: center; padding-top: 1.5rem; padding-bottom: 1rem; }
+    .hero-label { font-size: 1.1rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.75rem; }
+    .hero h1 { font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    .hero-sub { color: var(--text2); font-size: 0.9rem; max-width: 780px; margin: 0 auto; }
+
+    .input-card {
+      margin-top: 1.5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .input-row {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 640px) {
+      .input-row { grid-template-columns: 1fr; }
+    }
+    .input-wrap label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text2);
+      margin-bottom: 0.35rem;
+    }
+    .input-wrap input, .input-wrap select {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    .input-wrap input::placeholder { color: var(--text2); opacity: 0.7; }
+    .input-wrap input:focus, .input-wrap select:focus { outline: none; border-color: var(--purple); }
+
+    .btn-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-run {
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-run:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-run:disabled { cursor: not-allowed; opacity: 0.8; }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--text2);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-pill:hover { border-color: var(--purple); color: var(--text); }
+
+    .results-section { margin-top: 2rem; display: none; }
+    .consensus-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .consensus-title {
+      font-size: 0.95rem;
+      color: var(--text2);
+      margin-bottom: 0.75rem;
+    }
+    .consensus-message {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .consensus-message.green { color: var(--green); }
+    .consensus-message.orange { color: var(--orange); }
+    .consensus-message.red { color: var(--red); }
+
+    .progress-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .progress-bar {
+      flex: 1;
+      min-width: 220px;
+      height: 10px;
+      background: var(--bg3);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--red);
+      transition: width 0.25s ease;
+    }
+
+    .progress-fill.red { background: var(--red); }
+    .progress-fill.orange { background: var(--orange); }
+    .progress-fill.green { background: var(--green); }
+
+    .diff-details {
+      margin-top: 0.6rem;
+      font-size: 0.85rem;
+      color: var(--text2);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .table-wrap { overflow-x: auto; }
+    table.propagation-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 860px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .propagation-table th {
+      background: #1A1E2E;
+      color: #8a8fb5;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .propagation-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #1E2236;
+      vertical-align: top;
+      color: var(--text2);
+    }
+    .status-propagated { color: #22C55E; font-weight: 700; }
+    .status-not-propagated { color: #EF4444; font-weight: 700; }
+    .status-timeout { color: #F97316; font-weight: 700; }
+
+    footer { border-top: none; padding: 0; background: var(--bg2); margin-top: 3rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.5rem; }
+    .footer-bar {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--text2);
+    }
+    .footer-bar-left, .footer-bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text2); text-decoration: underline; }
+    .footer-disclaimer {
+      text-align: center;
+      width: 100%;
+      font-size: 11px;
+      color: var(--text2);
+      opacity: 0.6;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight.</a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/" class="active">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-label">DNS PROPAGATION</div>
+      <h1>See if your DNS has propagated globally.</h1>
+      <p class="hero-sub">Check your domain's DNS records across 8 public resolvers simultaneously. No signup. Nothing leaves your browser.</p>
+    </section>
+
+    <div class="input-card">
+      <div class="input-row">
+        <div class="input-wrap">
+          <label for="domain">Domain</label>
+          <input type="text" id="domain" placeholder="example.com" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
+        </div>
+        <div class="input-wrap">
+          <label for="recordType">Record type</label>
+          <select id="recordType">
+            <option value="A">A</option>
+            <option value="AAAA">AAAA</option>
+            <option value="MX">MX</option>
+            <option value="TXT">TXT</option>
+            <option value="CNAME">CNAME</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn-run" id="checkBtn">Check Propagation →</button>
+        <button type="button" class="btn-pill" id="tryExampleBtn">Try an example</button>
+      </div>
+    </div>
+
+    <section class="results-section" id="resultsSection">
+      <div class="consensus-wrap">
+        <div class="consensus-title" id="consensusTitle">—</div>
+        <div class="progress-row">
+          <div class="progress-bar">
+            <div class="progress-fill red" id="progressFill"></div>
+          </div>
+        </div>
+        <div class="consensus-message red" id="consensusMessage">Still propagating</div>
+        <div class="diff-details" id="diffDetails" style="display:none;"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="propagation-table" id="resultsTable">
+          <thead>
+            <tr>
+              <th>Resolver</th>
+              <th>IP</th>
+              <th>Status</th>
+              <th>Response</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+
+      <p class="abuseipdb-attribution" style="color: var(--text2); font-size: 0.85rem; margin-top: 1rem; text-align: left;">
+        Checks run via Cloudflare and Google DoH — the only public resolvers with open browser CORS support.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+    </div>
+    <div class="footer-bar">
+      <div class="footer-bar-left">
+        <span>DomainPreflight by MetricLogic ·</span>
+        <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a>
+        <span>·</span>
+        <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a>
+        <span>·</span>
+        <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a>
+      </div>
+      <div class="footer-bar-right">
+        <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a>
+        <span>·</span>
+        <span>MIT Licensed</span>
+        <span>·</span>
+        <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    var toast = document.getElementById('toast');
+    function toastShow(msg) {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(function () { toast.classList.remove('show'); }, 2500);
+    }
+
+    function escapeHtml(s) {
+      var div = document.createElement('div');
+      div.textContent = s == null ? '' : String(s);
+      return div.innerHTML;
+    }
+
+    var domainIn = document.getElementById('domain');
+    var recordTypeSel = document.getElementById('recordType');
+    var checkBtn = document.getElementById('checkBtn');
+    var tryExampleBtn = document.getElementById('tryExampleBtn');
+
+    var resultsSection = document.getElementById('resultsSection');
+    var consensusTitle = document.getElementById('consensusTitle');
+    var progressFill = document.getElementById('progressFill');
+    var consensusMessage = document.getElementById('consensusMessage');
+    var diffDetails = document.getElementById('diffDetails');
+    var resultsBody = document.getElementById('resultsBody');
+
+    var RESOLVERS = [
+      {
+        name: 'Cloudflare',
+        url: 'https://cloudflare-dns.com/dns-query',
+        ip: '1.1.1.1'
+      },
+      {
+        name: 'Cloudflare (Secondary)',
+        url: 'https://1.0.0.1/dns-query',
+        ip: '1.0.0.2'
+      },
+      {
+        name: 'Google',
+        url: 'https://dns.google/resolve',
+        ip: '8.8.8.8'
+      },
+      {
+        name: 'Google (Secondary)',
+        url: 'https://dns.google/resolve',
+        ip: '8.8.4.4'
+      },
+      {
+        name: 'Cloudflare Families',
+        url: 'https://family.cloudflare-dns.com/dns-query',
+        ip: '1.1.1.3'
+      }
+    ];
+
+    function normalizeRecordValue(v) {
+      if (v == null) return '';
+      var s = String(v).trim();
+      // Common formatting: CNAMEs often end with a trailing dot.
+      if (s.endsWith('.')) s = s.slice(0, -1);
+      return s;
+    }
+
+    async function queryResolver(resolver, domain, recordType) {
+      var start = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function () { controller.abort(); }, 5000);
+
+      try {
+        var url = resolver.url + '?name=' + encodeURIComponent(domain) + '&type=' + encodeURIComponent(recordType);
+        var res = await fetch(url, {
+          signal: controller.signal,
+          headers: { 'Accept': 'application/dns-json' }
+        });
+        var json = await res.json().catch(function () { return null; });
+        var elapsedMs = Math.round(((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()) - start);
+
+        if (!json || !json.Answer) {
+          return {
+            name: resolver.name,
+            value: 'No record',
+            status: 'not_propagated',
+            ms: elapsedMs
+          };
+        }
+
+        var values = (json.Answer || []).map(function (a) { return normalizeRecordValue(a.data); }).filter(Boolean);
+        // Stable ordering helps consensus.
+        values.sort();
+
+        var valueStr = values.length ? values.join(', ') : 'No record';
+        return {
+          name: resolver.name,
+          value: valueStr,
+          status: valueStr === 'No record' ? 'not_propagated' : 'propagated',
+          ms: elapsedMs
+        };
+      } catch (e) {
+        var elapsedMs2 = Math.round(((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()) - start);
+        return {
+          name: resolver.name,
+          value: 'Timeout',
+          status: 'timeout',
+          ms: elapsedMs2
+        };
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    function consensusTier(percent) {
+      if (percent === 100) return 'green';
+      if (percent <= 50) return 'red';
+      return 'orange';
+    }
+
+    function buildDiffDetails(results) {
+      var nonTimeout = results.filter(function (r) { return r.status !== 'timeout'; });
+      var map = new Map();
+      nonTimeout.forEach(function (r) {
+        if (!map.has(r.value)) map.set(r.value, []);
+        map.get(r.value).push(r.name);
+      });
+      var entries = Array.from(map.entries()).map(function (pair) {
+        return pair[0] + ' — ' + pair[1].join(', ');
+      });
+      return entries.join('\n');
+    }
+
+    async function runPropagation() {
+      var domain = (domainIn && domainIn.value ? domainIn.value : '').trim();
+      if (!domain) {
+        toastShow('Enter a domain');
+        return;
+      }
+      domain = domain.replace(/\.+$/, '');
+      if (!recordTypeSel) return;
+
+      var recordType = recordTypeSel.value;
+
+      checkBtn.disabled = true;
+      resultsSection.style.display = 'block';
+      resultsBody.innerHTML = '';
+
+      consensusTitle.textContent = 'Checking resolvers…';
+      consensusMessage.textContent = '';
+      diffDetails.style.display = 'none';
+
+      var runStart = Date.now();
+      var results = await Promise.all(RESOLVERS.map(function (r) {
+        return queryResolver(r, domain, recordType);
+      }));
+
+      // Table
+      resultsBody.innerHTML = '';
+      results.forEach(function (r) {
+        var statusHtml = '';
+        if (r.status === 'propagated') statusHtml = '<span class="status-propagated">✓ Propagated</span>';
+        else if (r.status === 'not_propagated') statusHtml = '<span class="status-not-propagated">✗ Not propagated</span>';
+        else statusHtml = '<span class="status-timeout">⟳ Timeout</span>';
+
+        var respText = (r.status === 'timeout') ? 'Timeout' : (r.ms + ' ms');
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' + escapeHtml(r.name) + '</td>' +
+          '<td>' + escapeHtml(r.value) + '</td>' +
+          '<td>' + statusHtml + '</td>' +
+          '<td>' + escapeHtml(respText) + '</td>';
+        resultsBody.appendChild(tr);
+      });
+
+      // Consensus
+      var propagatedCount = results.filter(function (r) { return r.status === 'propagated'; }).length;
+      var percent = Math.round((propagatedCount / 5) * 100);
+      consensusTitle.textContent = propagatedCount + ' of 5 resolvers see the new record';
+
+      var tier = consensusTier(percent);
+      progressFill.className = 'progress-fill ' + tier;
+      progressFill.style.width = percent + '%';
+
+      var hasAnyRecord = results.some(function (r) { return r.status === 'propagated'; });
+      var hasAnyNoRecord = results.some(function (r) { return r.status === 'not_propagated'; });
+      var fullyPropagated = propagatedCount === 5;
+
+      if (fullyPropagated) {
+        // Different IPs from different resolvers is expected for CDN/anycast.
+        consensusMessage.className = 'consensus-message green';
+        consensusMessage.textContent = '✓ Fully propagated across all checked resolvers';
+        diffDetails.style.display = 'none';
+      } else if (!hasAnyRecord) {
+        consensusMessage.className = 'consensus-message red';
+        consensusMessage.textContent = '✗ Not propagated';
+        diffDetails.style.display = 'none';
+      } else if (hasAnyRecord && hasAnyNoRecord) {
+        // Only flag inconsistent when some resolvers have a record and others return "No record".
+        consensusMessage.className = 'consensus-message orange';
+        consensusMessage.textContent = '⚠ Inconsistent';
+        diffDetails.textContent = buildDiffDetails(results);
+        diffDetails.style.display = 'block';
+      } else {
+        // Remaining cases are typically timeouts or all-resolvers returned records but not all of them.
+        if (percent <= 50) {
+          consensusMessage.className = 'consensus-message red';
+          consensusMessage.textContent = 'Still propagating';
+        } else {
+          consensusMessage.className = 'consensus-message orange';
+          consensusMessage.textContent = 'Mostly propagated';
+        }
+        diffDetails.style.display = 'none';
+      }
+
+      checkBtn.disabled = false;
+      checkBtn.textContent = 'Check Propagation →';
+    }
+
+    if (checkBtn) checkBtn.addEventListener('click', function () {
+      checkBtn.textContent = 'Checking…';
+      runPropagation();
+    });
+
+    if (tryExampleBtn) {
+      tryExampleBtn.addEventListener('click', function () {
+        if (domainIn) domainIn.value = 'domainpreflight.dev';
+        if (recordTypeSel) recordTypeSel.value = 'A';
+        runPropagation();
+      });
+    }
+  })();
+  </script>
+</body>
+</html>
+

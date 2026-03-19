@@ -45,6 +45,7 @@
       --red: #ef4444;
       --text: #e2e4f0;
       --text2: #8a8fb5;
+      --muted: var(--text2);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -265,6 +266,13 @@
       margin-bottom: 1.5rem;
       font-size: 0.9rem;
     }
+    .as-org-info {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 0.5rem;
+      line-height: 1.4;
+      white-space: normal;
+    }
     .ip-details-card .row { margin-bottom: 0.35rem; }
     .ip-details-card .row:last-child { margin-bottom: 0; }
     .ip-details-card .key { color: var(--text2); margin-right: 0.5rem; }
@@ -459,6 +467,7 @@
         <a href="/whois/">WHOIS</a>
         <a href="/dangling/">Dangling Records</a>
         <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
         <a href="/dmarc/">DMARC Report</a>
       </nav>
     </div>
@@ -475,11 +484,11 @@
       <div class="input-row">
         <div class="input-wrap">
           <label for="ip">Sending IP (required)</label>
-          <input type="text" id="ip" placeholder="203.0.113.42 — your mail server IP" autocomplete="off">
+              <input type="text" id="ip" placeholder="203.0.113.42 — your mail server IP" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
         </div>
         <div class="input-wrap">
           <label for="domain">Domain (optional)</label>
-          <input type="text" id="domain" placeholder="yourdomain.com — for VPS provider detection" autocomplete="off">
+              <input type="text" id="domain" placeholder="yourdomain.com — for VPS provider detection" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
         </div>
       </div>
       <button type="button" class="btn-run" id="runBtn">Run Checks</button>
@@ -616,6 +625,31 @@
       return { key: 'highrisk', label: 'High risk', color: 'var(--red)' };
     }
 
+    function fetchIpApiAsOrgInfo(ip) {
+      // Used for lightweight ASN/org context only (informational).
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function () { controller.abort(); }, 4000);
+      return fetch('https://ipapi.co/' + encodeURIComponent(ip) + '/json/', { signal: controller.signal })
+        .then(function (r) {
+          if (!r.ok) throw new Error('ipapi failed');
+          return r.json();
+        })
+        .then(function (data) {
+          if (!data) return null;
+          var asn = data.asn != null ? String(data.asn).trim() : '';
+          var org = data.org != null ? String(data.org).trim() : '';
+          var network = data.network != null ? String(data.network).trim() : '';
+          if (!asn && !org && !network) return null;
+          return { asn: asn, org: org, network: network };
+        })
+        .catch(function () {
+          return null;
+        })
+        .finally(function () {
+          clearTimeout(timeoutId);
+        });
+    }
+
     function animateScore(endScore, isWhitelisted, callback) {
       scoreTier.className = 'score-tier ' + getTier(endScore).key;
       scoreTier.textContent = getTier(endScore).label;
@@ -677,6 +711,14 @@
             '<div class="row"><span class="key">Country:</span>' + escapeHtml(countryCode) + '</div>' +
             '<div class="row"><span class="key">Domain:</span>' + escapeHtml(domain) + '</div>';
           ipDetailsCard.style.display = 'block';
+
+          fetchIpApiAsOrgInfo(ip).then(function (info) {
+            if (!info) return;
+            var el = document.createElement('div');
+            el.className = 'as-org-info';
+            el.textContent = 'ASN: ' + info.asn + ' · ' + info.org + ' · ' + info.network;
+            ipDetailsCard.appendChild(el);
+          });
 
           var abuseUrl = 'https://www.abuseipdb.com/check/' + encodeURIComponent(ip);
           if (abuseScore > 50) {

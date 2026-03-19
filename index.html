@@ -50,6 +50,7 @@
       --red: #ef4444;
       --text: #e2e4f0;
       --text2: #8a8fb5;
+      --muted: var(--text2);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -396,6 +397,7 @@
     .check-card-content { flex: 1; min-width: 0; }
     .check-card-title { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem; }
     .check-card-detail { color: var(--text2); font-size: 0.85rem; }
+    .ptr-as-info { color: var(--muted); font-size: 11px; margin-top: 6px; line-height: 1.4; }
     .check-card-badge {
       font-size: 0.75rem;
       color: var(--text2);
@@ -739,6 +741,7 @@
         <a href="/whois/">WHOIS</a>
         <a href="/dangling/">Dangling Records</a>
         <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
         <a href="/dmarc/">DMARC Report</a>
       </nav>
     </div>
@@ -763,11 +766,11 @@
           <div class="input-row">
             <div class="input-wrap">
               <label for="domain">Domain</label>
-              <input type="text" id="domain" placeholder="example.com" autocomplete="off">
+              <input type="text" id="domain" placeholder="example.com" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
             </div>
             <div class="input-wrap">
               <label for="ip">Sending IP (optional)</label>
-              <input type="text" id="ip" placeholder="Optional" autocomplete="off">
+              <input type="text" id="ip" placeholder="Optional" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">
             </div>
           </div>
           <div class="btn-row">
@@ -868,6 +871,39 @@ function normalizeDomain(input) {
 
 function isIPv6(ip) {
   return typeof ip === 'string' && ip.trim().includes(':');
+}
+
+function expandIPv6(ipv6) {
+  // Expand :: notation into full 8 groups of 4 hex digits.
+  const addr = String(ipv6 || '').trim().replace(/^\[|\]$/g, '');
+  const halves = addr.split('::');
+  if (halves.length === 2) {
+    const left = halves[0] ? halves[0].split(':') : [];
+    const right = halves[1] ? halves[1].split(':') : [];
+    const missing = 8 - left.length - right.length;
+    const middle = Array(missing).fill('0000');
+    return [...left, ...middle, ...right]
+      .map(g => g.padStart(4, '0')).join(':');
+  }
+  return addr.split(':')
+    .map(g => g.padStart(4, '0')).join(':');
+}
+
+function ipv6ToArpa(ipv6) {
+  // Reverse nibble-by-nibble into ip6.arpa.
+  // e.g. 2001:db8::1 -> ... .ip6.arpa
+  const addr = expandIPv6(ipv6);
+  return addr.replace(/:/g, '')
+    .split('').reverse().join('.')
+    + '.ip6.arpa';
+}
+
+function normalizeIPv6ForCompare(ipv6) {
+  try {
+    return expandIPv6(String(ipv6 || '').trim().replace(/^\[|\]$/g, '')).toLowerCase();
+  } catch (_) {
+    return String(ipv6 || '').trim().toLowerCase();
+  }
 }
 
 (function () {
@@ -1232,6 +1268,42 @@ function isIPv6(ip) {
     }
   }
 
+  async function fetchIpApiAsOrgInfo(ip) {
+    // CORS-open free endpoint: https://ipapi.co/{IP}/json/
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    try {
+      const res = await fetch('https://ipapi.co/' + encodeURIComponent(ip) + '/json/', { signal: controller.signal });
+      if (!res.ok) return null;
+      const data = await res.json();
+      const asn = data && data.asn ? String(data.asn).trim() : '';
+      const org = data && data.org ? String(data.org).trim() : '';
+      const network = data && data.network ? String(data.network).trim() : '';
+      if (!asn && !org && !network) return null;
+      return { asn, org, network };
+    } catch (_) {
+      return null;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  async function attachAsOrgInfo(cardEl, ip) {
+    if (!cardEl || !cardEl.querySelector) return;
+    if (cardEl.querySelector('.ptr-as-info')) return;
+
+    const detailEl = cardEl.querySelector('.check-card-detail');
+    if (!detailEl) return;
+
+    const info = await fetchIpApiAsOrgInfo(ip);
+    if (!info) return;
+
+    const metaEl = document.createElement('div');
+    metaEl.className = 'ptr-as-info';
+    metaEl.textContent = 'ASN: ' + info.asn + ' · ' + info.org + ' · ' + info.network;
+    detailEl.insertAdjacentElement('afterend', metaEl);
+  }
+
   async function runCheck1_PTR(domain, ip, cardIndex) {
     const cardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : null;
     if (!cardEl) {
@@ -1242,38 +1314,64 @@ function isIPv6(ip) {
       updateCard(cardEl, 'info', 'PTR / rDNS', 'No sending IP was entered — reverse DNS check skipped.', 'Skipped');
       return;
     }
-    if (isIPv6(ip)) {
-      updateCard(cardEl, 'info', 'PTR / rDNS', 'IPv6 not supported yet.', 'IPv6');
-      return;
-    }
-    const rev = ip.split('.').reverse().join('.') + '.in-addr.arpa';
+
+    const ipNorm = String(ip || '').trim().replace(/^\[|\]$/g, '');
+    const isV6 = isIPv6(ipNorm);
+    const rev = isV6
+      ? ipv6ToArpa(ipNorm)
+      : ipNorm.split('.').reverse().join('.') + '.in-addr.arpa';
+
     try {
       const j = await doh(rev, 'PTR');
       const ptrRec = (j.Answer || []).find(a => a.type === 12);
+
       if (!ptrRec || !ptrRec.data) {
         addPenalty(-25);
-        updateCard(cardEl, 'fail', 'PTR / rDNS', 'Your sending IP has no reverse DNS. Many mail servers reject these outright.', ip);
-        actions.push(actionCard('critical', 'Add a PTR record', 'Ask your host or DNS provider to add reverse DNS for ' + ip + ' pointing to your mail hostname (e.g. mail.' + domain + ').', 'Contact your hosting provider or DNS host to add PTR for ' + ip + ' → mail.' + domain));
+        updateCard(cardEl, 'fail', 'PTR / rDNS', 'Your sending IP has no reverse DNS. Many mail servers reject these outright.', ipNorm);
+        const updatedCardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : cardEl;
+        await attachAsOrgInfo(updatedCardEl, ipNorm);
+        actions.push(actionCard('critical', 'Add a PTR record', 'Ask your host or DNS provider to add reverse DNS for ' + ipNorm + ' pointing to your mail hostname (e.g. mail.' + domain + ').', 'Contact your hosting provider or DNS host to add PTR for ' + ipNorm + ' → mail.' + domain));
         return;
       }
+
       let ptrHost = (ptrRec.data || '').replace(/\.$/, '').trim();
       ptrHost = stripTxtQuotes(ptrHost);
+
       try {
-        const aRes = await doh(ptrHost, 'A');
-        const aRec = (aRes.Answer || []).find(a => a.type === 1);
-        const forwardIp = aRec ? aRec.data : null;
-        if (forwardIp !== ip) {
-          addPenalty(-15);
-          updateCard(cardEl, 'warn', 'PTR / rDNS', 'Reverse DNS points to ' + ptrHost + ', but that hostname doesn\'t point back to this IP. Receivers may treat it as suspicious.', ptrHost);
+        if (isV6) {
+          const aRes = await doh(ptrHost, 'AAAA');
+          const aRec = (aRes.Answer || []).find(a => a.type === 28);
+          const forwardIp = aRec ? normalizeIPv6ForCompare(aRec.data) : null;
+          const ipCompare = normalizeIPv6ForCompare(ipNorm);
+
+          if (!forwardIp || forwardIp !== ipCompare) {
+            addPenalty(-15);
+            updateCard(cardEl, 'warn', 'PTR / rDNS', 'Reverse DNS points to ' + ptrHost + ', but that hostname doesn\'t point back to this IP. Receivers may treat it as suspicious.', ptrHost);
+          } else {
+            updateCard(cardEl, 'pass', 'PTR / rDNS', 'Your sending IP has valid reverse DNS — good for inbox delivery.', ptrHost);
+          }
         } else {
-          updateCard(cardEl, 'pass', 'PTR / rDNS', 'Your sending IP has valid reverse DNS — good for inbox delivery.', ptrHost);
+          const aRes = await doh(ptrHost, 'A');
+          const aRec = (aRes.Answer || []).find(a => a.type === 1);
+          const forwardIp = aRec ? aRec.data : null;
+          if (forwardIp !== ipNorm) {
+            addPenalty(-15);
+            updateCard(cardEl, 'warn', 'PTR / rDNS', 'Reverse DNS points to ' + ptrHost + ', but that hostname doesn\'t point back to this IP. Receivers may treat it as suspicious.', ptrHost);
+          } else {
+            updateCard(cardEl, 'pass', 'PTR / rDNS', 'Your sending IP has valid reverse DNS — good for inbox delivery.', ptrHost);
+          }
         }
       } catch (_) {
         updateCard(cardEl, 'pass', 'PTR / rDNS', 'Reverse DNS record exists for this IP (full verification skipped).', ptrHost);
       }
+
+      const updatedCardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : cardEl;
+      await attachAsOrgInfo(updatedCardEl, ipNorm);
     } catch (e) {
       addPenalty(-25);
-      updateCard(cardEl, 'fail', 'PTR / rDNS', 'Could not look up reverse DNS: ' + (e.message || 'error'), ip);
+      updateCard(cardEl, 'fail', 'PTR / rDNS', 'Could not look up reverse DNS: ' + (e.message || 'error'), ipNorm);
+      const updatedCardEl = cardsGrid && cardsGrid.children[cardIndex] ? cardsGrid.children[cardIndex] : cardEl;
+      await attachAsOrgInfo(updatedCardEl, ipNorm);
     }
   }
 
@@ -1855,9 +1953,6 @@ Value: ${valueText}`;
         if (ip) ipIn.value = ip.trim();
       } else {
         ipIn.value = ip;
-      }
-      if (ip && isIPv6(ip)) {
-        toastShow('IPv6 not supported yet');
       }
       updateUrl(domain, ipIn.value.trim());
 
