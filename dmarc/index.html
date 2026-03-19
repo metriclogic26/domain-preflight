@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMARC Report Analyzer — DomainPreflight</title>
+  <meta name="description" content="Paste your DMARC aggregate report XML and see who's sending as your domain, what's failing, and how to fix it.">
+  <meta name="keywords" content="DMARC report analyzer, aggregate report, rua XML, email authentication, spoofing, DomainPreflight">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MetricLogic">
+  <link rel="canonical" href="https://domainpreflight.dev/dmarc/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DMARC Report Analyzer — DomainPreflight">
+  <meta property="og:description" content="Paste your DMARC aggregate report XML and see who's sending as your domain, what's failing, and how to fix it.">
+  <meta property="og:url" content="https://domainpreflight.dev/dmarc/">
+  <meta property="og:site_name" content="DomainPreflight">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="DMARC Report Analyzer — DomainPreflight">
+  <meta name="twitter:description" content="Paste your DMARC aggregate report XML. See who's sending as your domain and how to fix failures.">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"DMARC Report Analyzer","url":"https://domainpreflight.dev/dmarc/","description":"Paste DMARC aggregate report XML and see who's sending as your domain, what's failing, and how to fix it.","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0"}}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    nav a.active { color: var(--text); font-weight: 500; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero { text-align: center; padding-top: 1.5rem; padding-bottom: 1rem; }
+    .hero-label { font-size: 1.1rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.75rem; }
+    .hero h1 { font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    .hero-sub { color: var(--text2); font-size: 0.9rem; max-width: 700px; margin: 0 auto 1.5rem; }
+    .btn-primary {
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.25rem 0;
+    }
+    .btn-text:hover { text-decoration: underline; }
+    /* DMARC */
+    .dmarc-section { margin-top: 1rem; }
+    .dmarc-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .dmarc-section h2 { font-size: 1.1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+    .dmarc-subtitle { color: var(--text2); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; max-width: 760px; }
+    .dmarc-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+    .dmarc-textarea {
+      width: 100%;
+      height: 180px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .dmarc-textarea::placeholder { color: var(--text2); opacity: 0.7; }
+    .dmarc-controls { margin-top: 0.75rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .dmarc-clear-link { color: var(--text2); text-decoration: none; font-size: 0.95rem; cursor: pointer; }
+    .dmarc-clear-link:hover { text-decoration: underline; }
+    .dmarc-inline-error { margin-top: 0.75rem; color: var(--red); font-size: 0.85rem; }
+    .dmarc-inline-warning { margin-top: 0.75rem; color: var(--orange); font-size: 0.85rem; }
+    .dmarc-get-report summary { cursor: pointer; color: var(--text2); font-size: 0.85rem; list-style: none; }
+    .dmarc-get-report summary::-webkit-details-marker { display: none; }
+    .dmarc-get-report p { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin-top: 0.5rem; }
+    #dmarcResults { display: none; margin-top: 1.5rem; }
+    .dmarc-summary-bar {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1.1rem;
+      color: var(--text2);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .dmarc-policy-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .dmarc-policy-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 0.55rem;
+    }
+    .dmarc-policy-none { color: var(--orange); background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.35); }
+    .dmarc-policy-quarantine { color: var(--orange); background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.35); }
+    .dmarc-policy-reject { color: var(--green); background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.35); }
+    .dmarc-table-wrap { overflow-x: auto; margin-bottom: 1.25rem; }
+    table.dmarc-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 900px;
+    }
+    .dmarc-table th { background: #1A1E2E; color: #8a8fb5; padding: 8px 12px; text-align: left; font-weight: 600; }
+    .dmarc-table td { padding: 8px 12px; border-bottom: 1px solid #1E2236; vertical-align: top; color: var(--text2); }
+    .dmarc-cell-pass { color: #22C55E; font-weight: 700; }
+    .dmarc-cell-fail { color: #EF4444; font-weight: 700; }
+    .dmarc-cell-warn { color: #F97316; font-weight: 700; }
+    .dmarc-risk-low { color: #22C55E; font-weight: 700; }
+    .dmarc-risk-medium { color: #F97316; font-weight: 700; }
+    .dmarc-risk-high { color: #EF4444; font-weight: 700; }
+    .dmarc-badge-blocked {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.35);
+      color: var(--red);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+    .dmarc-actions { display: grid; gap: 1rem; }
+    .dmarc-action-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      background: var(--bg2);
+      color: var(--text2);
+    }
+    .dmarc-action-card.high { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3); }
+    .dmarc-action-card.medium { background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.3); }
+    .dmarc-action-card.low { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.25); }
+    .dmarc-action-title { font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+    .dmarc-action-card.high .dmarc-action-title { color: var(--red); }
+    .dmarc-action-card.medium .dmarc-action-title { color: var(--orange); }
+    .dmarc-action-card.low .dmarc-action-title { color: var(--green); }
+    .dmarc-fix-block { margin-top: 0.75rem; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; }
+    .dmarc-fix-label { font-size: 0.65rem; color: var(--purple); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.5rem; }
+    .dmarc-fix-pre { font-size: 0.8rem; color: var(--text2); white-space: pre-wrap; word-break: break-all; font-family: inherit; line-height: 1.5; margin-bottom: 0.5rem; }
+    .dmarc-copy-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .dmarc-copy-btn {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .dmarc-copy-btn:hover { border-color: var(--purple); }
+    .faq-section { max-width: 700px; margin: 2rem auto 0; padding: 2rem 1.5rem 3rem; border-top: 1px solid var(--border); }
+    .faq-section h2 { color: var(--text); font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    .faq-section h2:first-child { margin-top: 0; }
+    .faq-section p { color: var(--text2); font-size: 0.85rem; line-height: 1.6; }
+    footer { border-top: none; padding: 0; background: var(--bg2); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-bar {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--text2);
+    }
+    .footer-bar-left, .footer-bar-right { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text2); text-decoration: underline; }
+    .footer-disclaimer { text-align: center; width: 100%; font-size: 11px; color: var(--text2); opacity: 0.6; padding-bottom: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight.</a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/dmarc/" class="active">DMARC Report</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-label">DMARC REPORT ANALYZER</div>
+      <h1>Understand your DMARC aggregate reports.</h1>
+      <p class="hero-sub">Paste your rua XML report — see who's sending as your domain and what's failing.</p>
+    </section>
+
+    <section id="dmarcAnalyzer" class="dmarc-section">
+      <div class="dmarc-card">
+        <textarea id="dmarcXmlInput" class="dmarc-textarea" placeholder="Paste DMARC aggregate report XML here...&#10;(Download from your rua= email address)"></textarea>
+
+        <div class="dmarc-controls">
+          <button type="button" class="btn-primary" id="dmarcAnalyzeBtn">Analyze Report →</button>
+          <a href="#" id="dmarcClearLink" class="dmarc-clear-link">× Clear</a>
+          <button type="button" class="btn-text" id="dmarcTryExampleBtn">Try an example</button>
+        </div>
+
+        <div id="dmarcInlineError" class="dmarc-inline-error" style="display:none;"></div>
+        <div id="dmarcInlineWarning" class="dmarc-inline-warning" style="display:none;"></div>
+
+        <div style="margin-top: 1rem;">
+          <details class="dmarc-get-report">
+            <summary>How do I get this?</summary>
+            <p>Check the email address set in your rua= DMARC record. Google, Yahoo, and others send daily XML reports as .zip attachments. Unzip and paste the XML contents here.</p>
+          </details>
+        </div>
+      </div>
+
+      <div id="dmarcResults">
+        <div class="dmarc-summary-bar" id="dmarcSummaryBar"></div>
+        <div class="dmarc-policy-card" id="dmarcPolicyCard"></div>
+
+        <div class="dmarc-table-wrap" id="dmarcTableWrap" style="display:none;">
+          <table id="dmarcTable" class="dmarc-table">
+            <thead>
+              <tr>
+                <th>Source IP</th>
+                <th>Messages</th>
+                <th>DKIM</th>
+                <th>SPF</th>
+                <th>Disposition</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody id="dmarcTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="dmarcActions" class="dmarc-actions"></div>
+        <div id="dmarcCleanState" class="dmarc-action-card low" style="display:none;"></div>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <h2>How do I get a DMARC report?</h2>
+      <p>Check the email address in your DMARC record's rua= tag. Major providers (Google, Yahoo, Microsoft, etc.) send daily aggregate reports as .zip attachments. Unzip and open the .xml file, then paste its contents here.</p>
+
+      <h2>What do pass and fail mean?</h2>
+      <p>DKIM pass means the message was signed and the signature verified. SPF pass means the sending IP was allowed by your SPF record. If both fail for a source IP, that IP is sending as your domain without authorization — possible spoofing.</p>
+
+      <h2>Does anything leave my browser?</h2>
+      <p>No. Parsing and analysis run entirely in your browser. Your report XML is never sent to any server.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+    </div>
+    <div class="footer-bar">
+      <div class="footer-bar-left">
+        <span>DomainPreflight by MetricLogic ·</span>
+        <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a>
+        <span>·</span>
+        <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a>
+        <span>·</span>
+        <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a>
+      </div>
+      <div class="footer-bar-right">
+        <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a>
+        <span>·</span>
+        <span>MIT Licensed</span>
+        <span>·</span>
+        <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+(function () {
+  'use strict';
+
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  const toast = document.getElementById('toast');
+  function toastShow(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { toast.classList.remove('show'); }, 2500);
+  }
+
+  let lastSpfRecordForCopy = '';
+
+  const dmarcXmlInput = document.getElementById('dmarcXmlInput');
+  const dmarcAnalyzeBtn = document.getElementById('dmarcAnalyzeBtn');
+  const dmarcClearLink = document.getElementById('dmarcClearLink');
+  const dmarcTryExampleBtn = document.getElementById('dmarcTryExampleBtn');
+  const dmarcResults = document.getElementById('dmarcResults');
+  const dmarcSummaryBar = document.getElementById('dmarcSummaryBar');
+  const dmarcPolicyCard = document.getElementById('dmarcPolicyCard');
+  const dmarcTableWrap = document.getElementById('dmarcTableWrap');
+  const dmarcTableBody = document.getElementById('dmarcTableBody');
+  const dmarcActions = document.getElementById('dmarcActions');
+  const dmarcCleanState = document.getElementById('dmarcCleanState');
+  const dmarcInlineError = document.getElementById('dmarcInlineError');
+  const dmarcInlineWarning = document.getElementById('dmarcInlineWarning');
+
+  function dmarcSetInline(el, text, show) {
+    if (!el) return;
+    el.textContent = text || '';
+    el.style.display = show ? 'block' : 'none';
+  }
+
+  function dmarcTextFrom(root, selector) {
+    try {
+      const el = root && root.querySelector ? root.querySelector(selector) : null;
+      return el && el.textContent ? el.textContent.trim() : '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function dmarcFormatUnixSeconds(s) {
+    if (!s) return '—';
+    const n = Number(s);
+    if (!Number.isFinite(n)) return '—';
+    const dt = new Date(n * 1000);
+    if (Number.isNaN(dt.getTime())) return '—';
+    return dt.toISOString().slice(0, 10);
+  }
+
+  function dmarcEscapeText(s) {
+    return escapeHtml(String(s == null ? '' : s));
+  }
+
+  function dmarcIpToInt(ip) {
+    if (typeof ip !== 'string') return null;
+    const parts = ip.trim().split('.');
+    if (parts.length !== 4) return null;
+    const nums = parts.map(function (p) { return parseInt(p, 10); });
+    if (nums.some(function (n) { return Number.isNaN(n) || n < 0 || n > 255; })) return null;
+    return (((nums[0] << 24) >>> 0) | (nums[1] << 16) | (nums[2] << 8) | nums[3]) >>> 0;
+  }
+
+  function dmarcIpInCidr(ip, cidrIp, maskBits) {
+    const ipInt = dmarcIpToInt(ip);
+    const netInt = dmarcIpToInt(cidrIp);
+    if (ipInt == null || netInt == null) return false;
+    const m = Number(maskBits);
+    if (!Number.isFinite(m) || m < 0 || m > 32) return false;
+    const mask = m === 0 ? 0 : ((0xFFFFFFFF << (32 - m)) >>> 0);
+    return ((ipInt & mask) >>> 0) === ((netInt & mask) >>> 0);
+  }
+
+  function dmarcExtractSpfIp4Networks(spf) {
+    if (typeof spf !== 'string' || !spf.trim()) return [];
+    const tokens = spf.split(/\s+/);
+    const nets = [];
+    for (var t0 = 0; t0 < tokens.length; t0++) {
+      const t = String(tokens[t0]).trim();
+      const m = t.match(/^ip4:([^\/\s]+)(?:\/(\d{1,2}))?/i);
+      if (!m) continue;
+      const cidrIp = m[1];
+      const maskBits = m[2] != null ? parseInt(m[2], 10) : 32;
+      if (dmarcIpToInt(cidrIp) == null) continue;
+      nets.push({ ip: cidrIp, mask: maskBits });
+    }
+    return nets;
+  }
+
+  function dmarcSpfAllowsIp(spf, ip) {
+    const nets = dmarcExtractSpfIp4Networks(spf);
+    if (!nets.length) return null;
+    for (var i = 0; i < nets.length; i++) {
+      if (dmarcIpInCidr(ip, nets[i].ip, nets[i].mask)) return true;
+    }
+    return false;
+  }
+
+  function dmarcReset() {
+    dmarcSetInline(dmarcInlineError, '', false);
+    dmarcSetInline(dmarcInlineWarning, '', false);
+    if (dmarcResults) dmarcResults.style.display = 'none';
+    if (dmarcTableWrap) dmarcTableWrap.style.display = 'none';
+    if (dmarcTableBody) dmarcTableBody.innerHTML = '';
+    if (dmarcSummaryBar) dmarcSummaryBar.textContent = '';
+    if (dmarcPolicyCard) dmarcPolicyCard.textContent = '';
+    if (dmarcActions) dmarcActions.innerHTML = '';
+    if (dmarcCleanState) dmarcCleanState.style.display = 'none';
+    if (dmarcClearLink) dmarcClearLink.style.display = 'inline';
+  }
+
+  function dmarcRenderPolicyCard(policyRaw) {
+    const p = String(policyRaw || '').trim().toLowerCase();
+    const badge = p === 'reject'
+      ? { cls: 'dmarc-policy-reject', text: 'Full enforcement' }
+      : p === 'quarantine'
+        ? { cls: 'dmarc-policy-quarantine', text: 'Quarantine active' }
+        : { cls: 'dmarc-policy-none', text: 'Monitoring only — not blocking' };
+    dmarcPolicyCard.innerHTML =
+      '<div>Policy detected: <strong>p=' + dmarcEscapeText(p || '—') + '</strong></div>' +
+      '<div class="dmarc-policy-badge ' + badge.cls + '"> ' + dmarcEscapeText(badge.text) + '</div>';
+  }
+
+  function dmarcRiskCell(dkimPass, spfPass) {
+    if (dkimPass && spfPass) return { html: '<span class="dmarc-risk-low">✓ Aligned</span>', cls: 'low' };
+    if (!dkimPass && spfPass) return { html: '<span class="dmarc-risk-medium">⚠ Check sender</span>', cls: 'medium' };
+    if (!dkimPass && !spfPass) return { html: '<span class="dmarc-risk-high">✗ Spoofing risk</span>', cls: 'high' };
+    return { html: '<span class="dmarc-risk-medium">⚠ Check sender</span>', cls: 'medium' };
+  }
+
+  async function dmarcAnalyze() {
+    if (!dmarcXmlInput) return;
+    const xmlString = dmarcXmlInput.value || '';
+    dmarcReset();
+    if (!xmlString.trim()) {
+      dmarcSetInline(dmarcInlineWarning, 'Paste XML first.', true);
+      return;
+    }
+
+    var doc = null;
+    try {
+      const parser = new DOMParser();
+      doc = parser.parseFromString(xmlString, 'application/xml');
+      const parserErrors = doc.getElementsByTagName('parsererror');
+      if (parserErrors && parserErrors.length) {
+        dmarcSetInline(dmarcInlineError, 'Invalid XML — paste the full contents of the .xml file, not the .zip', true);
+        return;
+      }
+    } catch (_) {
+      dmarcSetInline(dmarcInlineError, 'Invalid XML — paste the full contents of the .xml file, not the .zip', true);
+      return;
+    }
+
+    const orgName = dmarcTextFrom(doc, 'report_metadata org_name');
+    const begin = dmarcTextFrom(doc, 'report_metadata date_range begin');
+    const end = dmarcTextFrom(doc, 'report_metadata date_range end');
+    const domain = dmarcTextFrom(doc, 'policy_published domain');
+    const policy = dmarcTextFrom(doc, 'policy_published p');
+    if (!orgName || !begin || !end || !domain || !policy) {
+      dmarcSetInline(dmarcInlineWarning, 'Report parsed but some fields are missing. Results may be incomplete.', true);
+    }
+
+    const records = Array.from(doc.getElementsByTagName('record') || []);
+    const rows = records.map(function (rec) {
+      const sourceIp = dmarcTextFrom(rec, 'row source_ip') || dmarcTextFrom(rec, 'source_ip');
+      const countRaw = dmarcTextFrom(rec, 'row count') || dmarcTextFrom(rec, 'count');
+      const disposition = (dmarcTextFrom(rec, 'row policy_evaluated disposition') || dmarcTextFrom(rec, 'policy_evaluated disposition') || '').toLowerCase();
+      const dkimRes = (dmarcTextFrom(rec, 'row policy_evaluated dkim') || dmarcTextFrom(rec, 'auth_results dkim result') || '').toLowerCase();
+      const spfRes = (dmarcTextFrom(rec, 'row policy_evaluated spf') || dmarcTextFrom(rec, 'auth_results spf result') || '').toLowerCase();
+      const count = parseInt(countRaw, 10);
+      const messages = Number.isFinite(count) ? count : 0;
+      const dkimPass = dkimRes === 'pass';
+      const spfPass = spfRes === 'pass';
+      return {
+        sourceIp: sourceIp || '',
+        messages: messages,
+        disposition: disposition || '',
+        dkimRes: dkimRes || '',
+        spfRes: spfRes || '',
+        dkimPass: dkimPass,
+        spfPass: spfPass
+      };
+    }).filter(function (r) { return r.sourceIp; });
+
+    const totalMessages = rows.reduce(function (sum, r) { return sum + (Number(r.messages) || 0); }, 0);
+    const beginStr = dmarcFormatUnixSeconds(begin);
+    const endStr = dmarcFormatUnixSeconds(end);
+    const dateRange = beginStr !== '—' && endStr !== '—' ? (beginStr + ' → ' + endStr) : (beginStr !== '—' ? beginStr : '—');
+
+    dmarcSummaryBar.textContent = 'Report from ' + (orgName || '—') + ' · ' + dateRange + ' · ' + totalMessages + ' messages analyzed';
+    dmarcRenderPolicyCard(policy);
+
+    dmarcTableBody.innerHTML = '';
+    dmarcTableWrap.style.display = 'block';
+
+    for (var r = 0; r < rows.length; r++) {
+      const row = rows[r];
+      const dkimCell = row.dkimPass
+        ? '<span class="dmarc-cell-pass">pass</span>'
+        : (row.dkimRes ? '<span class="dmarc-cell-fail">fail</span>' : '<span class="dmarc-cell-warn">—</span>');
+      const spfCell = row.spfPass
+        ? '<span class="dmarc-cell-pass">pass</span>'
+        : (row.spfRes ? '<span class="dmarc-cell-fail">fail</span>' : '<span class="dmarc-cell-warn">—</span>');
+      const dispositionLabel = row.disposition ? row.disposition : '—';
+      const blockedBadge = row.disposition === 'reject' ? '<span class="dmarc-badge-blocked">🔴 Blocked</span>' : '';
+      const risk = dmarcRiskCell(row.dkimPass, row.spfPass);
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + dmarcEscapeText(row.sourceIp) + '</td>' +
+        '<td>' + dmarcEscapeText(String(row.messages)) + '</td>' +
+        '<td>' + dkimCell + '</td>' +
+        '<td>' + spfCell + '</td>' +
+        '<td>' + dmarcEscapeText(dispositionLabel) + blockedBadge + '</td>' +
+        '<td>' + risk.html + '</td>';
+      dmarcTableBody.appendChild(tr);
+    }
+
+    dmarcActions.innerHTML = '';
+    dmarcCleanState.style.display = 'none';
+
+    const allAligned = rows.length > 0 && rows.every(function (r) { return r.dkimPass && r.spfPass; });
+    if (allAligned) {
+      dmarcCleanState.style.display = 'block';
+      dmarcCleanState.className = 'dmarc-action-card low';
+      dmarcCleanState.innerHTML =
+        '<div class="dmarc-action-title">✓ All senders are aligned</div>' +
+        '<div>All senders are aligned. No spoofing detected in this report period.</div>';
+      dmarcResults.style.display = 'block';
+      return;
+    }
+
+    const actions = [];
+    var spfRecord = '';
+    try { spfRecord = typeof lastSpfRecordForCopy === 'string' ? lastSpfRecordForCopy : ''; } catch (_) {}
+    const spfUnknownGroups = new Map();
+    if (spfRecord && spfRecord.trim()) {
+      for (var u = 0; u < rows.length; u++) {
+        const row = rows[u];
+        if (row.spfPass) continue;
+        const allows = dmarcSpfAllowsIp(spfRecord, row.sourceIp);
+        if (allows === null) continue;
+        if (allows === false) {
+          spfUnknownGroups.set(row.sourceIp, (spfUnknownGroups.get(row.sourceIp) || 0) + (Number(row.messages) || 0));
+        }
+      }
+    }
+    const unknownSenders = Array.from(spfUnknownGroups.entries()).map(function (e) { return { ip: e[0], messages: e[1] }; });
+
+    const spoofingRow = rows.find(function (r) { return !r.dkimPass && !r.spfPass; });
+    const hasDkimFailAndSpfFail = !!spoofingRow;
+    const failuresExist = rows.some(function (r) { return !(r.dkimPass && r.spfPass); });
+    const policyLower = String(policy || '').toLowerCase();
+
+    if (hasDkimFailAndSpfFail) {
+      const ip = spoofingRow.sourceIp;
+      actions.push(
+        '<div class="dmarc-action-card high">' +
+          '<div class="dmarc-action-title">🔴 SPOOFING DETECTED</div>' +
+          '<div>Messages from ' + dmarcEscapeText(ip) + ' are failing both DKIM and SPF. This could be a misconfigured sender or an attacker spoofing your domain.</div>' +
+          '<div style="margin-top:0.6rem;">Fix: If this IP is not a legitimate sender, upgrade to p=reject to block these messages.</div>' +
+        '</div>'
+      );
+    }
+
+    if (policyLower === 'none' && failuresExist) {
+      const fixValue = 'v=DMARC1; p=quarantine;';
+      actions.push(
+        '<div class="dmarc-action-card medium">' +
+          '<div class="dmarc-action-title">🟡 UPGRADE YOUR DMARC POLICY</div>' +
+          '<div>You\'re in monitoring mode. Failures are being reported but not blocked. Once legitimate senders are aligned, upgrade to p=quarantine.</div>' +
+          '<div style="margin-top:0.6rem;">Fix:</div>' +
+          '<div class="dmarc-fix-block">' +
+            '<div class="dmarc-fix-label">FIX</div>' +
+            '<pre class="dmarc-fix-pre">' + dmarcEscapeText(fixValue) + '</pre>' +
+            '<div class="dmarc-copy-buttons">' +
+              '<button type="button" class="dmarc-copy-btn" data-dmarc-copy="cloudflare">Copy for Cloudflare →</button>' +
+              '<button type="button" class="dmarc-copy-btn" data-dmarc-copy="namecheap">Copy for Namecheap →</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
+    if (unknownSenders.length) {
+      var body = '';
+      for (var s = 0; s < unknownSenders.length; s++) {
+        body += '<div>IP ' + dmarcEscapeText(unknownSenders[s].ip) + ' sent ' + dmarcEscapeText(String(unknownSenders[s].messages)) + ' messages but isn\'t in your SPF record. Add it or investigate.</div>';
+      }
+      actions.push(
+        '<div class="dmarc-action-card medium">' +
+          '<div class="dmarc-action-title">🟡 UNKNOWN SENDER DETECTED</div>' +
+          body +
+        '</div>'
+      );
+    }
+
+    if (!actions.length) {
+      actions.push(
+        '<div class="dmarc-action-card medium">' +
+          '<div class="dmarc-action-title">✓ No high-confidence spoofing signals</div>' +
+          '<div>Failures were detected, but no actionable spoofing pattern was confirmed from this report period.</div>' +
+        '</div>'
+      );
+    }
+
+    dmarcActions.innerHTML = actions.join('');
+    dmarcResults.style.display = 'block';
+
+    const copyButtons = dmarcActions.querySelectorAll('button[data-dmarc-copy]');
+    for (var c = 0; c < copyButtons.length; c++) {
+      const btn = copyButtons[c];
+      btn.addEventListener('click', function () {
+        const mode = this.getAttribute('data-dmarc-copy');
+        const fixValue = 'v=DMARC1; p=quarantine;';
+        const recordName = '_dmarc';
+        var text = '';
+        if (mode === 'cloudflare') {
+          text = 'Type: TXT\nName: ' + recordName + '\nValue: ' + fixValue + '\nTTL: Auto';
+        } else if (mode === 'namecheap') {
+          text = 'Type: TXT\nHost: ' + recordName + '\nValue: ' + fixValue + '\nTTL: Automatic';
+        }
+        if (text) navigator.clipboard.writeText(text);
+        toastShow('Copied DMARC fix ✓');
+        this.textContent = '✓ Copied';
+        var self = this;
+        setTimeout(function () { self.textContent = mode === 'cloudflare' ? 'Copy for Cloudflare →' : 'Copy for Namecheap →'; }, 2000);
+      });
+    }
+  }
+
+  if (dmarcAnalyzeBtn) dmarcAnalyzeBtn.addEventListener('click', dmarcAnalyze);
+  if (dmarcClearLink) {
+    dmarcClearLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (dmarcXmlInput) dmarcXmlInput.value = '';
+      dmarcReset();
+    });
+  }
+
+  if (dmarcTryExampleBtn) {
+    dmarcTryExampleBtn.addEventListener('click', function () {
+      const sample =
+        '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<feedback>\n' +
+        '  <report_metadata>\n' +
+        '    <org_name>Google Inc.</org_name>\n' +
+        '    <email>noreply-dmarc-support@google.com</email>\n' +
+        '    <report_id>12345678</report_id>\n' +
+        '    <date_range>\n' +
+        '      <begin>1710288000</begin>\n' +
+        '      <end>1710374400</end>\n' +
+        '    </date_range>\n' +
+        '  </report_metadata>\n' +
+        '  <policy_published>\n' +
+        '    <domain>example.com</domain>\n' +
+        '    <p>none</p>\n' +
+        '    <sp>none</sp>\n' +
+        '    <pct>100</pct>\n' +
+        '  </policy_published>\n' +
+        '  <record>\n' +
+        '    <row>\n' +
+        '      <source_ip>209.85.220.41</source_ip>\n' +
+        '      <count>142</count>\n' +
+        '      <policy_evaluated>\n' +
+        '        <disposition>none</disposition>\n' +
+        '        <dkim>pass</dkim>\n' +
+        '        <spf>pass</spf>\n' +
+        '      </policy_evaluated>\n' +
+        '    </row>\n' +
+        '    <identifiers>\n' +
+        '      <header_from>example.com</header_from>\n' +
+        '    </identifiers>\n' +
+        '    <auth_results>\n' +
+        '      <dkim>\n' +
+        '        <domain>example.com</domain>\n' +
+        '        <result>pass</result>\n' +
+        '      </dkim>\n' +
+        '      <spf>\n' +
+        '        <domain>example.com</domain>\n' +
+        '        <result>pass</result>\n' +
+        '      </spf>\n' +
+        '    </auth_results>\n' +
+        '  </record>\n' +
+        '  <record>\n' +
+        '    <row>\n' +
+        '      <source_ip>198.51.100.42</source_ip>\n' +
+        '      <count>3</count>\n' +
+        '      <policy_evaluated>\n' +
+        '        <disposition>none</disposition>\n' +
+        '        <dkim>fail</dkim>\n' +
+        '        <spf>fail</spf>\n' +
+        '      </policy_evaluated>\n' +
+        '    </row>\n' +
+        '    <identifiers>\n' +
+        '      <header_from>example.com</header_from>\n' +
+        '    </identifiers>\n' +
+        '    <auth_results>\n' +
+        '      <dkim>\n' +
+        '        <domain>example.com</domain>\n' +
+        '        <result>fail</result>\n' +
+        '      </dkim>\n' +
+        '      <spf>\n' +
+        '        <domain>example.com</domain>\n' +
+        '        <result>fail</result>\n' +
+        '      </spf>\n' +
+        '    </auth_results>\n' +
+        '  </record>\n' +
+        '</feedback>';
+      dmarcXmlInput.value = sample;
+      dmarcAnalyze();
+    });
+  }
+})();
+  </script>
+</body>
+</html>
