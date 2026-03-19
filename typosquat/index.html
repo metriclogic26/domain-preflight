@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typosquat Monitor — DomainPreflight</title>
+  <meta name="description" content="Detect lookalike domains that resolve. Find typosquatting domains impersonating your brand before attackers use them for phishing.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="MetricLogic">
+  <link rel="canonical" href="https://domainpreflight.dev/typosquat/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Typosquat Monitor — DomainPreflight">
+  <meta property="og:description" content="Detect lookalike domains that resolve. Find typosquatting domains impersonating your brand before attackers use them for phishing.">
+  <meta property="og:url" content="https://domainpreflight.dev/typosquat/">
+  <meta property="og:site_name" content="DomainPreflight">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Typosquat Monitor — DomainPreflight">
+  <meta name="twitter:description" content="Detect lookalike domains that resolve. Find typosquatting domains impersonating your brand before attackers use them for phishing.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    :root {
+      --bg: #0B0D14;
+      --surface: #13151F;
+      --bg2: #10131F;
+      --bg3: #161924;
+      --border: #1E2236;
+      --purple: #6C63FF;
+      --green: #22C55E;
+      --orange: #F97316;
+      --red: #EF4444;
+      --text: #E2E4F0;
+      --muted: #8a8fb5;
+      --text2: var(--muted);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-left: 0.5rem;
+      color: var(--text2);
+    }
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    nav a {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    nav a.active { color: var(--text); font-weight: 500; }
+    nav a.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 1rem; }
+    .hero {
+      text-align: center;
+      padding-top: 1.5rem;
+      padding-bottom: 2rem;
+    }
+    .hero-label {
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    .hero-sub {
+      color: var(--text2);
+      font-size: 0.9rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .input-wrap label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text2);
+      margin-bottom: 0.35rem;
+    }
+    .input-wrap input {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    .input-wrap input::placeholder { color: var(--text2); opacity: 0.7; }
+    .input-wrap input:focus { outline: none; border-color: var(--purple); }
+    .btn-scan {
+      display: block;
+      max-width: 340px;
+      margin: 0.75rem 0 0 auto;
+      width: 100%;
+      background: var(--purple);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .btn-scan:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-scan:disabled { cursor: not-allowed; opacity: 0.8; }
+    .hero-btns {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--text2);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-pill:focus { outline: none; border-color: var(--border); }
+    .btn-pill:hover { border-color: var(--purple); color: var(--text); }
+    #resultsSection { display: none; margin-top: 2rem; }
+    .progress-wrap { margin-bottom: 1.5rem; }
+    .progress-text { font-size: 0.9rem; color: var(--text2); margin-bottom: 0.5rem; }
+    .progress-bar { height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--purple); border-radius: 4px; width: 0%; transition: width 0.2s; }
+    .summary-bar {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      color: var(--text2);
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    .summary-bar.ok { color: var(--green); border-color: rgba(34,197,94,0.3); }
+    .summary-bar.warn { color: var(--orange); border-color: rgba(249,115,22,0.3); }
+    .summary-bar.critical { color: var(--red); border-color: rgba(239,68,68,0.3); }
+    .risk-cards { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
+    .risk-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+    .risk-card.high { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); }
+    .risk-card.medium { background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.3); }
+    .risk-card.low { background: rgba(34, 197, 94, 0.06); border-color: rgba(34, 197, 94, 0.25); }
+    .risk-card-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .risk-card.high .risk-card-title { color: var(--red); }
+    .risk-card.medium .risk-card-title { color: var(--orange); }
+    .risk-card.low .risk-card-title { color: var(--green); }
+    .risk-card-body { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.65rem; line-height: 1.6; }
+    .risk-domain { color: var(--text); font-weight: 500; word-break: break-all; }
+    .risk-card-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .risk-card-actions a {
+      color: var(--purple);
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .risk-card-actions a:hover { text-decoration: underline; }
+    .empty-state {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text2);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .empty-state.success {
+      border-color: rgba(34, 197, 94, 0.3);
+      color: var(--green);
+      background: rgba(34, 197, 94, 0.06);
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      background: var(--bg2);
+      margin-top: 3rem;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-disclaimer {
+      text-align: center;
+      width: 100%;
+      font-size: 11px;
+      color: var(--text2);
+      opacity: 0.6;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    footer a { color: var(--text2); text-decoration: none; font-size: 0.85rem; }
+    footer a:hover { color: var(--text2); text-decoration: underline; }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; margin-top: 2rem; }
+    .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
+    .faq-section {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+      border-top: 1px solid var(--border);
+    }
+    .faq-section h2 {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .faq-section h2:first-child { margin-top: 0; }
+    .faq-section p {
+      color: var(--text2);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight.</a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/" class="active" aria-current="page">Typosquat</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-label">TYPOSQUAT MONITOR</div>
+      <h1>Find domains impersonating yours.</h1>
+      <p class="hero-sub">Detect lookalike domains that resolve — before attackers use them for phishing. No signup. Nothing leaves your browser.</p>
+    </section>
+
+    <section class="input-card">
+      <div class="input-wrap">
+        <label for="domain">Domain</label>
+        <input type="text" id="domain" placeholder="yourdomain.com" autocomplete="off" spellcheck="false">
+      </div>
+      <button type="button" class="btn-scan" id="scanBtn">Scan Variants →</button>
+      <div class="hero-btns">
+        <button type="button" class="btn-pill" id="clearBtn">× Clear</button>
+        <button type="button" class="btn-pill" id="tryExampleBtn">Try an example</button>
+      </div>
+    </section>
+
+    <section id="resultsSection">
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-text" id="progressText">Checking variants…</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="summary-bar" id="summaryBar"></div>
+      <div id="riskCards" class="risk-cards"></div>
+
+      <div id="noResolveCard" class="empty-state success" style="display:none;"></div>
+    </section>
+  </main>
+
+  <section class="how-to-use">
+    <div class="how-to-use-label">HOW TO USE</div>
+    <ol class="how-to-use-steps">
+      <li>Enter your root domain (e.g. <span style="color: var(--text);">example.com</span>)</li>
+      <li>Click Scan Variants → to generate lookalike candidates</li>
+      <li>Review only the variants that resolve and take defensive action</li>
+    </ol>
+  </section>
+
+  <section class="faq-section">
+    <h2>What does “resolves” mean?</h2>
+    <p>Each generated variant is checked via Cloudflare DNS-over-HTTPS (DoH) for an A record. A resolving domain may be in use, but it doesn’t prove malicious intent.</p>
+
+    <h2>Why do some lookalikes show up as low risk?</h2>
+    <p>Variant risk is based on how likely a typo or visual similarity could be. Higher-risk categories include homoglyphs, missing/doubled characters, and name+common TLD combinations.</p>
+
+    <h2>Is this a guaranteed fix?</h2>
+    <p>No. This tool helps you discover candidate lookalikes early. Always verify in staging before deploying any generated or defensive actions.</p>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">Variant resolution checked via Cloudflare DoH. A resolving domain does not confirm malicious intent — verify manually before taking action. Always verify in staging.</p>
+      <div class="footer-links">
+        <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try <a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></span>
+        <span>
+          <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
+          <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
+          <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var DOH_URL = 'https://cloudflare-dns.com/dns-query';
+
+      var MAX_BATCH = 5;
+      var BATCH_DELAY_MS = 300;
+      var MIN_VARIANTS = 30;
+      var MAX_VARIANTS = 50;
+
+      var inputEl = document.getElementById('domain');
+      var scanBtn = document.getElementById('scanBtn');
+      var clearBtn = document.getElementById('clearBtn');
+      var tryExampleBtn = document.getElementById('tryExampleBtn');
+
+      var resultsSection = document.getElementById('resultsSection');
+      var progressWrap = document.getElementById('progressWrap');
+      var progressText = document.getElementById('progressText');
+      var progressFill = document.getElementById('progressFill');
+
+      var summaryBar = document.getElementById('summaryBar');
+      var riskCards = document.getElementById('riskCards');
+      var noResolveCard = document.getElementById('noResolveCard');
+
+      function toastShow(msg) {
+        var toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toast._t);
+        toast._t = setTimeout(function () { toast.classList.remove('show'); }, 2500);
+      }
+
+      function escapeHtml(s) {
+        var div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+
+      function normalizeDomain(input) {
+        if (typeof input !== 'string') return '';
+        var s = input.trim();
+        try {
+          if (/^https?:\/\//i.test(s)) {
+            s = new URL(s).hostname;
+          } else {
+            s = s.replace(/^https?:\/\//i, '').split('/')[0].trim();
+          }
+        } catch (_) {
+          s = s.replace(/^https?:\/\//i, '').split('/')[0].trim();
+        }
+        return s.replace(/\.+$/, '').toLowerCase();
+      }
+
+      function splitRootTld(domain) {
+        var labels = String(domain || '').toLowerCase().split('.').filter(Boolean);
+        if (labels.length !== 2) return null;
+        return { root: labels[0], tld: labels[1] };
+      }
+
+      function riskRank(level) {
+        if (level === 'high') return 3;
+        if (level === 'medium') return 2;
+        return 1;
+      }
+
+      function addVariant(outMap, domain, meta) {
+        if (!domain) return;
+        if (outMap.has(domain)) {
+          var existing = outMap.get(domain);
+          if (riskRank(meta.level) > riskRank(existing.level)) outMap.set(domain, meta);
+          return;
+        }
+        outMap.set(domain, meta);
+      }
+
+      function generateVariants(root, tld) {
+        var original = root + '.' + tld;
+        var variants = new Map();
+
+        var homoMap = { e: '3', a: '@', o: '0', i: '1', l: '1' };
+
+        // 1) Homoglyph substitution
+        for (var i = 0; i < root.length; i++) {
+          var ch = root[i];
+          if (Object.prototype.hasOwnProperty.call(homoMap, ch)) {
+            var newRoot = root.slice(0, i) + homoMap[ch] + root.slice(i + 1);
+            var domain = newRoot + '.' + tld;
+            addVariant(variants, domain, {
+              level: 'high',
+              type: 'Homoglyph (' + ch + '→' + homoMap[ch] + ')'
+            });
+          }
+        }
+
+        // 2) Adjacent key swaps (limit to first 8)
+        var swapCount = 0;
+        for (var si = 0; si < root.length - 1; si++) {
+          if (swapCount >= 8) break;
+          var swapped = root.slice(0, si) + root[si + 1] + root[si] + root.slice(si + 2);
+          var d = swapped + '.' + tld;
+          addVariant(variants, d, {
+            level: 'medium',
+            type: 'Adjacent key swap typos'
+          });
+          swapCount++;
+        }
+
+        // 3) Missing character (limit to first 6)
+        var missingCount = 0;
+        for (var mi = 0; mi < root.length; mi++) {
+          if (missingCount >= 6) break;
+          var missRoot = root.slice(0, mi) + root.slice(mi + 1);
+          var md = missRoot + '.' + tld;
+          addVariant(variants, md, {
+            level: 'high',
+            type: 'Missing character (' + root[mi] + ' removed)'
+          });
+          missingCount++;
+        }
+
+        // 4) Double character (limit to first 6)
+        var doubleCount = 0;
+        for (var di = 0; di < root.length; di++) {
+          if (doubleCount >= 6) break;
+          var doubled = root.slice(0, di + 1) + root[di] + root.slice(di + 1);
+          var dd = doubled + '.' + tld;
+          addVariant(variants, dd, {
+            level: 'high',
+            type: 'Doubled character (' + root[di] + ' duplicated)'
+          });
+          doubleCount++;
+        }
+
+        // 5) Common TLD swaps
+        var commonTlds = ['net', 'org', 'co', 'io', 'app', 'dev', 'ai', 'xyz'];
+        for (var ti = 0; ti < commonTlds.length; ti++) {
+          var targetTld = commonTlds[ti];
+          if (targetTld === tld) continue;
+          var domain = root + '.' + targetTld;
+          var level = 'medium';
+          if (targetTld === 'net' || targetTld === 'org' || targetTld === 'co') level = 'high';
+          else if (targetTld === 'xyz' || targetTld === 'ai') level = 'low';
+          addVariant(variants, domain, {
+            level: level,
+            type: (level === 'high' ? 'Same name + common TLD (.' + targetTld + ')' : 'TLD swap (.' + targetTld + ')')
+          });
+        }
+
+        // 6) Prefix/Suffix
+        var prefixVariants = [
+          { v: 'my-', label: 'my-' },
+          { v: 'get', label: 'get' },
+          { v: 'use', label: 'use' },
+          { v: 'try', label: 'try' }
+        ];
+        for (var pi = 0; pi < prefixVariants.length; pi++) {
+          var p = prefixVariants[pi].v;
+          var dp = p + root + '.' + tld;
+          addVariant(variants, dp, {
+            level: 'medium',
+            type: 'Prefix variant (' + prefixVariants[pi].label + ')'
+          });
+        }
+        var suffixVariants = [
+          { v: 'app', label: 'app' },
+          { v: '-app', label: '-app' }
+        ];
+        for (var si2 = 0; si2 < suffixVariants.length; si2++) {
+          var sfx = suffixVariants[si2].v;
+          var ds = root + sfx + '.' + tld;
+          addVariant(variants, ds, {
+            level: 'low',
+            type: 'Suffix variant (' + suffixVariants[si2].label + ')'
+          });
+        }
+
+        // Deduplicate & exclude original domain
+        if (variants.has(original)) variants.delete(original);
+
+        // Convert Map to ordered array of {domain, meta}
+        var ordered = [];
+        variants.forEach(function (meta, domain) {
+          ordered.push({ domain: domain, meta: meta });
+        });
+
+        // Sort deterministically to keep UI stable.
+        ordered.sort(function (a, b) {
+          if (a.meta.level !== b.meta.level) return riskRank(b.meta.level) - riskRank(a.meta.level);
+          return a.domain < b.domain ? -1 : a.domain > b.domain ? 1 : 0;
+        });
+
+        // Ensure we aim for 30-50 unique variants (cap to 50; if fewer, just show what we have).
+        if (ordered.length > MAX_VARIANTS) ordered = ordered.slice(0, MAX_VARIANTS);
+
+        return ordered;
+      }
+
+      async function resolves(domain) {
+        try {
+          var url = DOH_URL + '?name=' + encodeURIComponent(domain) + '&type=A';
+          var res = await fetch(url, { headers: { Accept: 'application/dns-json' } });
+          var data = await res.json();
+          return data.Answer && data.Answer.length > 0;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      async function checkBatch(domains, onProgress) {
+        var results = [];
+        var total = domains.length;
+        var checked = 0;
+        for (var i = 0; i < domains.length; i += MAX_BATCH) {
+          var batch = domains.slice(i, i + MAX_BATCH);
+          var batchResults = await Promise.all(
+            batch.map(function (d) {
+              return resolves(d).then(function (r) {
+                checked++;
+                if (typeof onProgress === 'function') onProgress(checked, total);
+                return { domain: d, resolves: r };
+              });
+            })
+          );
+          results.push.apply(results, batchResults);
+          if (i + MAX_BATCH < domains.length) {
+            await new Promise(function (r) { setTimeout(r, BATCH_DELAY_MS); });
+          }
+        }
+        return results;
+      }
+
+      function updateProgress(checked, total) {
+        progressText.textContent = 'Checking variant ' + checked + ' of ' + total + '...';
+        var pct = total === 0 ? 0 : Math.round((checked / total) * 100);
+        progressFill.style.width = String(pct) + '%';
+      }
+
+      function clearResults() {
+        resultsSection.style.display = 'none';
+        summaryBar.style.display = 'none';
+        riskCards.innerHTML = '';
+        noResolveCard.style.display = 'none';
+        noResolveCard.textContent = '';
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Checking variants…';
+      }
+
+      function renderRiskCard(domain, meta) {
+        var riskTitle = meta.level === 'high'
+          ? '🔴 HIGH RISK'
+          : meta.level === 'medium'
+            ? '🟡 MEDIUM RISK'
+            : '🟢 LOW RISK';
+
+        var urlscan = 'https://urlscan.io/search/#domain:' + domain;
+        var namecheap = 'https://www.namecheap.com/domains/registration/results/?domain=' + encodeURIComponent(domain);
+
+        var card = document.createElement('div');
+        card.className = 'risk-card ' + meta.level;
+        card.innerHTML =
+          '<div class="risk-card-title">' + riskTitle + '</div>' +
+          '<div class="risk-card-body">' +
+            '<div class="risk-domain">' + escapeHtml(domain) + '</div>' +
+            '<div>Type: ' + escapeHtml(meta.type) + '</div>' +
+            '<div>Status: ✗ Resolves — active domain</div>' +
+          '</div>' +
+          '<div class="risk-card-actions">' +
+            '<a href="' + escapeHtml(urlscan) + '" target="_blank" rel="noopener">Check on URLScan →</a>' +
+            '<a href="' + escapeHtml(namecheap) + '" target="_blank" rel="noopener">Register defensively →</a>' +
+          '</div>';
+        return card;
+      }
+
+      async function runScan() {
+        var normalized = normalizeDomain(inputEl.value);
+        var split = splitRootTld(normalized);
+        if (!split) {
+          toastShow('Enter a root domain like example.com');
+          return;
+        }
+
+        inputEl.value = split.root + '.' + split.tld;
+
+        var variants = generateVariants(split.root, split.tld);
+        if (!variants.length) {
+          toastShow('Could not generate variants for this domain');
+          return;
+        }
+
+        var total = variants.length;
+        var domains = variants.map(function (v) { return v.domain; });
+
+        scanBtn.disabled = true;
+        scanBtn.textContent = '⟳ Scanning…';
+        resultsSection.style.display = 'block';
+        progressWrap.style.display = 'block';
+        updateProgress(0, total);
+        summaryBar.style.display = 'none';
+        riskCards.innerHTML = '';
+        noResolveCard.style.display = 'none';
+
+        try {
+          var variantByDomain = new Map();
+          variants.forEach(function (v) { variantByDomain.set(v.domain, v.meta); });
+
+          var resolved = await checkBatch(domains, updateProgress);
+          var resolving = resolved.filter(function (r) { return r.resolves; });
+
+          var resolveCount = resolving.length;
+          var highCount = resolving.filter(function (r) { return variantByDomain.get(r.domain).level === 'high'; }).length;
+
+          // Summary bar
+          summaryBar.style.display = 'block';
+          summaryBar.classList.remove('ok', 'warn', 'critical');
+          if (resolveCount === 0) summaryBar.classList.add('ok');
+          else if (resolveCount <= 2) summaryBar.classList.add('warn');
+          else summaryBar.classList.add('critical');
+          summaryBar.textContent = total + ' variants checked · ' + resolveCount + ' resolve · ' + highCount + ' high risk';
+
+          // Risk cards only for resolving domains
+          if (resolveCount === 0) {
+            noResolveCard.style.display = 'block';
+            noResolveCard.textContent = '✓ No active lookalike domains detected across ' + total + ' variants checked. Your brand appears clean.';
+          } else {
+            var cards = resolving.map(function (r) {
+              return renderRiskCard(r.domain, variantByDomain.get(r.domain));
+            });
+            // Sort by risk level (high first)
+            resolving.sort(function (a, b) {
+              var la = variantByDomain.get(a.domain).level;
+              var lb = variantByDomain.get(b.domain).level;
+              return riskRank(lb) - riskRank(la);
+            });
+            // Re-render in sorted order for stable layout.
+            riskCards.innerHTML = '';
+            resolving.forEach(function (r) {
+              riskCards.appendChild(renderRiskCard(r.domain, variantByDomain.get(r.domain)));
+            });
+          }
+        } catch (e) {
+          toastShow('Scan failed. Please try again.');
+        } finally {
+          scanBtn.disabled = false;
+          scanBtn.textContent = 'Scan Variants →';
+        }
+      }
+
+      scanBtn.addEventListener('click', runScan);
+      inputEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') runScan();
+      });
+
+      clearBtn.addEventListener('click', function () {
+        inputEl.value = '';
+        clearResults();
+      });
+
+      tryExampleBtn.addEventListener('click', function () {
+        inputEl.value = 'github.com';
+        runScan();
+      });
+
+      clearResults();
+    })();
+  </script>
+</body>
+</html>
