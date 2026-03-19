@@ -291,14 +291,35 @@
       border-radius: 6px;
     }
     footer {
-      border-top: 1px solid var(--border);
-      padding: 1.25rem 1.5rem;
+      border-top: none;
+      padding: 0;
       background: var(--bg2);
     }
     .footer-inner {
       max-width: 1200px;
       margin: 0 auto;
+      padding: 1.25rem 1.5rem;
     }
+    .footer-bar {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--text2);
+    }
+    .footer-bar-left,
+    .footer-bar-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text2); text-decoration: underline; }
     .footer-disclaimer {
       text-align: center;
       width: 100%;
@@ -427,11 +448,23 @@
       <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
       <div class="footer-links">
         <span style="color: var(--text2); font-size: 0.85rem;">DomainPreflight by MetricLogic · Also try <a href="https://configclarity.dev" target="_blank" rel="noopener">configclarity.dev</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></span>
-        <span>
-          <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Open source · MIT · GitHub →</a>
-          <span style="color: var(--text2); margin: 0 0.5rem;">·</span>
-          <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
-        </span>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="footer-bar-left">
+        <span>DomainPreflight by MetricLogic ·</span>
+        <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a>
+        <span>·</span>
+        <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a>
+        <span>·</span>
+        <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a>
+      </div>
+      <div class="footer-bar-right">
+        <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a>
+        <span>·</span>
+        <span>MIT Licensed</span>
+        <span>·</span>
+        <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
       </div>
     </div>
   </footer>
