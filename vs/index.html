@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DomainPreflight Alternatives & Comparisons — DomainPreflight</title>
+  <meta name="description" content="How DomainPreflight compares to MXToolbox, EasyDMARC, dmarcian, and other email deliverability tools.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/vs/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"DomainPreflight vs Other DNS & Email Tools","url":"https://domainpreflight.dev/vs/","hasPart":{"@type":"ItemList","name":"Comparisons","numberOfItems":8,"itemListElement":[{"@type":"ListItem","position":1,"name":"vs MXToolbox","url":"https://domainpreflight.dev/vs/mxtoolbox/"},{"@type":"ListItem","position":2,"name":"vs EasyDMARC","url":"https://domainpreflight.dev/vs/easydmarc/"},{"@type":"ListItem","position":3,"name":"vs dmarcian","url":"https://domainpreflight.dev/vs/dmarcian/"},{"@type":"ListItem","position":4,"name":"vs PowerDMARC","url":"https://domainpreflight.dev/vs/powerdmarc/"},{"@type":"ListItem","position":5,"name":"vs DMARC Analyzer","url":"https://domainpreflight.dev/vs/dmarc-analyzer/"},{"@type":"ListItem","position":6,"name":"vs intoDNS","url":"https://domainpreflight.dev/vs/intodns/"},{"@type":"ListItem","position":7,"name":"vs SPFToolbox","url":"https://domainpreflight.dev/vs/spftoolbox/"},{"@type":"ListItem","position":8,"name":"vs DNSChecker","url":"https://domainpreflight.dev/vs/dnschecker/"}]}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Comparisons","item":"https://domainpreflight.dev/vs/"}]}
+  </script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; margin-bottom: 0.75rem; }
+    .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; max-width: 680px; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
+    .hub-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    .hub-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px rgba(108, 99, 255, 0.25); }
+    .hub-card-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+    .hub-card-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.4; }
+    .hub-card-arrow { color: var(--purple); font-size: 1.2rem; flex-shrink: 0; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> Comparisons</nav>
+    <p class="hero-label">Compare</p>
+    <h1>DomainPreflight vs Other DNS &amp; Email Tools</h1>
+    <p class="lead">How DomainPreflight compares to MXToolbox, EasyDMARC, dmarcian, and other email deliverability tools.</p>
+    <div class="card-grid">
+      <a class="hub-card" href="/vs/mxtoolbox/"><div><div class="hub-card-title">vs MXToolbox</div><p class="hub-card-desc">Client-side checks vs hosted lookups and limits.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/vs/easydmarc/"><div><div class="hub-card-title">vs EasyDMARC</div><p class="hub-card-desc">Free browser tools vs paid DMARC platforms.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/vs/dmarcian/"><div><div class="hub-card-title">vs dmarcian</div><p class="hub-card-desc">Aggregate reporting and alignment focus.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/vs/powerdmarc/"><div><div class="hub-card-title">vs PowerDMARC</div><p class="hub-card-desc">Enterprise DMARC vs lightweight preflight.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/vs/dmarc-analyzer/"><div><div class="hub-card-title">vs DMARC Analyzer</div><p class="hub-card-desc">Report parsing and policy comparison.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/vs/intodns/"><div><div class="hub-card-title">vs intoDNS</div><p class="hub-card-desc">Recursive checks vs multi-resolver propagation.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/vs/spftoolbox/"><div><div class="hub-card-title">vs SPFToolbox</div><p class="hub-card-desc">SPF flattening and lookup visualization.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/vs/dnschecker/"><div><div class="hub-card-title">vs DNSChecker</div><p class="hub-card-desc">Global propagation vs alignment scoring.</p></div><span class="hub-card-arrow">→</span></a>
+    </div>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>
