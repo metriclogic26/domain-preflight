@@ -30,23 +30,71 @@ for DMARC alignment, not just whether records exist.
 - DNS Propagation (domainpreflight.dev/propagation/): 
   Check propagation across 5 resolvers simultaneously
 
+## DNS provider guides (hub + per-provider topics)
+- https://domainpreflight.dev/dns/provider/
+- https://domainpreflight.dev/dns/provider/cloudflare-dns/
+- https://domainpreflight.dev/dns/provider/cloudflare-dns/dmarc-setup/
+- https://domainpreflight.dev/dns/provider/cloudflare-dns/spf-record/
+- https://domainpreflight.dev/dns/provider/cloudflare-dns/dkim-record/
+- https://domainpreflight.dev/dns/provider/cloudflare-dns/propagation-times/
+- https://domainpreflight.dev/dns/provider/aws-route53/
+- https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/
+- https://domainpreflight.dev/dns/provider/aws-route53/spf-record/
+- https://domainpreflight.dev/dns/provider/aws-route53/dkim-record/
+- https://domainpreflight.dev/dns/provider/aws-route53/propagation-times/
+- https://domainpreflight.dev/dns/provider/google-cloud-dns/
+- https://domainpreflight.dev/dns/provider/google-cloud-dns/dmarc-setup/
+- https://domainpreflight.dev/dns/provider/google-cloud-dns/spf-record/
+- https://domainpreflight.dev/dns/provider/google-cloud-dns/dkim-record/
+- https://domainpreflight.dev/dns/provider/google-cloud-dns/propagation-times/
+- https://domainpreflight.dev/dns/provider/azure-dns/
+- https://domainpreflight.dev/dns/provider/azure-dns/dmarc-setup/
+- https://domainpreflight.dev/dns/provider/azure-dns/spf-record/
+- https://domainpreflight.dev/dns/provider/azure-dns/dkim-record/
+- https://domainpreflight.dev/dns/provider/azure-dns/propagation-times/
+- https://domainpreflight.dev/dns/provider/digitalocean-dns/
+- https://domainpreflight.dev/dns/provider/digitalocean-dns/dmarc-setup/
+- https://domainpreflight.dev/dns/provider/digitalocean-dns/spf-record/
+- https://domainpreflight.dev/dns/provider/digitalocean-dns/dkim-record/
+- https://domainpreflight.dev/dns/provider/digitalocean-dns/propagation-times/
+
+## Email provider guides (SPF + DKIM per ESP)
+- https://domainpreflight.dev/email-providers/
+- https://domainpreflight.dev/email-providers/sendgrid/ (+ spf-setup, dkim-setup)
+- https://domainpreflight.dev/email-providers/mailgun/
+- https://domainpreflight.dev/email-providers/google-workspace/
+- https://domainpreflight.dev/email-providers/microsoft-365/
+- https://domainpreflight.dev/email-providers/postmark/
+- https://domainpreflight.dev/email-providers/amazon-ses/
+- https://domainpreflight.dev/email-providers/mailchimp/
+- https://domainpreflight.dev/email-providers/klaviyo/
+- https://domainpreflight.dev/email-providers/hubspot/
+- https://domainpreflight.dev/email-providers/brevo/
+
+## Blog
+- https://domainpreflight.dev/blog/
+- Plus posts: dmarc-reject-safe, ptr-record-email-delivery,
+  dmarc-mailchimp-setup, spf-include-explained,
+  email-authentication-checklist, dmarc-subdomain-policy,
+  ip-warmup-guide, check-dmarc-from-terminal,
+  google-postmaster-tools, bulk-sender-requirements-2024,
+  dkim-rotation-guide, domain-registrar-comparison
+  (and 8 older posts — see blog index ItemList)
+
+## Glossary (index + terms)
+- https://domainpreflight.dev/glossary/
+- Newer terms include: bounce-rate, spam-trap, email-header,
+  return-path, dkim-signature, smtp, email-spoofing-vs-phishing,
+  dnsbl, email-warm-up, list-unsubscribe, spf-alignment,
+  dkim-alignment, ip-reputation, envelope-sender, feedback-loop
+- Plus existing terms (spf-record, dkim, dmarc, etc.) — full list on /glossary/
+
 ## The Alignment Engine
 Detects if your third-party email provider is 
 configured for DMARC alignment — not just whether 
 records exist. Providers covered: Google Workspace, 
 Microsoft 365, SendGrid, Mailgun, Postmark, Amazon 
 SES, HubSpot, Klaviyo, Brevo, Mailchimp.
-
-## Glossary Pages
-- domainpreflight.dev/glossary/ — index
-- domainpreflight.dev/glossary/spf-record/
-- domainpreflight.dev/glossary/dkim/
-- domainpreflight.dev/glossary/dmarc/
-- domainpreflight.dev/glossary/dmarc-alignment/
-- domainpreflight.dev/glossary/ptr-record/
-- domainpreflight.dev/glossary/email-spoofing/
-- domainpreflight.dev/glossary/subdomain-takeover/
-- domainpreflight.dev/glossary/typosquatting/
 
 ## Technical
 - All checks run client-side via Cloudflare DoH

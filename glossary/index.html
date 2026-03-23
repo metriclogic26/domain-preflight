@@ -219,6 +219,66 @@
         <a href="/glossary/mail-exchanger/">Mail Exchanger</a>
         <p>The server named by MX that receives SMTP on port 25 — needs A record and ideally matching PTR.</p>
       </li>
+      <li>
+        <a href="/glossary/bounce-rate/">Bounce Rate</a>
+        <p>Bounce rate is the percentage of emails that could not be delivered — split into hard bounces (permanent: bad address, domain doesn’t exist) and soft bounces (temporary: mailbox full, server timeout). High bounce rates d…</p>
+      </li>
+      <li>
+        <a href="/glossary/spam-trap/">Spam Trap</a>
+        <p>A spam trap is an email address used to identify senders who use bad lists. Pristine traps were never real addresses — hitting one means you bought, scraped, or generated addresses. Recycled traps were once real addresse…</p>
+      </li>
+      <li>
+        <a href="/glossary/email-header/">Email Header</a>
+        <p>Email headers are metadata attached to every message: delivery path, authentication results (SPF, DKIM, DMARC), timestamps, and Received hops. Recipients rarely see them — “Show original” in Gmail exposes the full chain.</p>
+      </li>
+      <li>
+        <a href="/glossary/return-path/">Return-Path</a>
+        <p>Return-Path is the envelope sender used for bounces — separate from the visible From: header. SPF checks the Return-Path domain (or HELO/EHLO context). DMARC alignment compares Return-Path domain to the From: domain for …</p>
+      </li>
+      <li>
+        <a href="/glossary/dkim-signature/">DKIM Signature</a>
+        <p>A DKIM signature is a cryptographic hash of the body and selected headers, signed with the sender’s private key. It appears in the DKIM-Signature header. Receivers verify using the public key at selector._domainkey.domai…</p>
+      </li>
+      <li>
+        <a href="/glossary/smtp/">SMTP</a>
+        <p>SMTP is the standard protocol for sending email between servers — typically port 25 for server-to-server relay and port 587 (or 465) for authenticated submission. SMTP alone does not authenticate senders — SPF, DKIM, and…</p>
+      </li>
+      <li>
+        <a href="/glossary/email-spoofing-vs-phishing/">Email Spoofing vs Phishing</a>
+        <p>Spoofing is forging the From: header (and related envelope data) to impersonate a domain. Phishing is using deceptive email to steal credentials or install malware. Spoofing is a technical technique; phishing is the atta…</p>
+      </li>
+      <li>
+        <a href="/glossary/dnsbl/">DNSBL (DNS Blacklist)</a>
+        <p>A DNSBL is a DNS-based blocklist: mail servers query a special DNS zone with a reversed IP embedded in the query. Example: for 1.2.3.4, query 4.3.2.1.zen.spamhaus.org — NXDOMAIN means not listed; an A record response mea…</p>
+      </li>
+      <li>
+        <a href="/glossary/email-warm-up/">Email Warm-Up</a>
+        <p>Email warm-up is gradually increasing send volume from a new IP address so mailbox providers build positive reputation instead of flagging a sudden spike as abuse. Cold IPs with high volume trigger spam filters — warm-up…</p>
+      </li>
+      <li>
+        <a href="/glossary/list-unsubscribe/">List-Unsubscribe Header</a>
+        <p>The List-Unsubscribe header (RFC 2369, extended by RFC 8058) lets mail clients show an unsubscribe button next to the message. Bulk senders to Google and Yahoo require one-click unsubscribe support — List-Unsubscribe-Pos…</p>
+      </li>
+      <li>
+        <a href="/glossary/spf-alignment/">SPF Alignment</a>
+        <p>SPF alignment is the DMARC check that the Return-Path domain matches the From: header’s organizational domain. Relaxed alignment allows subdomain matches; strict requires exact host match. SPF alignment fails when ESPs u…</p>
+      </li>
+      <li>
+        <a href="/glossary/dkim-alignment/">DKIM Alignment</a>
+        <p>DKIM alignment verifies the d= domain in the DKIM-Signature matches the From: header’s organizational domain. Relaxed alignment allows subdomain relationships; strict requires exact match. Most ESPs achieve alignment via…</p>
+      </li>
+      <li>
+        <a href="/glossary/ip-reputation/">IP Reputation</a>
+        <p>IP reputation is a trust score mailbox providers assign to a sending IP based on history: bounces, spam complaints, spam trap hits, and blocklist appearances. It affects delivery independently of domain reputation — a ba…</p>
+      </li>
+      <li>
+        <a href="/glossary/envelope-sender/">Envelope Sender</a>
+        <p>The envelope sender is the address in the SMTP MAIL FROM command — also called Return-Path or bounce address. It is separate from the visible From: header. SPF validates against the envelope domain — DMARC alignment requ…</p>
+      </li>
+      <li>
+        <a href="/glossary/feedback-loop/">Feedback Loop (FBL)</a>
+        <p>A feedback loop is a service where mailbox providers forward spam complaints (FBL reports) to the sender when users click “Report spam.” Registered senders receive complaint notifications so they can remove complainers a…</p>
+      </li>
     </ul>
   </main>
 

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMARC TXT — Amazon Route 53 — DomainPreflight</title>
+  <meta name="description" content="Step-by-step: publish a DMARC TXT at _dmarc in Amazon Route 53, with exact field values and common mistakes.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"HowTo","name":"Add DMARC DNS in Amazon Route 53","description":"Create a TXT at _dmarc with your DMARC policy and rua mailbox in Amazon Route 53.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS admin access"},"tool":{"@type":"HowToTool","name":"DomainPreflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Amazon Route 53","url":"https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/#step1","text":"Step 1 AWS Console → Route 53 → Hosted zones → select your domain → Create record ."},{"@type":"HowToStep","position":2,"name":"Add a TXT record for DMARC","url":"https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/#step2","text":"Step 2 Choose TXT . In the name/host field enter _dmarc only (For apex SPF, leave the record name blank (not @ ). For DMARC use _dmarc in the name field.)."},{"@type":"HowToStep","position":3,"name":"Paste the DMARC value","url":"https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/#step3","text":"Step 3 Paste this value in one piece (follow your provider’s quoting rules): \"v=DMARC1; p=none; rua=mailto:dmarc@example.com; fo=1\""},{"@type":"HowToStep","position":4,"name":"TTL and save","url":"https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/#step4","text":"Step 4 TTL: 1 hour is fine for rollout. Save. Remember: TXT values must be wrapped in quotes in the value field. Multiple strings in one TXT are entered as separate quoted strings on one line."},{"@type":"HowToStep","position":5,"name":"Verify locally","url":"https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/#step5","text":"Step 5 Query _dmarc.yourdomain with dig or use DNS Propagation across resolvers."},{"@type":"HowToStep","position":6,"name":"Confirm with DomainPreflight","url":"https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/#step6","text":"Step 6 Run DNS Preflight on the domain — DMARC policy and reporting should appear once TXT resolves."}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Where do I add DMARC in Amazon Route 53?","acceptedAnswer":{"@type":"Answer","text":"In the DNS zone for your domain — TXT name _dmarc, value starting with v=DMARC1."}},{"@type":"Question","name":"Why is my DMARC not visible yet?","acceptedAnswer":{"@type":"Answer","text":"TTL on the old record, or wrong name (full FQDN vs relative). Check authoritative NS."}},{"@type":"Question","name":"Does Amazon Route 53 proxy DMARC TXT?","acceptedAnswer":{"@type":"Answer","text":"Treat mail-related DNS as DNS-only where applicable — follow the provider gotcha on this page."}},{"@type":"Question","name":"What p= should I start with?","acceptedAnswer":{"@type":"Answer","text":"p=none for monitoring — tighten after reports look clean."}},{"@type":"Question","name":"How do I verify?","acceptedAnswer":{"@type":"Answer","text":"DNS Preflight and the DMARC Report Analyzer after rua= receives XML."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"DNS Records","item":"https://domainpreflight.dev/dns/"},{"@type":"ListItem","position":3,"name":"DNS Providers","item":"https://domainpreflight.dev/dns/provider/"},{"@type":"ListItem","position":4,"name":"Amazon Route 53","item":"https://domainpreflight.dev/dns/provider/aws-route53/"},{"@type":"ListItem","position":5,"name":"DMARC TXT","item":"https://domainpreflight.dev/dns/provider/aws-route53/dmarc-setup/"}]}
+  </script>
+  <style>
+
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; --warn: #f0a030; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.25rem, 3.2vw, 1.75rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.3; }
+    .lead { color: var(--text2); font-size: 0.92rem; margin-bottom: 1.25rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 1.75rem 0 0.65rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .gotcha { margin: 1rem 0 1.25rem; padding: 1rem 1.15rem; background: rgba(240, 160, 48, 0.08); border: 1px solid rgba(240, 160, 48, 0.35); border-radius: 10px; font-size: 0.88rem; color: var(--text); }
+    .gotcha strong { color: var(--warn); }
+    .dns-block, pre.code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.65rem 0 1rem; }
+    .howto-step { margin-bottom: 1.25rem; padding: 0.75rem 0 0.75rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.88rem; }
+    .tool-cta { margin: 1.75rem 0; padding: 1.15rem 1.35rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.45rem !important; font-size: 0.9rem; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h2 { font-size: 1.05rem; margin-top: 2rem; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.35rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; color: var(--text2); font-size: 0.9rem; }
+    .internal-links { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.86rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .hub-card { display: block; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; margin-bottom: 0.65rem; transition: border-color 0.2s; }
+    .hub-card:hover { border-color: var(--purple); }
+    .hub-card-title { font-weight: 600; color: var(--text); font-size: 0.92rem; }
+    .hub-card-desc { font-size: 0.78rem; color: var(--text2); margin-top: 0.35rem; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/blog/">Blog</a>
+        <a href="/learn/">Learn</a>
+
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/dns/">DNS Records</a> <span aria-hidden="true">›</span> <a href="/dns/provider/">DNS Providers</a> <span aria-hidden="true">›</span> <a href="/dns/provider/aws-route53/">Amazon Route 53</a> <span aria-hidden="true">›</span> DMARC setup</nav>
+    <article>
+      <p class="hero-label">DNS provider</p>
+      <h1>Add a DMARC record in Amazon Route 53</h1>
+      <p class="lead">DMARC lives at <code>_dmarc.yourdomain</code> as a TXT record. Amazon Route 53 is your control plane — one typo in the name field and receivers never see the record.</p>
+      <div class="gotcha"><strong>Provider gotcha:</strong> <strong>TXT values must be wrapped in quotes</strong> in the value field. Multiple strings in one TXT are entered as separate quoted strings on one line.</div>
+      <p>See also <a href="/dns/dmarc-record/">DMARC record reference</a> and <a href="/learn/dmarc/">DMARC setup guide</a>.</p>
+
+      <h2>Step by step</h2>
+      <div class="howto-step" id="step1"><strong>Step 1</strong> AWS Console → <strong>Route 53</strong> → <strong>Hosted zones</strong> → select your domain → <strong>Create record</strong>.</div>
+      <div class="howto-step" id="step2"><strong>Step 2</strong> Choose <strong>TXT</strong>. In the name/host field enter <code>_dmarc</code> only (For apex SPF, leave the record name <strong>blank</strong> (not <code>@</code>). For DMARC use <code>_dmarc</code> in the name field.).</div>
+      <div class="howto-step" id="step3"><strong>Step 3</strong> Paste this value in one piece (follow your provider’s quoting rules): <div class="dns-block">"v=DMARC1; p=none; rua=mailto:dmarc@example.com; fo=1"</div></div>
+      <div class="howto-step" id="step4"><strong>Step 4</strong> TTL: 1 hour is fine for rollout. Save. Remember: <strong>TXT values must be wrapped in quotes</strong> in the value field. Multiple strings in one TXT are entered as separate quoted strings on one line.</div>
+      <div class="howto-step" id="step5"><strong>Step 5</strong> Query <code>_dmarc.yourdomain</code> with dig or use <a href="https://domainpreflight.dev/propagation/">DNS Propagation</a> across resolvers.</div>
+      <div class="howto-step" id="step6"><strong>Step 6</strong> Run <a href="https://domainpreflight.dev/">DNS Preflight</a> on the domain — DMARC policy and reporting should appear once TXT resolves.</div>
+
+      <div class="tool-cta">
+        <p><strong>DNS Preflight</strong> — full auth check for your domain.</p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight →</a></p>
+        <p><strong>Propagation</strong> — compare resolvers.</p>
+        <p><a href="https://domainpreflight.dev/propagation/">Open DNS Propagation →</a></p>
+      </div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>Where do I add DMARC in Amazon Route 53?</h3>
+        <p>In the DNS zone for your domain — TXT name _dmarc, value starting with v=DMARC1.</p>
+        <h3>Why is my DMARC not visible yet?</h3>
+        <p>TTL on the old record, or wrong name (full FQDN vs relative). Check authoritative NS.</p>
+        <h3>Does Amazon Route 53 proxy DMARC TXT?</h3>
+        <p>Treat mail-related DNS as DNS-only where applicable — follow the provider gotcha on this page.</p>
+        <h3>What p= should I start with?</h3>
+        <p>p=none for monitoring — tighten after reports look clean.</p>
+        <h3>How do I verify?</h3>
+        <p>DNS Preflight and the DMARC Report Analyzer after rua= receives XML.</p>
+      </section>
+      <div class="internal-links"><p><a href="/dns/provider/aws-route53/">← Amazon Route 53 hub</a> · <a href="/dns/provider/">All DNS providers</a></p></div>
+
+    </article>
+  </main>
+  <footer>
+
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+
+  </footer>
+</body>
+</html>

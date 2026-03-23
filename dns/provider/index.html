@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNS Providers — DomainPreflight</title>
+  <meta name="description" content="How to add DMARC, SPF, DKIM, and verify propagation in Cloudflare, Route 53, Google Cloud DNS, Azure DNS, and DigitalOcean.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/dns/provider/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"DNS Records","item":"https://domainpreflight.dev/dns/"},{"@type":"ListItem","position":3,"name":"DNS Providers","item":"https://domainpreflight.dev/dns/provider/"}]}
+  </script>
+  <style>
+
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; --warn: #f0a030; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.25rem, 3.2vw, 1.75rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.3; }
+    .lead { color: var(--text2); font-size: 0.92rem; margin-bottom: 1.25rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 1.75rem 0 0.65rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .gotcha { margin: 1rem 0 1.25rem; padding: 1rem 1.15rem; background: rgba(240, 160, 48, 0.08); border: 1px solid rgba(240, 160, 48, 0.35); border-radius: 10px; font-size: 0.88rem; color: var(--text); }
+    .gotcha strong { color: var(--warn); }
+    .dns-block, pre.code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.65rem 0 1rem; }
+    .howto-step { margin-bottom: 1.25rem; padding: 0.75rem 0 0.75rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.88rem; }
+    .tool-cta { margin: 1.75rem 0; padding: 1.15rem 1.35rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.45rem !important; font-size: 0.9rem; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h2 { font-size: 1.05rem; margin-top: 2rem; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.35rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; color: var(--text2); font-size: 0.9rem; }
+    .internal-links { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.86rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .hub-card { display: block; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; margin-bottom: 0.65rem; transition: border-color 0.2s; }
+    .hub-card:hover { border-color: var(--purple); }
+    .hub-card-title { font-weight: 600; color: var(--text); font-size: 0.92rem; }
+    .hub-card-desc { font-size: 0.78rem; color: var(--text2); margin-top: 0.35rem; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/blog/">Blog</a>
+        <a href="/learn/">Learn</a>
+
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/dns/">DNS Records</a> <span aria-hidden="true">›</span> DNS Providers</nav>
+    <p class="hero-label">DNS</p>
+    <h1>DNS providers</h1>
+    <p class="lead">Pick your DNS host — we show the exact UI path, field quirks, and copy-paste values.</p>
+      <a class="hub-card" href="/dns/provider/cloudflare-dns/"><div class="hub-card-title">Cloudflare DNS</div><div class="hub-card-desc">DMARC, SPF, DKIM, propagation — Cloudflare DNS-specific steps.</div></a>
+      <a class="hub-card" href="/dns/provider/aws-route53/"><div class="hub-card-title">Amazon Route 53</div><div class="hub-card-desc">DMARC, SPF, DKIM, propagation — Amazon Route 53-specific steps.</div></a>
+      <a class="hub-card" href="/dns/provider/google-cloud-dns/"><div class="hub-card-title">Google Cloud DNS</div><div class="hub-card-desc">DMARC, SPF, DKIM, propagation — Google Cloud DNS-specific steps.</div></a>
+      <a class="hub-card" href="/dns/provider/azure-dns/"><div class="hub-card-title">Azure DNS</div><div class="hub-card-desc">DMARC, SPF, DKIM, propagation — Azure DNS-specific steps.</div></a>
+      <a class="hub-card" href="/dns/provider/digitalocean-dns/"><div class="hub-card-title">DigitalOcean DNS</div><div class="hub-card-desc">DMARC, SPF, DKIM, propagation — DigitalOcean DNS-specific steps.</div></a>
+    <p class="internal-links" style="margin-top:1.5rem"><a href="/dns/">← DNS Records hub</a></p>
+  </main>
+  <footer>
+
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+
+  </footer>
+</body>
+</html>

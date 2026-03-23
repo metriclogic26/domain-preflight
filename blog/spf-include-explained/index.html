@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPF include: Explained — What It Does and When to Use It | DomainPreflight</title>
+  <meta name="description" content="Every include: costs one DNS lookup. Here&#x27;s what include: actually does and how to use it without hitting the limit.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/blog/spf-include-explained/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"SPF include: Explained — What It Does and When to Use It","description":"Every include: costs one DNS lookup. Here's what include: actually does and how to use it without hitting the limit.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","url":"https://domainpreflight.dev/"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/blog/spf-include-explained/"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does include pull IPs automatically at send time?","acceptedAnswer":{"@type":"Answer","text":"No — receivers resolve the included SPF record at lookup time; nested includes chain."}},{"@type":"Question","name":"Why is nested include expensive?","acceptedAnswer":{"@type":"Answer","text":"Each include: can add more lookups — SendGrid’s record includes more includes."}},{"@type":"Question","name":"What is the limit?","acceptedAnswer":{"@type":"Answer","text":"10 DNS lookups total for SPF evaluation — see the SPF lookup limit post on this blog."}},{"@type":"Question","name":"Can I replace include with ip4?","acceptedAnswer":{"@type":"Answer","text":"Yes — flattening — trades operational pain for fewer lookups."}},{"@type":"Question","name":"How do I count?","acceptedAnswer":{"@type":"Answer","text":"DNS Preflight SPF tree shows the running total."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://domainpreflight.dev/blog/"},{"@type":"ListItem","position":3,"name":"SPF include: Explained — What It Does and When to Use It","item":"https://domainpreflight.dev/blog/spf-include-explained/"}]}
+  </script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.85rem); font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
+    .post-date { color: var(--text2); font-size: 0.8rem; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul, article ol { margin: 0.5rem 0 1rem 1.25rem; color: var(--text2); font-size: 0.9rem; }
+    pre.code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { margin-bottom: 0.5rem; color: var(--text); }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h2 { font-size: 1.05rem; margin-top: 2rem; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; color: var(--text2); font-size: 0.9rem; }
+    .internal-links { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.88rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/blog/">Blog</a>
+        <a href="/learn/">Learn</a>
+
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/blog/">Blog</a> <span aria-hidden="true">›</span> SPF include: Explained — What It Does and When to Use It</nav>
+    <article>
+      <p class="hero-label">Blog</p>
+      <h1>SPF include: Explained — What It Does and When to Use It</h1>
+      <p class="post-date"><time datetime="2026-03-19">March 19, 2026</time></p>
+
+      <p><code>include:vendor.net</code> tells the receiver: “also evaluate that domain’s SPF.” It is indirection — not a magic CC list.</p>
+      <h2>Lookup math</h2>
+      <p>Each mechanism that triggers DNS counts. Nested includes multiply pain. That is why stacks with six SaaS tools blow past ten without anyone editing a character.</p>
+<pre class="code-block">v=spf1 include:_spf.google.com include:sendgrid.net ~all</pre>
+      <p>Learn more: <a href="/glossary/spf-record/">SPF record</a>, <a href="/learn/spf/">SPF guide</a>.</p>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>Does include pull IPs automatically at send time?</h3>
+        <p>No — receivers resolve the included SPF record at lookup time; nested includes chain.</p>
+        <h3>Why is nested include expensive?</h3>
+        <p>Each include: can add more lookups — SendGrid’s record includes more includes.</p>
+        <h3>What is the limit?</h3>
+        <p>10 DNS lookups total for SPF evaluation — see the SPF lookup limit post on this blog.</p>
+        <h3>Can I replace include with ip4?</h3>
+        <p>Yes — flattening — trades operational pain for fewer lookups.</p>
+        <h3>How do I count?</h3>
+        <p>DNS Preflight SPF tree shows the running total.</p>
+      </section>
+      <div class="internal-links"><p><a href="/blog/">← All posts</a></p></div>
+    </article>
+  </main>
+  <footer>
+
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+
+  </footer>
+</body>
+</html>

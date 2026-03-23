@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPF setup — Amazon SES — DomainPreflight</title>
+  <meta name="description" content="Add Amazon SES to your SPF TXT: include string, one record, verify with DNS Preflight.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"HowTo","name":"Add Amazon SES SPF","description":"Publish SPF include for Amazon SES at your DNS host and verify.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS admin access"},"tool":{"@type":"HowToTool","name":"DomainPreflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Amazon SES","url":"https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/#step1","text":"Step 1 AWS Console → SES → Verified identities → your domain → DKIM → Easy DKIM."},{"@type":"HowToStep","position":2,"name":"Add or merge SPF TXT at your DNS host","url":"https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/#step2","text":"Step 2 At Cloudflare, Route 53, or wherever your domain’s zone lives — not inside Amazon SES’s SPF editor if they don’t host DNS."},{"@type":"HowToStep","position":3,"name":"Use this SPF string","url":"https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/#step3","text":"Step 3 Merge with your other senders into one v=spf1 line. Example baseline including Amazon SES: v=spf1 include:amazonses.com ~all"},{"@type":"HowToStep","position":4,"name":"Single record only","url":"https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/#step4","text":"Step 4 If you already have SPF, add include:... before ~all — never publish two SPF TXT records."},{"@type":"HowToStep","position":5,"name":"Wait for DNS","url":"https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/#step5","text":"Step 5 TTL 300–3600s. Propagation: minutes to an hour depending on resolver."},{"@type":"HowToStep","position":6,"name":"Verify with DNS Preflight","url":"https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/#step6","text":"Step 6 Run DNS Preflight — confirm SPF resolves and lookup count stays under 10. DMARC alignment: DMARC fixes ."}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What SPF include does Amazon SES need?","acceptedAnswer":{"@type":"Answer","text":"Use the include string on this page — merge into your single SPF TXT with other mail sources."}},{"@type":"Question","name":"Can I have two SPF records?","acceptedAnswer":{"@type":"Answer","text":"No. Merge into one v=spf1 or receivers return PermError."}},{"@type":"Question","name":"Where do I edit SPF?","acceptedAnswer":{"@type":"Answer","text":"At your DNS host (Route 53, Cloudflare, etc.) — not always inside the email product."}},{"@type":"Question","name":"How do I know it worked?","acceptedAnswer":{"@type":"Answer","text":"DNS Preflight shows your SPF string and lookup count."}},{"@type":"Question","name":"Why does DMARC still fail?","acceptedAnswer":{"@type":"Answer","text":"SPF alone doesn’t align if Return-Path is different — you need DKIM alignment or aligned SPF. See /fix/dmarc/."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Email Providers","item":"https://domainpreflight.dev/email-providers/"},{"@type":"ListItem","position":3,"name":"Amazon SES","item":"https://domainpreflight.dev/email-providers/amazon-ses/"},{"@type":"ListItem","position":4,"name":"SPF setup","item":"https://domainpreflight.dev/email-providers/amazon-ses/spf-setup/"}]}
+  </script>
+  <style>
+
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; --warn: #f0a030; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.25rem, 3.2vw, 1.75rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.3; }
+    .lead { color: var(--text2); font-size: 0.92rem; margin-bottom: 1.25rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 1.75rem 0 0.65rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .gotcha { margin: 1rem 0 1.25rem; padding: 1rem 1.15rem; background: rgba(240, 160, 48, 0.08); border: 1px solid rgba(240, 160, 48, 0.35); border-radius: 10px; font-size: 0.88rem; color: var(--text); }
+    .gotcha strong { color: var(--warn); }
+    .dns-block, pre.code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.65rem 0 1rem; }
+    .howto-step { margin-bottom: 1.25rem; padding: 0.75rem 0 0.75rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.88rem; }
+    .tool-cta { margin: 1.75rem 0; padding: 1.15rem 1.35rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.45rem !important; font-size: 0.9rem; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h2 { font-size: 1.05rem; margin-top: 2rem; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.35rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; color: var(--text2); font-size: 0.9rem; }
+    .internal-links { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.86rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .hub-card { display: block; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; margin-bottom: 0.65rem; transition: border-color 0.2s; }
+    .hub-card:hover { border-color: var(--purple); }
+    .hub-card-title { font-weight: 600; color: var(--text); font-size: 0.92rem; }
+    .hub-card-desc { font-size: 0.78rem; color: var(--text2); margin-top: 0.35rem; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/blog/">Blog</a>
+        <a href="/learn/">Learn</a>
+
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/email-providers/">Email Providers</a> <span aria-hidden="true">›</span> <a href="/email-providers/amazon-ses/">Amazon SES</a> <span aria-hidden="true">›</span> SPF setup</nav>
+    <article>
+      <p class="hero-label">Email provider</p>
+      <h1>SPF setup for Amazon SES</h1>
+      <p class="lead">SPF authorises IPs and includes for your envelope sender. Amazon SES gives you the <code>include:</code> you must add to your domain’s single SPF TXT.</p>
+      <div class="gotcha"><strong>Common mistake:</strong> Verifying domain without enabling DKIM — Easy DKIM CNAMEs must be present and verified.</div>
+
+      <h2>Step by step</h2>
+      <div class="howto-step" id="step1"><strong>Step 1</strong> AWS Console → <strong>SES</strong> → <strong>Verified identities</strong> → your domain → <strong>DKIM</strong> → Easy DKIM.</div>
+      <div class="howto-step" id="step2"><strong>Step 2</strong> At Cloudflare, Route 53, or wherever your domain’s zone lives — not inside Amazon SES’s SPF editor if they don’t host DNS.</div>
+      <div class="howto-step" id="step3"><strong>Step 3</strong> Merge with your other senders into <strong>one</strong> v=spf1 line. Example baseline including Amazon SES: <div class="dns-block">v=spf1 include:amazonses.com ~all</div></div>
+      <div class="howto-step" id="step4"><strong>Step 4</strong> If you already have SPF, add <code>include:...</code> before <code>~all</code> — never publish two SPF TXT records.</div>
+      <div class="howto-step" id="step5"><strong>Step 5</strong> TTL 300–3600s. Propagation: minutes to an hour depending on resolver.</div>
+      <div class="howto-step" id="step6"><strong>Step 6</strong> Run <a href="https://domainpreflight.dev/">DNS Preflight</a> — confirm SPF resolves and lookup count stays under 10. DMARC alignment: <a href="/fix/dmarc/">DMARC fixes</a>.</div>
+
+      <div class="tool-cta">
+        <p><strong>DNS Preflight</strong> — verify SPF, DKIM, DMARC in one pass.</p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight →</a></p>
+        <p><strong>DMARC alignment</strong> — fixes when reports show failures.</p>
+        <p><a href="/fix/dmarc/">DMARC fix guides →</a></p>
+      </div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What SPF include does Amazon SES need?</h3>
+        <p>Use the include string on this page — merge into your single SPF TXT with other mail sources.</p>
+        <h3>Can I have two SPF records?</h3>
+        <p>No. Merge into one v=spf1 or receivers return PermError.</p>
+        <h3>Where do I edit SPF?</h3>
+        <p>At your DNS host (Route 53, Cloudflare, etc.) — not always inside the email product.</p>
+        <h3>How do I know it worked?</h3>
+        <p>DNS Preflight shows your SPF string and lookup count.</p>
+        <h3>Why does DMARC still fail?</h3>
+        <p>SPF alone doesn’t align if Return-Path is different — you need DKIM alignment or aligned SPF. See /fix/dmarc/.</p>
+      </section>
+      <div class="internal-links"><p><a href="/email-providers/amazon-ses/">← Amazon SES hub</a> · <a href="/email-providers/">All email providers</a></p></div>
+
+    </article>
+  </main>
+  <footer>
+
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+
+  </footer>
+</body>
+</html>
