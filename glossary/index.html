@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Glossary — DomainPreflight</title>
-  <meta name="description" content="Definitions for SPF, DKIM, DMARC, PTR, email spoofing, subdomain takeover, typosquatting, and related DNS and email security terms.">
+  <meta name="description" content="Definitions for SPF, DKIM, DMARC, email deliverability, blacklists, MX, DNSSEC, WHOIS, and related DNS and email security terms.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/glossary/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,6 +108,7 @@
         <a href="/typosquat/">Typosquat</a>
         <a href="/propagation/">Propagation</a>
         <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
       </nav>
     </div>
   </header>
@@ -149,6 +150,74 @@
       <li>
         <a href="/glossary/typosquatting/">Typosquatting</a>
         <p>Registering <code>gooogle.com</code>-style names to catch typos and phish your users.</p>
+      </li>
+      <li>
+        <a href="/glossary/email-deliverability/">Email Deliverability</a>
+        <p>Whether mail hits the inbox vs spam — auth, reputation, content, and engagement together.</p>
+      </li>
+      <li>
+        <a href="/glossary/blacklist/">Email Blacklist (Blocklist)</a>
+        <p>Real-time lists of IPs and domains known for spam — receivers may reject before SPF/DKIM.</p>
+      </li>
+      <li>
+        <a href="/glossary/mx-record/">MX Record</a>
+        <p>DNS rows that say which server receives mail for the domain — no MX, no inbound delivery.</p>
+      </li>
+      <li>
+        <a href="/glossary/dmarc-policy/">DMARC Policy</a>
+        <p>The <code>p=</code> tag: none, quarantine, or reject — start loose, tighten after reports look clean.</p>
+      </li>
+      <li>
+        <a href="/glossary/spf-permerror/">SPF PermError</a>
+        <p>SPF can’t be evaluated — usually too many lookups or bad syntax. Often treated like a hard fail.</p>
+      </li>
+      <li>
+        <a href="/glossary/email-authentication/">Email Authentication</a>
+        <p>SPF, DKIM, and DMARC together prove who sent mail and what receivers should do when auth fails.</p>
+      </li>
+      <li>
+        <a href="/glossary/dmarc-aggregate-report/">DMARC Aggregate Report</a>
+        <p>Daily XML (RUA) from big inboxes — who sent as your domain and whether SPF/DKIM passed.</p>
+      </li>
+      <li>
+        <a href="/glossary/rdns/">Reverse DNS (rDNS)</a>
+        <p>IP → hostname via PTR; FCrDNS checks the hostname resolves back to the same IP.</p>
+      </li>
+      <li>
+        <a href="/glossary/spf-softfail/">SPF SoftFail</a>
+        <p><code>~all</code> — not authorised, but “suspicious” rather than always hard-fail.</p>
+      </li>
+      <li>
+        <a href="/glossary/dkim-selector/">DKIM Selector</a>
+        <p>The <code>s=</code> name that points at <code>selector._domainkey</code> — multiple keys per domain.</p>
+      </li>
+      <li>
+        <a href="/glossary/cname-record/">CNAME Record</a>
+        <p>Hostname → hostname; ESPs use CNAMEs so they can rotate DKIM keys without you editing TXT.</p>
+      </li>
+      <li>
+        <a href="/glossary/txt-record/">TXT Record</a>
+        <p>Where SPF, DKIM, and DMARC strings live — plus vendor verification tokens.</p>
+      </li>
+      <li>
+        <a href="/glossary/whois/">WHOIS</a>
+        <p>Registration lookup — registrar, expiry, nameservers; modern stacks use RDAP JSON.</p>
+      </li>
+      <li>
+        <a href="/glossary/domain-expiry/">Domain Expiry</a>
+        <p>When renewal lapses, DNS stops — sites and mail drop; squatters wait in the queue.</p>
+      </li>
+      <li>
+        <a href="/glossary/dnssec/">DNSSEC</a>
+        <p>Signed DNS answers — stops cache poisoning; separate from SPF/DKIM/DMARC for mail.</p>
+      </li>
+      <li>
+        <a href="/glossary/catch-all-address/">Catch-All Email Address</a>
+        <p>Inbox that accepts anything@ — convenient, but spam and dictionary attacks love it.</p>
+      </li>
+      <li>
+        <a href="/glossary/mail-exchanger/">Mail Exchanger</a>
+        <p>The server named by MX that receives SMTP on port 25 — needs A record and ideally matching PTR.</p>
       </li>
     </ul>
   </main>
