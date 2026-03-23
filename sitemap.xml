@@ -391,6 +391,56 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://domainpreflight.dev/learn/dmarc/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/spf/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/dkim/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/email-deliverability/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/dns-for-email/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/domain-security/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/subdomain-security/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/dmarc-reporting/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/self-hosted-email/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/learn/brand-protection/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://domainpreflight.dev/registrar/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

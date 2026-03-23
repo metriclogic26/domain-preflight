@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Learn — Email & DNS — DomainPreflight</title>
-  <meta name="description" content="Foundational guides to email authentication, DNS records, and deliverability — built for operators and developers.">
+  <meta name="description" content="Foundational guides to email authentication, DNS records, deliverability, and domain security — built for operators and developers.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/learn/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"CollectionPage","name":"Learn Email & DNS","url":"https://domainpreflight.dev/learn/","hasPart":{"@type":"ItemList","name":"Learning guides","numberOfItems":5,"itemListElement":[{"@type":"ListItem","position":1,"name":"Email authentication basics","url":"https://domainpreflight.dev/learn/email-authentication/"},{"@type":"ListItem","position":2,"name":"DMARC roadmap","url":"https://domainpreflight.dev/learn/dmarc-roadmap/"},{"@type":"ListItem","position":3,"name":"SPF deep dive","url":"https://domainpreflight.dev/learn/spf-deep-dive/"},{"@type":"ListItem","position":4,"name":"DNS for email","url":"https://domainpreflight.dev/learn/dns-for-email/"},{"@type":"ListItem","position":5,"name":"PTR and sending IP reputation","url":"https://domainpreflight.dev/learn/ptr-reputation/"}]}}
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"Learn Email & DNS","url":"https://domainpreflight.dev/learn/","hasPart":{"@type":"ItemList","name":"Learning guides","numberOfItems":10,"itemListElement":[{"@type":"ListItem","position":1,"name":"How to Set Up DMARC: The Complete Guide","url":"https://domainpreflight.dev/learn/dmarc/"},{"@type":"ListItem","position":2,"name":"How to Set Up an SPF Record: The Complete Guide","url":"https://domainpreflight.dev/learn/spf/"},{"@type":"ListItem","position":3,"name":"How to Set Up DKIM: The Complete Guide","url":"https://domainpreflight.dev/learn/dkim/"},{"@type":"ListItem","position":4,"name":"Email Deliverability: Everything That Affects Whether Your Email Reaches the Inbox","url":"https://domainpreflight.dev/learn/email-deliverability/"},{"@type":"ListItem","position":5,"name":"DNS Records Every Email Sender Needs","url":"https://domainpreflight.dev/learn/dns-for-email/"},{"@type":"ListItem","position":6,"name":"Domain Security: Expiry, Locks, and WHOIS Privacy","url":"https://domainpreflight.dev/learn/domain-security/"},{"@type":"ListItem","position":7,"name":"Subdomain Security: Dangling Records and Takeover Prevention","url":"https://domainpreflight.dev/learn/subdomain-security/"},{"@type":"ListItem","position":8,"name":"DMARC Reporting: How to Get, Read, and Act on Aggregate Reports","url":"https://domainpreflight.dev/learn/dmarc-reporting/"},{"@type":"ListItem","position":9,"name":"Self-Hosted Email: SPF, DKIM, DMARC, and PTR Setup","url":"https://domainpreflight.dev/learn/self-hosted-email/"},{"@type":"ListItem","position":10,"name":"Email Brand Protection: DMARC, Typosquats, and Subdomain Security","url":"https://domainpreflight.dev/learn/brand-protection/"}]}}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Learn","item":"https://domainpreflight.dev/learn/"}]}
@@ -37,11 +37,12 @@
     h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; margin-bottom: 0.75rem; }
     .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; max-width: 640px; }
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
-    .hub-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    .hub-card { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
     .hub-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px rgba(108, 99, 255, 0.25); }
     .hub-card-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
-    .hub-card-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.4; }
-    .hub-card-arrow { color: var(--purple); font-size: 1.2rem; flex-shrink: 0; }
+    .hub-card-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.4; margin-bottom: 0.45rem; }
+    .hub-card-meta { font-size: 0.68rem; color: var(--purple); letter-spacing: 0.02em; }
+    .hub-card-arrow { color: var(--purple); font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
     footer { border-top: 1px solid var(--border); background: var(--surface); }
     .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
     .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
@@ -64,6 +65,10 @@
         <a href="/propagation/">Propagation</a>
         <a href="/dmarc/">DMARC Report</a>
         <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/registrar/">Registrars</a>
+        <a href="/incidents/">Incidents</a>
+        <a href="/learn/">Learn</a>
       </nav>
     </div>
   </header>
@@ -71,13 +76,18 @@
     <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> Learn</nav>
     <p class="hero-label">Learn</p>
     <h1>Email &amp; DNS Learning Hub</h1>
-    <p class="lead">Foundational guides to SPF, DKIM, DMARC, and DNS — written for people who ship email and own domains.</p>
+    <p class="lead">Long-form guides to SPF, DKIM, DMARC, deliverability, and domain security — problem-first, with examples and links into tools.</p>
     <div class="card-grid">
-      <a class="hub-card" href="/learn/email-authentication/"><div><div class="hub-card-title">Email authentication basics</div><p class="hub-card-desc">How SPF, DKIM, and DMARC fit together.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/learn/dmarc-roadmap/"><div><div class="hub-card-title">DMARC roadmap</div><p class="hub-card-desc">From p=none to reject without breaking mail.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/learn/spf-deep-dive/"><div><div class="hub-card-title">SPF deep dive</div><p class="hub-card-desc">Lookups, flattening, and edge cases.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/learn/dns-for-email/"><div><div class="hub-card-title">DNS for email</div><p class="hub-card-desc">MX, TXT, and what resolvers actually see.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/learn/ptr-reputation/"><div><div class="hub-card-title">PTR and sending IP reputation</div><p class="hub-card-desc">Reverse DNS and inbox placement.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/dmarc/"><div><div class="hub-card-title">How to Set Up DMARC: The Complete Guide</div><p class="hub-card-desc">Policy, aggregate reports, alignment fixes, and a safe path to p=reject.</p><div class="hub-card-meta">~9 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/spf/"><div><div class="hub-card-title">How to Set Up an SPF Record: The Complete Guide</div><p class="hub-card-desc">Build one TXT, stay under the lookup limit, fix PermError, test with Preflight.</p><div class="hub-card-meta">~8 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/dkim/"><div><div class="hub-card-title">How to Set Up DKIM: The Complete Guide</div><p class="hub-card-desc">2048-bit keys, selectors, DNS publication, rotation, and DMARC alignment.</p><div class="hub-card-meta">~7 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/email-deliverability/"><div><div class="hub-card-title">Email Deliverability: The Complete Guide</div><p class="hub-card-desc">Authentication, reputation, content, engagement — diagnose inbox placement.</p><div class="hub-card-meta">~7 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/dns-for-email/"><div><div class="hub-card-title">DNS Records Every Email Sender Needs</div><p class="hub-card-desc">MX, SPF, DKIM, DMARC, PTR — what each does and how they fit together.</p><div class="hub-card-meta">~7 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/domain-security/"><div><div class="hub-card-title">Domain Security: Expiry, Locks, and WHOIS</div><p class="hub-card-desc">Auto-renew, transfer lock, privacy, auth codes — keep the root of trust.</p><div class="hub-card-meta">~6 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/subdomain-security/"><div><div class="hub-card-title">Subdomain Security: Dangling Records</div><p class="hub-card-desc">Takeover mechanics, cloud targets, and how to find CNAMEs you forgot.</p><div class="hub-card-meta">~6 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/dmarc-reporting/"><div><div class="hub-card-title">DMARC Reporting: Aggregate Reports</div><p class="hub-card-desc">rua mailboxes, XML triage, and acting on what you find before tightening policy.</p><div class="hub-card-meta">~6 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/self-hosted-email/"><div><div class="hub-card-title">Self-Hosted Email: SPF, DKIM, DMARC, PTR</div><p class="hub-card-desc">Port 25, reverse DNS, warm-up, and monitoring for your own MTA.</p><div class="hub-card-meta">~6 min read</div></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/learn/brand-protection/"><div><div class="hub-card-title">Email Brand Protection: DMARC &amp; Typosquats</div><p class="hub-card-desc">Stop spoofing, find lookalikes, audit dangling DNS — one checklist.</p><div class="hub-card-meta">~6 min read</div></div><span class="hub-card-arrow">→</span></a>
     </div>
   </main>
   <footer>

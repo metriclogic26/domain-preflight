@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self-Hosted Email Authentication — The Complete Guide — DomainPreflight</title>
+  <meta name="description" content="PTR, SPF, DKIM, DMARC, IP warm-up, and monitoring for self-hosted MTAs in 2026.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/learn/self-hosted-email/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"Self-Hosted Email: SPF, DKIM, DMARC, and PTR Setup","description":"PTR, SPF, DKIM, DMARC, IP warm-up, and monitoring for self-hosted MTAs in 2026.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/learn/self-hosted-email/"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"HowTo","name":"Stand up self-hosted SMTP with auth","description":"Set PTR, SPF, DKIM, DMARC, warm the IP, and monitor blocklists.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS and email admin access"},"tool":{"@type":"HowToTool","name":"DomainPreflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Confirm outbound port 25 policy with your host","url":"https://domainpreflight.dev/learn/self-hosted-email/#step1","text":"Step 1 Without port 25 or relay, you are blocked before DNS matters."},{"@type":"HowToStep","position":2,"name":"Set PTR to your mail hostname and matching A record","url":"https://domainpreflight.dev/learn/self-hosted-email/#step2","text":"Step 2 PTR mismatch is an instant spam signal."},{"@type":"HowToStep","position":3,"name":"Publish SPF with your sending IP and relays","url":"https://domainpreflight.dev/learn/self-hosted-email/#step3","text":"Step 3 Include smart hosts if you relay outbound."},{"@type":"HowToStep","position":4,"name":"Install DKIM signing (OpenDKIM/rspamd) and publish TXT","url":"https://domainpreflight.dev/learn/self-hosted-email/#step4","text":"Step 4 2048-bit keys and documented selectors reduce surprises."},{"@type":"HowToStep","position":5,"name":"Add DMARC p=none with rua=","url":"https://domainpreflight.dev/learn/self-hosted-email/#step5","text":"Step 5 Same DMARC story as hosted mail — start monitoring."},{"@type":"HowToStep","position":6,"name":"Warm IP volume and watch DMARC + blocklists","url":"https://domainpreflight.dev/learn/self-hosted-email/#step6","text":"Step 6 Increase volume only when bounces and complaints stay low."}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What do I need for self-hosted email to reach inboxes?","acceptedAnswer":{"@type":"Answer","text":"PTR record, SPF, DKIM, DMARC, and a clean sending IP. Miss any one and email lands in spam or gets rejected."}},{"@type":"Question","name":"Which VPS providers allow port 25 for mail servers?","acceptedAnswer":{"@type":"Answer","text":"Hetzner, DigitalOcean, Vultr, and Linode generally allow port 25. AWS and Google Cloud block it by default — requires a request to unblock."}},{"@type":"Question","name":"How do I set up a PTR record for my mail server?","acceptedAnswer":{"@type":"Answer","text":"In your hosting provider's control panel under Reverse DNS. Set it to your mail hostname and add a matching A record."}},{"@type":"Question","name":"How do I warm up a new IP?","acceptedAnswer":{"@type":"Answer","text":"Start with 50-100 emails/day. Double every few days if bounce rates stay low. Takes 2-4 weeks to build reputation."}},{"@type":"Question","name":"How do I monitor my self-hosted mail server's reputation?","acceptedAnswer":{"@type":"Answer","text":"Run DNS Preflight with your server's IP — checks PTR, blocklists, SPF, DKIM, and DMARC in one pass."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Learn","item":"https://domainpreflight.dev/learn/"},{"@type":"ListItem","position":3,"name":"Self-hosted email","item":"https://domainpreflight.dev/learn/self-hosted-email/"}]}
+  </script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.9rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.3; }
+    .subtitle { color: var(--text2); font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .learn-meta { font-size: 0.78rem; color: var(--text2); margin-bottom: 1.75rem; }
+    .learn-meta time { color: var(--purple); }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article h3 { font-size: 0.95rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul, article ol { margin: 0.5rem 0 1rem 1.25rem; }
+    .dns-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.8rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .howto-step { margin-bottom: 1.35rem; padding: 0.85rem 0 0.85rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.5rem !important; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/registrar/">Registrars</a>
+        <a href="/incidents/">Incidents</a>
+        <a href="/learn/">Learn</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/learn/">Learn</a> <span aria-hidden="true">›</span> Self-hosted email
+</nav>
+    <article>
+      <p class="hero-label">Guide</p>
+      <h1>Self-Hosted Email: SPF, DKIM, DMARC, and PTR Setup</h1>
+      <p class="subtitle">Running your own mail server is harder than it used to be. ISPs block port 25, major providers require PTR records, and DMARC is now mandatory for reliable delivery. This guide covers everything self-hosters need to configure.</p>
+      <p class="learn-meta">Updated <time datetime="2026-03-19">March 19, 2026</time></p>
+
+      <p>Self-hosting mail in 2026 means fighting port blocks, IP reputation, and mandatory authentication. This guide covers provider choice, PTR, SPF, DKIM, DMARC, warm-up, and monitoring. See <a href="/glossary/ptr-record/">PTR</a>, <a href="/glossary/rdns/">rDNS</a>, and <a href="/glossary/email-deliverability/">deliverability</a>.</p>
+
+      <h2>Why self-hosted email is hard in 2026</h2>
+      <p>Residential and many cloud IPs block outbound 25. Large receivers require aligned SPF/DKIM/DMARC and often sane PTR. New IPs have no reputation — warm-up is mandatory. Expect to spend engineering time on TLS, queues, and blocklists.</p>
+
+      <h2>Choosing a hosting provider</h2>
+      <p>You need outbound SMTP allowed (or smart host), ability to set PTR for your IP, and ideally clean IP space. Common VPS providers allow port 25 with policy; hyperscalers often require unblock tickets. Verify before you build.</p>
+
+      <h2>PTR record — the first thing to set</h2>
+      <p>Ask your provider for reverse DNS pointing to your mail hostname (e.g. <code>mail.example.com</code>). Create matching A/AAAA records. PTR mismatch → spam or rejection. <a href="/dns/ptr-record/">PTR DNS</a>.</p>
+
+      <h2>SPF for self-hosted</h2>
+      <p>Include your IP with <code>ip4:</code>/<code>ip6:</code> and any ESP relays. Single SPF record. <a href="/learn/spf/">SPF guide</a>.</p>
+
+      <h2>DKIM for Postfix/Exim/Dovecot</h2>
+      <p>Generate 2048-bit keys, configure OpenDKIM/rspamd, publish selector TXT. Test with swaks or mail clients. Verify headers show <code>dkim=pass</code>.</p>
+
+      <h2>DMARC for self-hosted</h2>
+      <p>Publish <code>p=none</code> with <code>rua=</code>, align sending domains, then tighten. Same process as hosted mail — <a href="/learn/dmarc/">DMARC guide</a>.</p>
+
+      <h2>IP warm-up</h2>
+      <p>Start with low daily volume, increase gradually, watch bounces and spam folder rates. Takes weeks. Patience beats throttling.</p>
+
+      <h2>Ongoing monitoring</h2>
+      <p>Check blocklists, DMARC reports, and TLS expiry. Errors: <a href="/error/ptr-mismatch/">PTR mismatch</a>, <a href="/error/blacklisted-ip/">blacklisted IP</a>. Use <a href="https://domainpreflight.dev/">DNS Preflight</a> for DNS-side checks.</p>
+      <p>Queue monitoring matters: deferred mail that expires hurts reputation. Bounce handling matters: repeated sends to bad addresses flag you as negligent. Self-hosted operators wear SPF, DKIM, DMARC, <em>and</em> deliverability engineering hats — budget time accordingly.</p>
+      <p>Cross-reference <a href="/learn/spf/">SPF</a>, <a href="/learn/dkim/">DKIM</a>, and <a href="/learn/dmarc/">DMARC</a> guides when upgrading stack components; one Postfix update can change signing defaults.</p>
+
+      <div class="tool-cta">
+        <p><strong>Tool:</strong> Check PTR, SPF, DKIM, DMARC, and related DNS for your sending IP and domain.</p>
+        <p><a href="https://domainpreflight.dev/">Run DNS Preflight →</a></p>
+      </div>
+      <h2>Step by step</h2>
+      <div class="howto-step" id="step1"><strong>Step 1</strong> Without port 25 or relay, you are blocked before DNS matters.</div>
+      <div class="howto-step" id="step2"><strong>Step 2</strong> PTR mismatch is an instant spam signal.</div>
+      <div class="howto-step" id="step3"><strong>Step 3</strong> Include smart hosts if you relay outbound.</div>
+      <div class="howto-step" id="step4"><strong>Step 4</strong> 2048-bit keys and documented selectors reduce surprises.</div>
+      <div class="howto-step" id="step5"><strong>Step 5</strong> Same DMARC story as hosted mail — start monitoring.</div>
+      <div class="howto-step" id="step6"><strong>Step 6</strong> Increase volume only when bounces and complaints stay low.</div>
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What do I need for self-hosted email to reach inboxes?</h3>
+        <p>PTR record, SPF, DKIM, DMARC, and a clean sending IP. Miss any one and email lands in spam or gets rejected.</p>
+        <h3>Which VPS providers allow port 25 for mail servers?</h3>
+        <p>Hetzner, DigitalOcean, Vultr, and Linode generally allow port 25. AWS and Google Cloud block it by default — requires a request to unblock.</p>
+        <h3>How do I set up a PTR record for my mail server?</h3>
+        <p>In your hosting provider's control panel under Reverse DNS. Set it to your mail hostname and add a matching A record.</p>
+        <h3>How do I warm up a new IP?</h3>
+        <p>Start with 50-100 emails/day. Double every few days if bounce rates stay low. Takes 2-4 weeks to build reputation.</p>
+        <h3>How do I monitor my self-hosted mail server's reputation?</h3>
+        <p>Run DNS Preflight with your server's IP — checks PTR, blocklists, SPF, DKIM, and DMARC in one pass.</p>
+      </section>
+      <div class="internal-links">
+        <p><a href="/learn/">← All learning guides</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DomainPreflight →</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>
