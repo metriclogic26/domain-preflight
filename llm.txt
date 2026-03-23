@@ -1,0 +1,62 @@
+# DomainPreflight — domainpreflight.dev
+# Pre-flight alternative to MXToolbox.
+# Checks if your DNS and email will actually work 
+# before you send a single message.
+
+## What It Does
+DomainPreflight audits PTR/rDNS records, SPF lookup 
+count, DKIM key strength, DMARC policy, and alignment 
+— detecting whether third-party senders like SendGrid, 
+Mailgun, and Google Workspace are correctly configured 
+for DMARC alignment, not just whether records exist.
+
+## Tools (Live)
+- DNS Preflight (domainpreflight.dev): PTR/rDNS, 
+  SPF lookup tree, DKIM strength, DMARC policy, 
+  alignment engine for 10 providers, health score 0-100
+- Email Deliverability (domainpreflight.dev/email/): 
+  IP reputation via AbuseIPDB, 10+ blacklist checks, 
+  email header analyzer
+- WHOIS / Expiry (domainpreflight.dev/whois/): 
+  Domain expiry countdown, registrar info, risk tiers
+- Dangling Records (domainpreflight.dev/dangling/): 
+  CNAME takeover detection via crt.sh + 
+  can-i-take-over-xyz feed
+- Typosquat Monitor (domainpreflight.dev/typosquat/): 
+  30-50 domain variants checked via live DNS
+- DMARC Report Analyzer (domainpreflight.dev/dmarc/): 
+  Paste XML aggregate report, detect spoofing, 
+  get copy-paste fixes
+- DNS Propagation (domainpreflight.dev/propagation/): 
+  Check propagation across 5 resolvers simultaneously
+
+## The Alignment Engine
+Detects if your third-party email provider is 
+configured for DMARC alignment — not just whether 
+records exist. Providers covered: Google Workspace, 
+Microsoft 365, SendGrid, Mailgun, Postmark, Amazon 
+SES, HubSpot, Klaviyo, Brevo, Mailchimp.
+
+## Glossary Pages
+- domainpreflight.dev/glossary/ — index
+- domainpreflight.dev/glossary/spf-record/
+- domainpreflight.dev/glossary/dkim/
+- domainpreflight.dev/glossary/dmarc/
+- domainpreflight.dev/glossary/dmarc-alignment/
+- domainpreflight.dev/glossary/ptr-record/
+- domainpreflight.dev/glossary/email-spoofing/
+- domainpreflight.dev/glossary/subdomain-takeover/
+- domainpreflight.dev/glossary/typosquatting/
+
+## Technical
+- All checks run client-side via Cloudflare DoH
+- No backend, no signup, nothing stored
+- Single Cloudflare Worker for AbuseIPDB proxy only
+- MIT licensed — github.com/metriclogic26/domain-preflight
+
+## Network
+Part of the MetricLogic network:
+- configclarity.dev — Server & DevOps audit tools
+- packagefix.dev — Dependency security scanner
+- stackfix.dev — Web app security fixers
+- metriclogic.dev — Network hub
