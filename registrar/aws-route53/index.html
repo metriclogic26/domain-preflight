@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrars — DomainPreflight</title>
-  <meta name="description" content="Step-by-step email authentication guides for Cloudflare, Namecheap, GoDaddy, Route 53, Squarespace Domains, Porkbun, Hover, Gandi, Dynadot, and Name.com.">
+  <title>AWS Route 53 — Email Authentication Setup Guides — DomainPreflight</title>
+  <meta name="description" content="SPF, DKIM, DMARC, MX, and DNSSEC in Route 53 hosted zones.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://domainpreflight.dev/registrar/">
+  <link rel="canonical" href="https://domainpreflight.dev/registrar/aws-route53/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"CollectionPage","name":"Registrar DNS guides","url":"https://domainpreflight.dev/registrar/","hasPart":{"@type":"ItemList","name":"Registrars","numberOfItems":10,"itemListElement":[{"@type":"ListItem","position":1,"name":"Cloudflare","url":"https://domainpreflight.dev/registrar/cloudflare/"},{"@type":"ListItem","position":2,"name":"Namecheap","url":"https://domainpreflight.dev/registrar/namecheap/"},{"@type":"ListItem","position":3,"name":"GoDaddy","url":"https://domainpreflight.dev/registrar/godaddy/"},{"@type":"ListItem","position":4,"name":"Google Domains / Squarespace","url":"https://domainpreflight.dev/registrar/google-domains/"},{"@type":"ListItem","position":5,"name":"Porkbun","url":"https://domainpreflight.dev/registrar/porkbun/"},{"@type":"ListItem","position":6,"name":"AWS Route 53","url":"https://domainpreflight.dev/registrar/aws-route53/"},{"@type":"ListItem","position":7,"name":"Hover","url":"https://domainpreflight.dev/registrar/hover/"},{"@type":"ListItem","position":8,"name":"Gandi","url":"https://domainpreflight.dev/registrar/gandi/"},{"@type":"ListItem","position":9,"name":"Dynadot","url":"https://domainpreflight.dev/registrar/dynadot/"},{"@type":"ListItem","position":10,"name":"Name.com","url":"https://domainpreflight.dev/registrar/name-com/"}]}}
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"Route 53 email guides","url":"https://domainpreflight.dev/registrar/aws-route53/","hasPart":{"@type":"ItemList","name":"Route 53 email guides topics","numberOfItems":5,"itemListElement":[{"@type":"ListItem","position":1,"name":"SPF record","url":"https://domainpreflight.dev/registrar/aws-route53/spf-record/"},{"@type":"ListItem","position":2,"name":"DKIM record","url":"https://domainpreflight.dev/registrar/aws-route53/dkim/"},{"@type":"ListItem","position":3,"name":"DMARC setup","url":"https://domainpreflight.dev/registrar/aws-route53/dmarc-setup/"},{"@type":"ListItem","position":4,"name":"MX record","url":"https://domainpreflight.dev/registrar/aws-route53/mx-record/"},{"@type":"ListItem","position":5,"name":"DNSSEC","url":"https://domainpreflight.dev/registrar/aws-route53/dnssec/"}]}}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Registrars","item":"https://domainpreflight.dev/registrar/"}]}
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Registrars","item":"https://domainpreflight.dev/registrar/"},{"@type":"ListItem","position":3,"name":"AWS Route 53","item":"https://domainpreflight.dev/registrar/aws-route53/"}]}
   </script>
   <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
@@ -35,7 +35,7 @@
     .breadcrumb a:hover { text-decoration: underline; }
     .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
     h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; margin-bottom: 0.75rem; }
-    .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; max-width: 720px; }
+    .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem; max-width: 720px; }
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
     .hub-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
     .hub-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px rgba(108, 99, 255, 0.25); }
@@ -70,21 +70,19 @@
     </div>
   </header>
   <main>
-    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> Registrars</nav>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/registrar/">Registrars</a> <span aria-hidden="true">›</span> AWS Route 53
+</nav>
     <p class="hero-label">Registrar</p>
-    <h1>Registrar DNS guides</h1>
-    <p class="lead">Problem-first walkthroughs for SPF, DKIM, DMARC, and MX — matched to each panel’s fields, quirks, and click paths. Open your brand, then the record you’re fixing.</p>
+    <h1>Email Authentication on AWS Route 53</h1>
+    <p class="lead">Route 53 has a specific TXT record format — values must be wrapped in quotes. Here's how to add SPF, DKIM, DMARC, and MX records correctly.</p>
+    <p class="lead">Hosted zones live under Route 53 → Hosted Zones → your domain. Root is a blank record name — not @. Turn on DNSSEC from the hosted zone when you're ready.</p>
     <div class="card-grid">
-      <a class="hub-card" href="/registrar/cloudflare/"><div><div class="hub-card-title">Cloudflare</div><p class="hub-card-desc">Proxy toggle, fast DNS, registrar in same UI.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/namecheap/"><div><div class="hub-card-title">Namecheap</div><p class="hub-card-desc">Advanced DNS — host field, no proxy toggle.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/godaddy/"><div><div class="hub-card-title">GoDaddy</div><p class="hub-card-desc">New vs legacy DNS — same records, different clicks.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/google-domains/"><div><div class="hub-card-title">Google Domains / Squarespace</div><p class="hub-card-desc">Squarespace domains UI — post-2023 migration.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/porkbun/"><div><div class="hub-card-title">Porkbun</div><p class="hub-card-desc">Simple DNS — host field uses subdomain only.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/aws-route53/"><div><div class="hub-card-title">AWS Route 53</div><p class="hub-card-desc">Quoted TXT values, blank apex, optional DNSSEC.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/hover/"><div><div class="hub-card-title">Hover</div><p class="hub-card-desc">Minimal DNS editor — fixed TTL.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/gandi/"><div><div class="hub-card-title">Gandi</div><p class="hub-card-desc">LiveDNS — @ and _dmarc, renewal in domain settings.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/dynadot/"><div><div class="hub-card-title">Dynadot</div><p class="hub-card-desc">DNS Settings under Manage Domain.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/registrar/name-com/"><div><div class="hub-card-title">Name.com</div><p class="hub-card-desc">Manage DNS — host @ for root TXT.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/registrar/aws-route53/spf-record/"><div><div class="hub-card-title">SPF record</div><p class="hub-card-desc">One v=spf1 TXT at root — merge providers.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/registrar/aws-route53/dkim/"><div><div class="hub-card-title">DKIM record</div><p class="hub-card-desc">TXT at selector._domainkey — paste full key.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/registrar/aws-route53/dmarc-setup/"><div><div class="hub-card-title">DMARC setup</div><p class="hub-card-desc">TXT at _dmarc — start with p=none.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/registrar/aws-route53/mx-record/"><div><div class="hub-card-title">MX record</div><p class="hub-card-desc">Priorities, hostnames, no proxy where applicable.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/registrar/aws-route53/dnssec/"><div><div class="hub-card-title">DNSSEC</div><p class="hub-card-desc">Signing keys in the hosted zone.</p></div><span class="hub-card-arrow">→</span></a>
     </div>
   </main>
   <footer>
