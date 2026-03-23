@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft 365 SPF and DKIM Configuration Changes — DomainPreflight</title>
+  <meta name="description" content="Microsoft 365 now expects DKIM on custom domains — SPF alone isn't enough; selector CNAMEs and Defender DKIM signing are required for alignment.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/incidents/microsoft-365-spf-changes/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Microsoft 365 Email Authentication: What's Changed and What to Check","description":"Microsoft 365 now expects DKIM on custom domains — SPF alone isn't enough; selector CNAMEs and Defender DKIM signing are required for alignment.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/incidents/microsoft-365-spf-changes/"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is SPF alone enough for Microsoft 365?","acceptedAnswer":{"@type":"Answer","text":"No longer. Microsoft now expects DKIM configured for custom domains. SPF + DKIM + DMARC is the required setup."}},{"@type":"Question","name":"What are the selector1 and selector2 CNAMEs?","acceptedAnswer":{"@type":"Answer","text":"Two CNAME records that let Microsoft sign email with your domain's DKIM key instead of Microsoft's. Required for DMARC alignment. Get exact values from Defender → DKIM settings."}},{"@type":"Question","name":"My M365 email was working fine without DKIM — why is it failing now?","acceptedAnswer":{"@type":"Answer","text":"Microsoft has been tightening enforcement progressively. What worked a year ago may now trigger spam filtering or rejection."}},{"@type":"Question","name":"Does this affect all M365 customers?","acceptedAnswer":{"@type":"Answer","text":"All customers with custom domains should configure DKIM. @outlook.com/@hotmail.com addresses are handled automatically."}},{"@type":"Question","name":"How do I verify M365 DKIM is working?","acceptedAnswer":{"@type":"Answer","text":"Run DNS Preflight — the alignment engine checks selector1 and selector2 CNAMEs and shows pass/fail."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Incidents","item":"https://domainpreflight.dev/incidents/"},{"@type":"ListItem","position":3,"name":"Microsoft 365 auth","item":"https://domainpreflight.dev/incidents/microsoft-365-spf-changes/"}]}
+  </script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.9rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.3; }
+    .subtitle { color: var(--text2); font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .incident-meta { font-size: 0.78rem; color: var(--text2); margin-bottom: 1.75rem; }
+    .incident-meta time { color: var(--purple); }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul { margin: 0.5rem 0 1rem 1.25rem; }
+    .dns-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.8rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .howto-step { margin-bottom: 1.35rem; padding: 0.85rem 0 0.85rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.5rem !important; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/registrar/">Registrars</a>
+        <a href="/incidents/">Incidents</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/incidents/">Incidents</a> <span aria-hidden="true">›</span> Microsoft 365 auth
+</nav>
+    <article>
+      <p class="hero-label">Incident</p>
+      <h1>Microsoft 365 Email Authentication: What's Changed and What to Check</h1>
+      <p class="subtitle">Microsoft has progressively tightened email authentication requirements for Microsoft 365. DKIM is now effectively required for custom domains — and SPF alone is no longer sufficient for reliable inbox delivery.</p>
+      <p class="incident-meta">Published <time datetime="2026-03-19">March 19, 2026</time></p>
+
+      <p>Microsoft 365 has been tightening how it treats custom-domain senders: SPF alone no longer reliably lands in the inbox — you need DKIM keys published and signing enabled, or DMARC alignment breaks and mail junked or rejected.</p>
+
+      <h2>What changed</h2>
+      <p>Microsoft 365 now strongly enforces DKIM alignment for custom domains. Emails without DKIM configured are increasingly landing in Junk or being rejected.</p>
+      <p>The key change many missed: adding <code>include:spf.protection.outlook.com</code> to your SPF record is not enough. You also need:</p>
+      <ol>
+        <li>selector1 and selector2 CNAME records published in your DNS</li>
+        <li>DKIM signing enabled in Microsoft 365 Defender</li>
+      </ol>
+      <p>Without these, M365 signs email with Microsoft's domain — not yours. DMARC alignment fails.</p>
+
+      <h2>The error in bounce logs</h2>
+      <div class="dns-block">550 5.7.509 Access denied, sending domain
+[domain] does not pass DMARC verification
+and has a DMARC policy of reject.</div>
+
+      <h2>What to do</h2>
+      <div class="howto-step" id="step1"><strong>Step 1</strong> Microsoft 365 Defender → Email &amp; collaboration → Policies → DKIM</div>
+      <div class="howto-step" id="step2"><strong>Step 2</strong> Select your domain → Create DKIM keys</div>
+      <div class="howto-step" id="step3"><strong>Step 3</strong> Add selector1 and selector2 CNAMEs to your DNS</div>
+      <div class="howto-step" id="step4"><strong>Step 4</strong> Enable DKIM signing in Defender</div>
+      <div class="howto-step" id="step5"><strong>Step 5</strong> Run DNS Preflight to confirm alignment</div>
+
+      <div class="tool-cta">
+        <p>Check alignment</p>
+        <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
+      </div>
+      <div class="glossary-links"><strong>Related:</strong>
+        <a href="/fix/dmarc/microsoft-365/">DMARC fix for Microsoft 365</a> ·
+        <a href="/fix/dkim/microsoft-365/">DKIM fix for Microsoft 365</a>
+      </div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>Is SPF alone enough for Microsoft 365?</h3>
+        <p>No longer. Microsoft now expects DKIM configured for custom domains. SPF + DKIM + DMARC is the required setup.</p>
+        <h3>What are the selector1 and selector2 CNAMEs?</h3>
+        <p>Two CNAME records that let Microsoft sign email with your domain's DKIM key instead of Microsoft's. Required for DMARC alignment. Get exact values from Defender → DKIM settings.</p>
+        <h3>My M365 email was working fine without DKIM — why is it failing now?</h3>
+        <p>Microsoft has been tightening enforcement progressively. What worked a year ago may now trigger spam filtering or rejection.</p>
+        <h3>Does this affect all M365 customers?</h3>
+        <p>All customers with custom domains should configure DKIM. @outlook.com/@hotmail.com addresses are handled automatically.</p>
+        <h3>How do I verify M365 DKIM is working?</h3>
+        <p>Run DNS Preflight — the alignment engine checks selector1 and selector2 CNAMEs and shows pass/fail.</p>
+      </section>
+      <div class="internal-links">
+        <p><a href="/incidents/">← All incidents</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DomainPreflight →</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>

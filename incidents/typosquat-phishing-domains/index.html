@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typosquat Phishing Domains — How Attackers Use Lookalikes — DomainPreflight</title>
+  <meta name="description" content="Homoglyphs, TLD swaps, and missing letters — attackers register lookalikes for phishing; DomainPreflight Typosquat Monitor finds resolving variants.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/incidents/typosquat-phishing-domains/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Typosquat Phishing: How Attackers Register Your Lookalike Domains","description":"Homoglyphs, TLD swaps, and missing letters — attackers register lookalikes for phishing; DomainPreflight Typosquat Monitor finds resolving variants.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/incidents/typosquat-phishing-domains/"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a typosquat phishing domain?","acceptedAnswer":{"@type":"Answer","text":"A domain registered to look like a legitimate brand — one character off, different TLD, or homoglyph swap — used to host phishing pages or send phishing email."}},{"@type":"Question","name":"How do I find domains impersonating my brand?","acceptedAnswer":{"@type":"Answer","text":"Run DomainPreflight Typosquat Monitor — checks 30-50 lookalike variants via live DNS to find which ones resolve."}},{"@type":"Question","name":"Should I register lookalike domains defensively?","acceptedAnswer":{"@type":"Answer","text":"For high-risk variants (homoglyphs, common TLD swaps) — yes. The cost is low. The alternative is letting attackers register them."}},{"@type":"Question","name":"What if I find a phishing domain using my brand?","acceptedAnswer":{"@type":"Answer","text":"Report to the registrar's abuse team, the hosting provider's abuse contact, and Google Safe Browsing (safebrowsing.google.com/safebrowsing/report_phish/)."}},{"@type":"Question","name":"Can DMARC protect against typosquat phishing?","acceptedAnswer":{"@type":"Answer","text":"Only for your actual domain. DMARC on yourdomain.com doesn't protect against email from paypa1.com — that's a different domain with its own DNS."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Incidents","item":"https://domainpreflight.dev/incidents/"},{"@type":"ListItem","position":3,"name":"Typosquat phishing","item":"https://domainpreflight.dev/incidents/typosquat-phishing-domains/"}]}
+  </script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.9rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.3; }
+    .subtitle { color: var(--text2); font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .incident-meta { font-size: 0.78rem; color: var(--text2); margin-bottom: 1.75rem; }
+    .incident-meta time { color: var(--purple); }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul { margin: 0.5rem 0 1rem 1.25rem; }
+    .dns-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.8rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .howto-step { margin-bottom: 1.35rem; padding: 0.85rem 0 0.85rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.5rem !important; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/registrar/">Registrars</a>
+        <a href="/incidents/">Incidents</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/incidents/">Incidents</a> <span aria-hidden="true">›</span> Typosquat phishing
+</nav>
+    <article>
+      <p class="hero-label">Incident</p>
+      <h1>Typosquat Phishing: How Attackers Register Your Lookalike Domains</h1>
+      <p class="subtitle">Attackers register domains that look like yours — one character off, a different TLD, a homoglyph substitution — and use them for phishing campaigns. Here's how it works and how to find lookalike domains targeting your brand.</p>
+      <p class="incident-meta">Published <time datetime="2026-03-19">March 19, 2026</time></p>
+
+      <p>Attackers spend $10 on a lookalike domain — paypa1.com, yourbrand.co — then host a clone of your login page and send mail that almost passes the eye test. Your DMARC on the real domain doesn't stop mail from a different domain.</p>
+
+      <h2>How typosquat phishing works</h2>
+      <p><strong>Step 1 — Register a lookalike:</strong> The attacker registers something like paypa1.com (l→1) or paypal.co (TLD swap). The cost is $10-15/year.</p>
+      <p><strong>Step 2 — Set up infrastructure:</strong> They configure MX records, create email accounts, and sometimes clone your entire website on the domain.</p>
+      <p><strong>Step 3 — Send phishing email:</strong> Emails appear to come from support@paypa1.com — close enough that users don't notice. Links go to a cloned version of your site.</p>
+      <p><strong>Step 4 — Harvest credentials:</strong> Users enter usernames and passwords on the fake site. Attackers collect them.</p>
+
+      <h2>Common lookalike techniques</h2>
+      <div class="dns-block">Homoglyph:     paypa1.com (l→1)
+Missing char:  paypl.com
+Doubled char:  paypall.com
+TLD swap:      paypal.co, paypal.net
+Prefix:        mypaypal.com, getpaypal.com
+Suffix:        paypalapp.com
+Subdomain:     paypal.com.attacker.com</div>
+
+      <h2>How to find lookalikes</h2>
+      <p>Run DomainPreflight Typosquat Monitor — it generates 30-50 variants of your domain and checks which ones resolve to active websites. A resolving domain is higher risk than a registered-but-parked domain — active sites can be hosting phishing.</p>
+      <p><strong>Defensive registration:</strong> Consider registering your highest-risk variants. The cost is small compared to the damage from an active phishing campaign.</p>
+      <div class="tool-cta">
+        <p>Check for typosquats</p>
+        <a href="https://domainpreflight.dev/typosquat/">Open Typosquat Monitor →</a>
+      </div>
+      <div class="glossary-links"><strong>Related:</strong>
+        <a href="/glossary/typosquatting/">Typosquatting</a>
+      </div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What is a typosquat phishing domain?</h3>
+        <p>A domain registered to look like a legitimate brand — one character off, different TLD, or homoglyph swap — used to host phishing pages or send phishing email.</p>
+        <h3>How do I find domains impersonating my brand?</h3>
+        <p>Run DomainPreflight Typosquat Monitor — checks 30-50 lookalike variants via live DNS to find which ones resolve.</p>
+        <h3>Should I register lookalike domains defensively?</h3>
+        <p>For high-risk variants (homoglyphs, common TLD swaps) — yes. The cost is low. The alternative is letting attackers register them.</p>
+        <h3>What if I find a phishing domain using my brand?</h3>
+        <p>Report to the registrar's abuse team, the hosting provider's abuse contact, and Google Safe Browsing (safebrowsing.google.com/safebrowsing/report_phish/).</p>
+        <h3>Can DMARC protect against typosquat phishing?</h3>
+        <p>Only for your actual domain. DMARC on yourdomain.com doesn't protect against email from paypa1.com — that's a different domain with its own DNS.</p>
+      </section>
+      <div class="internal-links">
+        <p><a href="/incidents/">← All incidents</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DomainPreflight →</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>

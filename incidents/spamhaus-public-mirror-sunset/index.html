@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spamhaus Public DNS Mirror Sunset — April 2026 — DomainPreflight</title>
+  <meta name="description" content="Spamhaus ends public DNS mirrors April 8, 2026 — use a free DQS key or blocklist queries return NXDOMAIN. DomainPreflight already uses DQS.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/incidents/spamhaus-public-mirror-sunset/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Spamhaus Sunsetting Public DNS Mirrors: What to Do Before April 8, 2026","description":"Spamhaus ends public DNS mirrors April 8, 2026 — use a free DQS key or blocklist queries return NXDOMAIN. DomainPreflight already uses DQS.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/incidents/spamhaus-public-mirror-sunset/"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Spamhaus sunsetting?","acceptedAnswer":{"@type":"Answer","text":"Spamhaus is ending public DNS mirror access on April 8, 2026. Queries via public resolvers (8.8.8.8, 1.1.1.1) will return NXDOMAIN instead of blocklist results."}},{"@type":"Question","name":"How do I fix this before April 8?","acceptedAnswer":{"@type":"Answer","text":"Register for a free Spamhaus DQS account at spamhaus.org/dqs, get your API key, and update your mail server to use the DQS hostname format."}},{"@type":"Question","name":"Is DomainPreflight affected?","acceptedAnswer":{"@type":"Answer","text":"No — DomainPreflight already uses Spamhaus DQS. The Email Deliverability blocklist checks continue working."}},{"@type":"Question","name":"What happens if I do nothing by April 8?","acceptedAnswer":{"@type":"Answer","text":"Your mail server's Spamhaus blocklist checks will stop working — returning NXDOMAIN for all queries. This effectively disables that spam check."}},{"@type":"Question","name":"Is the Spamhaus DQS free?","acceptedAnswer":{"@type":"Answer","text":"Yes for self-hosted mail servers with low query volume. Commercial use requires a paid plan."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Incidents","item":"https://domainpreflight.dev/incidents/"},{"@type":"ListItem","position":3,"name":"Spamhaus mirror sunset","item":"https://domainpreflight.dev/incidents/spamhaus-public-mirror-sunset/"}]}
+  </script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.9rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.3; }
+    .subtitle { color: var(--text2); font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .incident-meta { font-size: 0.78rem; color: var(--text2); margin-bottom: 1.75rem; }
+    .incident-meta time { color: var(--purple); }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul { margin: 0.5rem 0 1rem 1.25rem; }
+    .dns-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.8rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .howto-step { margin-bottom: 1.35rem; padding: 0.85rem 0 0.85rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.5rem !important; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/registrar/">Registrars</a>
+        <a href="/incidents/">Incidents</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/incidents/">Incidents</a> <span aria-hidden="true">›</span> Spamhaus mirror sunset
+</nav>
+    <article>
+      <p class="hero-label">Incident</p>
+      <h1>Spamhaus Sunsetting Public DNS Mirrors: What to Do Before April 8, 2026</h1>
+      <p class="subtitle">Spamhaus is sunsetting its public DNS mirrors on April 8, 2026. Mail servers using public DNS resolvers (8.8.8.8, 1.1.1.1) to query Spamhaus blocklists will stop getting valid responses. The fix is to register for a free Spamhaus DQS key.</p>
+      <p class="incident-meta">Published <time datetime="2026-03-19">March 19, 2026</time></p>
+
+      <p>On April 8, 2026, Spamhaus flips off public DNS mirror answers — queries that used to return blocklist data via resolvers like 8.8.8.8 will come back as NXDOMAIN. If your Postfix or RBL still points at zen.spamhaus.org without DQS, your spam filter quietly stops working.</p>
+
+      <h2>What is changing</h2>
+      <p>Spamhaus has always provided blocklist queries via DNS. Anyone could query zen.spamhaus.org using public resolvers. From April 8, 2026: queries via public resolvers return NXDOMAIN instead of blocklist results. Only queries from registered DQS (Data Query Service) accounts will continue to work.</p>
+
+      <h2>Who is affected</h2>
+      <ul>
+        <li>Self-hosted mail servers (Postfix, Exim, Dovecot) querying Spamhaus directly</li>
+        <li>Custom spam filters using Spamhaus DNS</li>
+        <li>Any tool that queries zen.spamhaus.org without a DQS key</li>
+      </ul>
+      <p><strong>DomainPreflight uses Spamhaus DQS</strong> — the IP blocklist check on the Email Deliverability tool is not affected.</p>
+
+      <h2>The fix</h2>
+      <p>Register for a free Spamhaus DQS account at spamhaus.org/dqs. Free tier covers self-hosted mail servers.</p>
+      <p>Update your mail server config:</p>
+      <div class="dns-block">Before April 8:
+reject_rbl_client zen.spamhaus.org
+
+After April 8 (with DQS key):
+reject_rbl_client [key].zen.dq.spamhaus.net</div>
+
+      <h2>Migration steps</h2>
+      <div class="howto-step" id="step1"><strong>Step 1</strong> Go to spamhaus.org/dqs and register for a free account</div>
+      <div class="howto-step" id="step2"><strong>Step 2</strong> Get your DQS API key from the dashboard</div>
+      <div class="howto-step" id="step3"><strong>Step 3</strong> Update your mail server config to use the DQS hostname format: [key].zen.dq.spamhaus.net</div>
+      <div class="howto-step" id="step4"><strong>Step 4</strong> Test the new config before April 8 — don't wait</div>
+      <div class="howto-step" id="step5"><strong>Step 5</strong> Run DomainPreflight Email Deliverability to verify blocklist checks still work</div>
+
+      <div class="tool-cta">
+        <p>Email Deliverability (blocklists)</p>
+        <a href="https://domainpreflight.dev/email/">Open Email tool →</a>
+      </div>
+      <div class="glossary-links"><strong>Related:</strong>
+        <a href="/glossary/blacklist/">Blacklist</a> ·
+        <a href="/error/blacklisted-ip/">Blacklisted IP</a>
+      </div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What is Spamhaus sunsetting?</h3>
+        <p>Spamhaus is ending public DNS mirror access on April 8, 2026. Queries via public resolvers (8.8.8.8, 1.1.1.1) will return NXDOMAIN instead of blocklist results.</p>
+        <h3>How do I fix this before April 8?</h3>
+        <p>Register for a free Spamhaus DQS account at spamhaus.org/dqs, get your API key, and update your mail server to use the DQS hostname format.</p>
+        <h3>Is DomainPreflight affected?</h3>
+        <p>No — DomainPreflight already uses Spamhaus DQS. The Email Deliverability blocklist checks continue working.</p>
+        <h3>What happens if I do nothing by April 8?</h3>
+        <p>Your mail server's Spamhaus blocklist checks will stop working — returning NXDOMAIN for all queries. This effectively disables that spam check.</p>
+        <h3>Is the Spamhaus DQS free?</h3>
+        <p>Yes for self-hosted mail servers with low query volume. Commercial use requires a paid plan.</p>
+      </section>
+      <div class="internal-links">
+        <p><a href="/incidents/">← All incidents</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DomainPreflight →</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>

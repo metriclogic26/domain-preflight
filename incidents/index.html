@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Incidents & Outages — DomainPreflight</title>
-  <meta name="description" content="Notable email, DNS, and provider incidents — deliverability impact and what to check.">
+  <meta name="description" content="Email and DNS incidents — Google/Yahoo DMARC 2024, Spamhaus DQS, M365 auth, takeovers, blacklists, and more. What happened and what to do.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/incidents/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"CollectionPage","name":"Email & DNS Incidents","url":"https://domainpreflight.dev/incidents/","hasPart":{"@type":"ItemList","name":"Incident write-ups","numberOfItems":4,"itemListElement":[{"@type":"ListItem","position":1,"name":"Provider outages","url":"https://domainpreflight.dev/incidents/provider-outages/"},{"@type":"ListItem","position":2,"name":"Blacklist waves","url":"https://domainpreflight.dev/incidents/blacklist-waves/"},{"@type":"ListItem","position":3,"name":"DNS incidents","url":"https://domainpreflight.dev/incidents/dns-incidents/"},{"@type":"ListItem","position":4,"name":"Registry and TLD events","url":"https://domainpreflight.dev/incidents/registry-events/"}]}}
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"Email & DNS Incidents","url":"https://domainpreflight.dev/incidents/","hasPart":{"@type":"ItemList","name":"Incident write-ups","numberOfItems":10,"itemListElement":[{"@type":"ListItem","position":1,"name":"Google and Yahoo DMARC Enforcement — February 2024","url":"https://domainpreflight.dev/incidents/google-dmarc-enforcement-2024/"},{"@type":"ListItem","position":2,"name":"Yahoo Bulk Sender Requirements — 2024 Changes","url":"https://domainpreflight.dev/incidents/yahoo-bulk-sender-requirements/"},{"@type":"ListItem","position":3,"name":"Spamhaus Public DNS Mirror Sunset — April 2026","url":"https://domainpreflight.dev/incidents/spamhaus-public-mirror-sunset/"},{"@type":"ListItem","position":4,"name":"Microsoft 365 SPF and DKIM Configuration Changes","url":"https://domainpreflight.dev/incidents/microsoft-365-spf-changes/"},{"@type":"ListItem","position":5,"name":"Subdomain Takeover: Real Cases and How to Prevent Them","url":"https://domainpreflight.dev/incidents/subdomain-takeover-cases/"},{"@type":"ListItem","position":6,"name":"Domain Expiry Outages — Real Cases and Prevention","url":"https://domainpreflight.dev/incidents/domain-expiry-outages/"},{"@type":"ListItem","position":7,"name":"Email Blacklisting Incidents — Causes, Impact, and Recovery","url":"https://domainpreflight.dev/incidents/email-blacklist-incidents/"},{"@type":"ListItem","position":8,"name":"SendGrid IP Reputation and Deliverability Issues","url":"https://domainpreflight.dev/incidents/sendgrid-ip-reputation/"},{"@type":"ListItem","position":9,"name":"DMARC Adoption in 2024 — Industry Statistics","url":"https://domainpreflight.dev/incidents/dmarc-adoption-2024/"},{"@type":"ListItem","position":10,"name":"Typosquat Phishing Domains — How Attackers Use Lookalikes","url":"https://domainpreflight.dev/incidents/typosquat-phishing-domains/"}]}}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Incidents","item":"https://domainpreflight.dev/incidents/"}]}
@@ -35,11 +35,12 @@
     .breadcrumb a:hover { text-decoration: underline; }
     .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
     h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; margin-bottom: 0.75rem; }
-    .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; max-width: 640px; }
+    .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; max-width: 720px; }
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
     .hub-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
     .hub-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px rgba(108, 99, 255, 0.25); }
     .hub-card-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+    .hub-card-date { font-size: 0.68rem; color: var(--purple); margin-bottom: 0.35rem; letter-spacing: 0.04em; }
     .hub-card-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.4; }
     .hub-card-arrow { color: var(--purple); font-size: 1.2rem; flex-shrink: 0; }
     footer { border-top: 1px solid var(--border); background: var(--surface); }
@@ -64,6 +65,9 @@
         <a href="/propagation/">Propagation</a>
         <a href="/dmarc/">DMARC Report</a>
         <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+        <a href="/registrar/">Registrars</a>
+        <a href="/incidents/">Incidents</a>
       </nav>
     </div>
   </header>
@@ -71,12 +75,18 @@
     <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> Incidents</nav>
     <p class="hero-label">Incidents</p>
     <h1>Email &amp; DNS Incidents</h1>
-    <p class="lead">Notable outages, blacklist waves, and DNS events — with context for deliverability. Individual write-ups are linked as they are published.</p>
+    <p class="lead">What broke, who felt it, and what to check in your own stack — short write-ups with tools and fix guides linked.</p>
     <div class="card-grid">
-      <a class="hub-card" href="/incidents/provider-outages/"><div><div class="hub-card-title">Provider outages</div><p class="hub-card-desc">Major ESP and mailbox provider downtime.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/incidents/blacklist-waves/"><div><div class="hub-card-title">Blacklist waves</div><p class="hub-card-desc">Listings affecting shared IPs and senders.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/incidents/dns-incidents/"><div><div class="hub-card-title">DNS incidents</div><p class="hub-card-desc">Resolver issues, DNSSEC, and propagation.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/incidents/registry-events/"><div><div class="hub-card-title">Registry &amp; TLD events</div><p class="hub-card-desc">Expiry, transfers, and registrar maintenance.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/google-dmarc-enforcement-2024/"><div><div class="hub-card-title">Google &amp; Yahoo DMARC enforcement</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">Feb 2024 bulk-sender rules — 550 5.7.26 and minimum DMARC.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/yahoo-bulk-sender-requirements/"><div><div class="hub-card-title">Yahoo bulk sender requirements</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">Aligned with Google — PTR, DMARC, unsubscribe, spam rate.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/spamhaus-public-mirror-sunset/"><div><div class="hub-card-title">Spamhaus public mirror sunset</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">April 2026 — move to DQS or RBL queries go NXDOMAIN.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/microsoft-365-spf-changes/"><div><div class="hub-card-title">Microsoft 365 SPF / DKIM</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">DKIM CNAMEs and Defender — SPF alone isn’t enough.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/subdomain-takeover-cases/"><div><div class="hub-card-title">Subdomain takeover cases</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">GitHub, S3, Heroku — dangling CNAME patterns.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/domain-expiry-outages/"><div><div class="hub-card-title">Domain expiry outages</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">When DNS stops — grace, redemption, prevention.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/email-blacklist-incidents/"><div><div class="hub-card-title">Email blacklist incidents</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">Causes, list impact, recovery — Spamhaus to Postmaster.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/sendgrid-ip-reputation/"><div><div class="hub-card-title">SendGrid IP reputation</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">Shared pools, domain alignment, dedicated IP tradeoffs.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/dmarc-adoption-2024/"><div><div class="hub-card-title">DMARC adoption 2024</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">Stats — growth vs stuck at p=none.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/incidents/typosquat-phishing-domains/"><div><div class="hub-card-title">Typosquat phishing domains</div><p class="hub-card-date">2026-03-19</p><p class="hub-card-desc">Lookalikes, homoglyphs, Typosquat Monitor.</p></div><span class="hub-card-arrow">→</span></a>
     </div>
   </main>
   <footer>
