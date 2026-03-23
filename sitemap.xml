@@ -106,6 +106,56 @@
     <priority>0.65</priority>
   </url>
   <url>
+    <loc>https://domainpreflight.dev/error/spf-permerror/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/dmarc-alignment-failed/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/dkim-signature-failed/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/emails-going-to-spam/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/blacklisted-ip/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/550-rejected/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/dkim-none/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/ptr-mismatch/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/no-mx-record/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/error/dmarc-policy-none/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://domainpreflight.dev/vs/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
