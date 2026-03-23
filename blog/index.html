@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Email Deliverability Blog — DomainPreflight</title>
-  <meta name="description" content="DMARC setup guides, SPF fixes, blacklist incidents, and email authentication updates.">
+  <meta name="description" content="DMARC, SPF, alignment, SendGrid setup, subdomain takeover, and domain expiry — short posts from the browser.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/blog/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Blog","name":"Email Deliverability & DNS Blog","url":"https://domainpreflight.dev/blog/","description":"DMARC setup guides, SPF fixes, blacklist incidents, and email authentication updates.","publisher":{"@type":"Organization","name":"MetricLogic"},"hasPart":{"@type":"ItemList","name":"Blog posts","numberOfItems":0,"itemListElement":[]}}
+  {"@context":"https://schema.org","@type":"Blog","name":"Email Deliverability & DNS Blog","url":"https://domainpreflight.dev/blog/","description":"DMARC, SPF, alignment, SendGrid, dangling CNAMEs, domain expiry — practical posts.","publisher":{"@type":"Organization","name":"MetricLogic"},"hasPart":{"@type":"ItemList","name":"Blog posts","numberOfItems":8,"itemListElement":[{"@type":"ListItem","position":1,"name":"Your DMARC Is Set to p=none. Here's Why That's Still a Problem.","url":"https://domainpreflight.dev/blog/dmarc-p-none-still-a-problem/"},{"@type":"ListItem","position":2,"name":"The SPF Lookup Limit: Why You Hit 10 and How to Stay Under It","url":"https://domainpreflight.dev/blog/spf-lookup-limit/"},{"@type":"ListItem","position":3,"name":"DMARC Alignment vs DMARC Policy — The Difference Most Guides Skip","url":"https://domainpreflight.dev/blog/dmarc-alignment-vs-dmarc-policy/"},{"@type":"ListItem","position":4,"name":"Why Your Emails Pass SPF and DKIM But Still Fail DMARC","url":"https://domainpreflight.dev/blog/spf-dkim-pass-dmarc-fails/"},{"@type":"ListItem","position":5,"name":"The SendGrid CNAME Setup Most People Miss (And Why DMARC Fails Without It)","url":"https://domainpreflight.dev/blog/sendgrid-cname-setup/"},{"@type":"ListItem","position":6,"name":"Subdomain Takeover: The Dangling CNAME Risk Nobody Checks","url":"https://domainpreflight.dev/blog/subdomain-takeover-dangling-cnames/"},{"@type":"ListItem","position":7,"name":"How to Read a DMARC Aggregate Report Without Losing Your Mind","url":"https://domainpreflight.dev/blog/how-to-read-dmarc-report/"},{"@type":"ListItem","position":8,"name":"Domain Expiry: The Infrastructure Failure That Always Comes at the Worst Time","url":"https://domainpreflight.dev/blog/domain-expiry-infrastructure-failure/"}]}}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://domainpreflight.dev/blog/"}]}
@@ -36,7 +36,13 @@
     .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
     h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; margin-bottom: 0.75rem; }
     .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; max-width: 640px; }
-    .empty-state { padding: 2rem; background: var(--surface); border: 1px dashed var(--border); border-radius: 12px; color: var(--text2); font-size: 0.9rem; text-align: center; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.85rem; }
+    .post-card { display: block; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    .post-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px rgba(108, 99, 255, 0.25); }
+    .post-card-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.35rem; line-height: 1.35; }
+    .post-card-meta { font-size: 0.72rem; color: var(--text2); margin-bottom: 0.5rem; }
+    .post-card-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.45; }
+    .post-card-arrow { color: var(--purple); float: right; font-size: 1.1rem; margin-left: 0.5rem; }
     footer { border-top: 1px solid var(--border); background: var(--surface); }
     .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
     .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
@@ -59,6 +65,7 @@
         <a href="/propagation/">Propagation</a>
         <a href="/dmarc/">DMARC Report</a>
         <a href="/glossary/">Glossary</a>
+        <a href="/blog/">Blog</a>
       </nav>
     </div>
   </header>
@@ -66,8 +73,18 @@
     <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> Blog</nav>
     <p class="hero-label">Blog</p>
     <h1>Email Deliverability &amp; DNS Blog</h1>
-    <p class="lead">Longer write-ups on auth, outages, and whatever we’re learning in prod — shows up here when we publish it.</p>
-    <p class="empty-state">Nothing posted yet. Ping us on GitHub if you want a topic covered.</p>
+    <p class="lead">Short posts — the stuff we wish someone had told us before a Friday outage.</p>
+
+    <div class="card-grid">
+      <a class="post-card" href="/blog/dmarc-p-none-still-a-problem/"><span class="post-card-arrow">→</span><div class="post-card-title">Your DMARC Is Set to p=none. Here's Why That's Still a Problem.</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">Green tick, zero blocking — spoofing still lands in inboxes. What to do next.</div></a>
+      <a class="post-card" href="/blog/spf-lookup-limit/"><span class="post-card-arrow">→</span><div class="post-card-title">The SPF Lookup Limit: Why You Hit 10 and How to Stay Under It</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">Silent PermError when you stack one more SaaS on SPF — count and flatten.</div></a>
+      <a class="post-card" href="/blog/dmarc-alignment-vs-dmarc-policy/"><span class="post-card-arrow">→</span><div class="post-card-title">DMARC Alignment vs DMARC Policy — The Difference Most Guides Skip</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">p=reject doesn't help if alignment never lines up. Here's the split.</div></a>
+      <a class="post-card" href="/blog/spf-dkim-pass-dmarc-fails/"><span class="post-card-arrow">→</span><div class="post-card-title">Why Your Emails Pass SPF and DKIM But Still Fail DMARC</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">Two greens and a red — alignment is the missing piece.</div></a>
+      <a class="post-card" href="/blog/sendgrid-cname-setup/"><span class="post-card-arrow">→</span><div class="post-card-title">The SendGrid CNAME Setup Most People Miss</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">SPF include alone won't align Return-Path — you need the three CNAMEs.</div></a>
+      <a class="post-card" href="/blog/subdomain-takeover-dangling-cnames/"><span class="post-card-arrow">→</span><div class="post-card-title">Subdomain Takeover: The Dangling CNAME Risk Nobody Checks</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">Deleted the app, left the DNS — someone else can claim your hostname.</div></a>
+      <a class="post-card" href="/blog/how-to-read-dmarc-report/"><span class="post-card-arrow">→</span><div class="post-card-title">How to Read a DMARC Aggregate Report Without Losing Your Mind</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">Zip, XML, pain — or paste into the analyzer and get a table.</div></a>
+      <a class="post-card" href="/blog/domain-expiry-infrastructure-failure/"><span class="post-card-arrow">→</span><div class="post-card-title">Domain Expiry: The Infrastructure Failure That Always Comes at the Worst Time</div><div class="post-card-meta">March 19, 2026</div><div class="post-card-desc">NXDOMAIN Monday — auto-renew and WHOIS checks beat heroics.</div></a>
+    </div>
   </main>
   <footer>
     <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain Expiry: The Infrastructure Failure That Always Comes at the Worst Time | DomainPreflight</title>
+  <meta name="description" content="Domain expiry takes down your website, email, and every DNS-dependent service simultaneously. It&#x27;s preventable in 5 minutes. Here&#x27;s how.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/blog/domain-expiry-infrastructure-failure/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Domain Expiry: The Infrastructure Failure That Always Comes at the Worst Time",
+  "datePublished": "2026-03-19",
+  "dateModified": "2026-03-19",
+  "author": {
+    "@type": "Organization",
+    "name": "MetricLogic"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "DomainPreflight",
+    "url": "https://domainpreflight.dev/"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://domainpreflight.dev/blog/domain-expiry-infrastructure-failure/"
+  }
+}
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What happens when a domain expires?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your website goes down, email stops working, and all DNS records become inaccessible. Everything that depends on your domain fails simultaneously."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much notice do I get before expiry?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most registrars send emails at 90, 60, 30, and 7 days. These often go unread. Enable auto-renew and don't rely on email notices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I recover an expired domain?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Usually yes — during the grace period (30-45 days) at normal renewal cost. After that, redemption fees apply. After redemption, the domain is released."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I check when my domain expires?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run DomainPreflight WHOIS — it shows the exact expiry date, registrar, and days remaining with a risk tier."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if my domain was registered by someone who left the company?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Contact the registrar directly. Most require proof of ownership (company documents) to transfer or renew a domain under a departed registrant."
+      }
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://domainpreflight.dev/blog/"},{"@type":"ListItem","position":3,"name":"Domain Expiry: The Infrastructure Failure That Always Comes at the Worst Time","item":"https://domainpreflight.dev/blog/domain-expiry-infrastructure-failure/"}]}
+  </script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.85rem); font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
+    .post-date { color: var(--text2); font-size: 0.8rem; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul, article ol { margin: 0.5rem 0 1rem 1.25rem; color: var(--text2); font-size: 0.9rem; }
+    pre.code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { margin-bottom: 0.5rem; color: var(--text); }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .faq-section h2 { font-size: 1.05rem; margin-top: 2rem; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; color: var(--text2); font-size: 0.9rem; }
+    .internal-links { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.88rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/blog/">Blog</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/blog/">Blog</a> <span aria-hidden="true">›</span> Domain Expiry: The Infrastructure Failure That Always Comes at the Worst Time</nav>
+    <article>
+      <p class="hero-label">Blog</p>
+      <h1>Domain Expiry: The Infrastructure Failure That Always Comes at the Worst Time</h1>
+      <p class="post-date"><time datetime="2026-03-19">March 19, 2026</time></p>
+      <p>It's a Monday morning. Your website is down. Email is bouncing. Customers can't reach you.</p>
+      <p>Someone checks the domain. It expired three days ago.</p>
+      <p>This happens to companies of every size. The fix is five minutes of setup. The failure is weeks of damage.</p>
+
+      <h2>What Actually Happens When a Domain Expires</h2>
+      <p>Everything stops at once.</p>
+      <p>Your website returns NXDOMAIN. Email bounces with "domain not found." SSL certificates break on the next renewal because the domain can't be verified.</p>
+      <p>Subdomains, APIs, webhooks, SPF records, DKIM records — all gone. Everything that depends on DNS stops working.</p>
+
+      <h2>The Danger Window</h2>
+      <p>Most registrars send warning emails at 90, 60, 30, and 7 days before expiry.</p>
+      <p>Those emails go to a billing address nobody checks. Or the inbox of someone who left the company three years ago.</p>
+      <p>The domain expires. The grace period starts (usually 30-45 days). Then the redemption period. Then the domain is released to the public.</p>
+      <p>Domain squatters watch expiry feeds. Valuable domains get snatched in minutes.</p>
+
+      <h2>The Five-Minute Fix</h2>
+      <p>Enable auto-renew on every domain you own. Not just your primary domain — all of them.</p>
+      <p>Then check the expiry dates now. Use DomainPreflight WHOIS — it shows the exact expiry date, registrar, and a risk tier.</p>
+      <p>Critical (under 30 days) → renew today. Warning (30-60 days) → renew this week. Safe (over 60 days) → enable auto-renew and forget about it.</p>
+
+      <h2>Multiple Domains</h2>
+      <p>If you manage more than a handful of domains, run each one through DomainPreflight WHOIS and note the expiry dates.</p>
+      <p>Set calendar reminders 60 days before expiry as a backup — even with auto-renew enabled. Payment method expiry is the second most common cause of domain loss after just forgetting to renew.</p>
+
+      <h2>If You've Already Expired</h2>
+      <p>Contact your registrar immediately. Most offer a grace period where you can renew at normal cost.</p>
+      <p>After the grace period, redemption fees kick in — often $100-200 to recover your own domain.</p>
+      <p>After redemption, it's gone.</p>
+
+      <div class="tool-cta">
+        <p>Check your domain expiry</p>
+        <a href="https://domainpreflight.dev/whois/">Open WHOIS →</a>
+      </div>
+
+      <div class="glossary-links"><strong>Also read:</strong>
+        <a href="/glossary/domain-expiry/">Domain expiry</a> ·
+        <a href="/glossary/whois/">WHOIS</a> ·
+        <a href="https://domainpreflight.dev/whois/">WHOIS tool</a>
+      </div>
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What happens when a domain expires?</h3>
+        <p>Your website goes down, email stops working, and all DNS records become inaccessible. Everything that depends on your domain fails simultaneously.</p>
+        <h3>How much notice do I get before expiry?</h3>
+        <p>Most registrars send emails at 90, 60, 30, and 7 days. These often go unread. Enable auto-renew and don&#x27;t rely on email notices.</p>
+        <h3>Can I recover an expired domain?</h3>
+        <p>Usually yes — during the grace period (30-45 days) at normal renewal cost. After that, redemption fees apply. After redemption, the domain is released.</p>
+        <h3>How do I check when my domain expires?</h3>
+        <p>Run DomainPreflight WHOIS — it shows the exact expiry date, registrar, and days remaining with a risk tier.</p>
+        <h3>What if my domain was registered by someone who left the company?</h3>
+        <p>Contact the registrar directly. Most require proof of ownership (company documents) to transfer or renew a domain under a departed registrant.</p>
+      </section>
+      <div class="internal-links">
+        <p><a href="/blog/">← All posts</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>
