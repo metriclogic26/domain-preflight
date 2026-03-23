@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subdomain Takeover — Detection and Prevention — DomainPreflight Glossary</title>
+  <meta name="description" content="A subdomain takeover occurs when a subdomain's DNS record points to an external service that has been deleted or deprovisioned, allowing an attacker to claim that service and serve content on your subdomain.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/glossary/subdomain-takeover/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Subdomain Takeover",
+    "description": "A subdomain takeover occurs when a subdomain's DNS record points to an external service that has been deleted or deprovisioned, allowing an attacker to claim that service and serve content on your subdomain. Common targets include GitHub Pages, AWS S3 buckets, Heroku apps, and Netlify sites.",
+    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a subdomain takeover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A subdomain takeover occurs when a CNAME points to a deprovisioned service, allowing an attacker to claim it and serve content on your subdomain."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which services are most vulnerable?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GitHub Pages, AWS S3, Heroku, Netlify, and Azure are the most commonly exploited services for subdomain takeovers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I check for dangling DNS records?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use DomainPreflight's Dangling Records tool — it scans certificate logs and checks CNAMEs against known takeover fingerprints."
+        }
+      }
+    ]
+  }
+  </script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root {
+      --bg: #0B0D14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.8rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.85rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    article > p:first-of-type { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 1.75rem 0 0.65rem; color: var(--text); }
+    article p { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul { color: var(--text2); font-size: 0.9rem; margin: 0.5rem 0 1rem 1.25rem; }
+    article li { margin-bottom: 0.35rem; }
+    .tool-cta {
+      margin-top: 2rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      border-left: 3px solid var(--purple);
+    }
+    .tool-cta p { margin-bottom: 0.75rem; color: var(--text); }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 0;
+      background: var(--bg2);
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text2);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight.</a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <article>
+      <p class="hero-label">Glossary</p>
+      <h1>Subdomain Takeover — Detection and Prevention</h1>
+      <p>A subdomain takeover occurs when a subdomain's DNS record points to an external service that has been deleted or deprovisioned, allowing an attacker to claim that service and serve content on your subdomain. Common targets include GitHub Pages, AWS S3 buckets, Heroku apps, and Netlify sites.</p>
+
+      <h2>How Subdomain Takeovers Happen</h2>
+      <p>When you delete a Heroku app but forget to remove the CNAME record pointing to it, the subdomain is left dangling. An attacker can register a new Heroku app with the same name and immediately serve content on your subdomain — passing off phishing pages as legitimate.</p>
+
+      <h2>High-Risk Services</h2>
+      <p>Services most commonly exploited for subdomain takeovers include:</p>
+      <ul>
+        <li>GitHub Pages (*.github.io)</li>
+        <li>AWS S3 (*.s3.amazonaws.com)</li>
+        <li>Heroku (*.herokuapp.com)</li>
+        <li>Netlify (*.netlify.app)</li>
+        <li>Azure (*.azurewebsites.net)</li>
+      </ul>
+
+      <h2>How to Prevent Subdomain Takeovers</h2>
+      <ol style="color: var(--text2); font-size: 0.9rem; margin: 0.5rem 0 1rem 1.25rem;">
+        <li>Remove DNS records when deprovisioning services</li>
+        <li>Regularly audit CNAMEs in your DNS</li>
+        <li>Use DomainPreflight's Dangling Records tool to scan for vulnerable subdomains</li>
+      </ol>
+
+      <div class="tool-cta">
+        <p>Scan for dangling records</p>
+        <a href="https://domainpreflight.dev/dangling/">Open Dangling Records →</a>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+    </div>
+    <div class="footer-bar">
+      <div>
+        <span>DomainPreflight by MetricLogic ·</span>
+        <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a>
+        <span>·</span>
+        <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a>
+        <span>·</span>
+        <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a>
+        <span>·</span>
+        <a href="/glossary/">Glossary</a>
+      </div>
+      <div>
+        <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a>
+        <span> · </span>
+        <span>MIT Licensed</span>
+        <span> · </span>
+        <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
