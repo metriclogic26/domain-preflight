@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DNS Concepts — DomainPreflight</title>
-  <meta name="description" content="Core DNS record types and behavior for email — A, AAAA, CNAME, MX, TXT, NS, and PTR.">
+  <title>DNS Records — DomainPreflight</title>
+  <meta name="description" content="Guides for MX, TXT, SPF, DKIM, DMARC, CNAME, A, AAAA, PTR, NS, and DNS propagation — how to add records and verify them.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/dns/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,10 +12,10 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"CollectionPage","name":"DNS Concepts for Email","url":"https://domainpreflight.dev/dns/","hasPart":{"@type":"ItemList","name":"DNS topics","numberOfItems":6,"itemListElement":[{"@type":"ListItem","position":1,"name":"A and AAAA records","url":"https://domainpreflight.dev/dns/a-aaaa/"},{"@type":"ListItem","position":2,"name":"CNAME records","url":"https://domainpreflight.dev/dns/cname/"},{"@type":"ListItem","position":3,"name":"MX records","url":"https://domainpreflight.dev/dns/mx/"},{"@type":"ListItem","position":4,"name":"TXT records","url":"https://domainpreflight.dev/dns/txt/"},{"@type":"ListItem","position":5,"name":"NS delegation","url":"https://domainpreflight.dev/dns/ns/"},{"@type":"ListItem","position":6,"name":"PTR and reverse DNS","url":"https://domainpreflight.dev/dns/ptr/"}]}}
+  {"@context":"https://schema.org","@type":"CollectionPage","name":"DNS Records","url":"https://domainpreflight.dev/dns/","hasPart":{"@type":"ItemList","name":"DNS guides","numberOfItems":15,"itemListElement":[{"@type":"ListItem","position":1,"name":"MX Record Setup Guide","url":"https://domainpreflight.dev/dns/mx-record/"},{"@type":"ListItem","position":2,"name":"TXT Record Setup Guide","url":"https://domainpreflight.dev/dns/txt-record/"},{"@type":"ListItem","position":3,"name":"CNAME Record Setup Guide","url":"https://domainpreflight.dev/dns/cname-record/"},{"@type":"ListItem","position":4,"name":"A Record Setup Guide","url":"https://domainpreflight.dev/dns/a-record/"},{"@type":"ListItem","position":5,"name":"AAAA Record Setup Guide","url":"https://domainpreflight.dev/dns/aaaa-record/"},{"@type":"ListItem","position":6,"name":"PTR Record Setup Guide","url":"https://domainpreflight.dev/dns/ptr-record/"},{"@type":"ListItem","position":7,"name":"SPF Record Setup Guide","url":"https://domainpreflight.dev/dns/spf-record/"},{"@type":"ListItem","position":8,"name":"DKIM Record Setup Guide","url":"https://domainpreflight.dev/dns/dkim-record/"},{"@type":"ListItem","position":9,"name":"DMARC Record Setup Guide","url":"https://domainpreflight.dev/dns/dmarc-record/"},{"@type":"ListItem","position":10,"name":"NS Record — Nameserver Setup","url":"https://domainpreflight.dev/dns/ns-record/"},{"@type":"ListItem","position":11,"name":"DNS Propagation","url":"https://domainpreflight.dev/dns/propagation/"},{"@type":"ListItem","position":12,"name":"A Record Propagation","url":"https://domainpreflight.dev/dns/propagation/a-record/"},{"@type":"ListItem","position":13,"name":"MX Record Propagation","url":"https://domainpreflight.dev/dns/propagation/mx-record/"},{"@type":"ListItem","position":14,"name":"TXT Record Propagation","url":"https://domainpreflight.dev/dns/propagation/txt-record/"},{"@type":"ListItem","position":15,"name":"CNAME Record Propagation","url":"https://domainpreflight.dev/dns/propagation/cname/"}]}}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"DNS","item":"https://domainpreflight.dev/dns/"}]}
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"DNS Records","item":"https://domainpreflight.dev/dns/"}]}
   </script>
   <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
@@ -36,6 +36,8 @@
     .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
     h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; margin-bottom: 0.75rem; }
     .lead { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; max-width: 640px; }
+    .section-title { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    .section-title:first-of-type { margin-top: 0; }
     .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
     .hub-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
     .hub-card:hover { border-color: var(--purple); box-shadow: 0 0 0 1px rgba(108, 99, 255, 0.25); }
@@ -64,21 +66,37 @@
         <a href="/propagation/">Propagation</a>
         <a href="/dmarc/">DMARC Report</a>
         <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
       </nav>
     </div>
   </header>
   <main>
-    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> DNS</nav>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> DNS Records</nav>
     <p class="hero-label">DNS</p>
-    <h1>DNS concepts for email</h1>
-    <p class="lead">Record types and behaviors that matter for sending and receiving mail — linked guides as they are published.</p>
+    <h1>DNS record guides</h1>
+    <p class="lead">Problem-first guides for the records that affect email — add them correctly, verify propagation, and link to tools when you need a second opinion.</p>
+
+    <h2 class="section-title">Record types</h2>
     <div class="card-grid">
-      <a class="hub-card" href="/dns/a-aaaa/"><div><div class="hub-card-title">A and AAAA records</div><p class="hub-card-desc">Hostnames to IPv4 and IPv6 for mail servers.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/dns/cname/"><div><div class="hub-card-title">CNAME records</div><p class="hub-card-desc">Aliases, apex limitations, and takeovers.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/dns/mx/"><div><div class="hub-card-title">MX records</div><p class="hub-card-desc">Priority, fallback, and receiving mail.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/dns/txt/"><div><div class="hub-card-title">TXT records</div><p class="hub-card-desc">SPF, DKIM, DMARC, and string length limits.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/dns/ns/"><div><div class="hub-card-title">NS delegation</div><p class="hub-card-desc">Who answers queries for your zone.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/dns/ptr/"><div><div class="hub-card-title">PTR and reverse DNS</div><p class="hub-card-desc">IP to hostname for outbound reputation.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/mx-record/"><div><div class="hub-card-title">MX record</div><p class="hub-card-desc">Where mail is delivered — priorities, providers, verification.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/txt-record/"><div><div class="hub-card-title">TXT record</div><p class="hub-card-desc">SPF, DKIM, DMARC, verification — and the one-SPF rule.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/cname-record/"><div><div class="hub-card-title">CNAME record</div><p class="hub-card-desc">Aliases, apex limits, DKIM CNAMEs.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/a-record/"><div><div class="hub-card-title">A record</div><p class="hub-card-desc">Point hostnames to IPv4 — sites, mail hosts, PTR.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/aaaa-record/"><div><div class="hub-card-title">AAAA record</div><p class="hub-card-desc">IPv6 addresses for dual-stack setups.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/ptr-record/"><div><div class="hub-card-title">PTR record</div><p class="hub-card-desc">Reverse DNS at your host — not the registrar.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/spf-record/"><div><div class="hub-card-title">SPF record</div><p class="hub-card-desc">Authorised senders, includes, and the 10-lookup limit.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/dkim-record/"><div><div class="hub-card-title">DKIM record</div><p class="hub-card-desc">Publish your public key — avoid truncation.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/dmarc-record/"><div><div class="hub-card-title">DMARC record</div><p class="hub-card-desc">Policy, reports, and rollout from p=none to reject.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/ns-record/"><div><div class="hub-card-title">NS record</div><p class="hub-card-desc">Nameservers at the registrar — delegation and cutovers.</p></div><span class="hub-card-arrow">→</span></a>
+    </div>
+
+    <h2 class="section-title">Propagation guides</h2>
+    <div class="card-grid">
+      <a class="hub-card" href="/dns/propagation/"><div><div class="hub-card-title">DNS propagation</div><p class="hub-card-desc">TTL, timelines, and checking five resolvers at once.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/propagation/a-record/"><div><div class="hub-card-title">A record propagation</div><p class="hub-card-desc">How long A changes take and what to do if stuck.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/propagation/mx-record/"><div><div class="hub-card-title">MX record propagation</div><p class="hub-card-desc">Email during MX changes, TTL, verification.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/propagation/txt-record/"><div><div class="hub-card-title">TXT record propagation</div><p class="hub-card-desc">SPF, DKIM, DMARC — verify auth records are live.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/dns/propagation/cname/"><div><div class="hub-card-title">CNAME propagation</div><p class="hub-card-desc">DKIM CNAMEs, chains, and TTL.</p></div><span class="hub-card-arrow">→</span></a>
     </div>
   </main>
   <footer>

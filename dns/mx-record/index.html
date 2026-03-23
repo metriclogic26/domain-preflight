@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MX Record — How to Add and Verify Your Mail Exchanger — DomainPreflight</title>
+  <meta name="description" content="Add MX records so mail servers know where to deliver email for your domain. Verify with DomainPreflight Propagation.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/dns/mx-record/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"HowTo","name":"Add and verify MX records for your domain","description":"Log into DNS, remove old MX entries, add provider MX records with correct priority, wait for propagation, and verify with a propagation checker.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS access at your registrar or DNS host"},"tool":{"@type":"HowToTool","name":"DomainPreflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Log into your DNS provider","url":"https://domainpreflight.dev/dns/mx-record/#step1","text":"Step 1 Log into your DNS provider (Cloudflare, Namecheap, etc.)."},{"@type":"HowToStep","position":2,"name":"Remove old MX records","url":"https://domainpreflight.dev/dns/mx-record/#step2","text":"Step 2 Delete any existing MX records from a previous provider."},{"@type":"HowToStep","position":3,"name":"Add provider MX records","url":"https://domainpreflight.dev/dns/mx-record/#step3","text":"Step 3 Add the MX records your email provider specifies — get exact values from their setup docs."},{"@type":"HowToStep","position":4,"name":"Set priority correctly","url":"https://domainpreflight.dev/dns/mx-record/#step4","text":"Step 4 Set priority values correctly (lower number = higher priority)."},{"@type":"HowToStep","position":5,"name":"Wait for DNS propagation","url":"https://domainpreflight.dev/dns/mx-record/#step5","text":"Step 5 Wait up to 48 hours for DNS propagation."},{"@type":"HowToStep","position":6,"name":"Verify with Propagation checker","url":"https://domainpreflight.dev/dns/mx-record/#step6","text":"Step 6 Run the DomainPreflight Propagation checker to confirm MX records are live across all resolvers."}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is an MX record?","acceptedAnswer":{"@type":"Answer","text":"An MX record tells mail servers where to deliver email for your domain. Without one, your domain can't receive email."}},{"@type":"Question","name":"Can I have multiple MX records?","acceptedAnswer":{"@type":"Answer","text":"Yes — multiple MX records provide redundancy. Lower priority numbers are tried first. If the primary is down, the next is tried automatically."}},{"@type":"Question","name":"What does MX priority mean?","acceptedAnswer":{"@type":"Answer","text":"Lower number = higher priority. Priority 1 is tried before priority 5. If you have one server, use priority 10."}},{"@type":"Question","name":"How long do MX record changes take?","acceptedAnswer":{"@type":"Answer","text":"Up to 48 hours. Use DomainPreflight Propagation checker to see when all resolvers have the new record."}},{"@type":"Question","name":"My MX records exist but email still bounces — why?","acceptedAnswer":{"@type":"Answer","text":"Check that MX records point to a hostname (not an IP), the hostname has an A record, and your mail server is actually running."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"DNS Records","item":"https://domainpreflight.dev/dns/"},{"@type":"ListItem","position":3,"name":"MX Record Setup Guide","item":"https://domainpreflight.dev/dns/mx-record/"}]}
+  </script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.9rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    .subtitle { color: var(--text2); font-size: 0.95rem; margin-bottom: 2rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul { margin: 0.5rem 0 1rem 1.25rem; }
+    .dns-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.8rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .howto-step { margin-bottom: 1.35rem; padding: 0.85rem 0 0.85rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.5rem !important; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/dns/">DNS Records</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+<a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/dns/">DNS Records</a> <span aria-hidden="true">›</span> MX Record Setup Guide
+</nav>
+    <article>
+      <p class="hero-label">DNS guide</p>
+      <h1>MX Record Setup Guide</h1>
+      <p class="subtitle">An MX record tells other mail servers where to deliver email for your domain. Without one, your domain can't receive any email. Here's how to add the right MX records for your email provider and verify they're working.</p>
+
+      <h2>Why it matters</h2>
+      <p>When someone sends email to you@yourdomain.com, their server looks up your MX record to find your mail server. No MX = no delivery. Wrong MX = email going to the wrong server.</p>
+
+      <h2>Common MX records by provider</h2>
+      <p>Copy exact values from your provider’s docs — these are typical examples.</p>
+      <h3>Google Workspace</h3>
+      <div class="dns-block">@ MX 1  aspmx.l.google.com
+@ MX 5  alt1.aspmx.l.google.com
+@ MX 5  alt2.aspmx.l.google.com
+@ MX 10 alt3.aspmx.l.google.com
+@ MX 10 alt4.aspmx.l.google.com</div>
+      <h3>Microsoft 365</h3>
+      <div class="dns-block">@ MX 0  yourdomain-com.mail.protection.outlook.com</div>
+      <h3>Fastmail</h3>
+      <div class="dns-block">@ MX 10 in1-smtp.messagingengine.com
+@ MX 20 in2-smtp.messagingengine.com</div>
+      <h3>Zoho Mail</h3>
+      <div class="dns-block">@ MX 10 mx.zoho.com
+@ MX 20 mx2.zoho.com</div>
+
+      <h2>How to verify</h2>
+      <p>Run <strong>DomainPreflight Propagation</strong> — select MX record type, enter your domain, confirm all five resolvers show your records.</p>
+      <div class="tool-cta">
+        <p>Check MX across resolvers</p>
+        <a href="https://domainpreflight.dev/propagation/">Open Propagation checker →</a>
+      </div>
+      <div class="glossary-links"><strong>Related:</strong>
+        <a href="/glossary/mx-record/">MX record (glossary)</a> ·
+        <a href="/error/no-mx-record/">No MX record error</a>
+      </div>
+
+      <h2>Step by step</h2>
+      <div class="howto-step" id="step1"><strong>Step 1</strong> Log into your DNS provider (Cloudflare, Namecheap, etc.).</div>
+      <div class="howto-step" id="step2"><strong>Step 2</strong> Delete any existing MX records from a previous provider.</div>
+      <div class="howto-step" id="step3"><strong>Step 3</strong> Add the MX records your email provider specifies — get exact values from their setup docs.</div>
+      <div class="howto-step" id="step4"><strong>Step 4</strong> Set priority values correctly (lower number = higher priority).</div>
+      <div class="howto-step" id="step5"><strong>Step 5</strong> Wait up to 48 hours for DNS propagation.</div>
+      <div class="howto-step" id="step6"><strong>Step 6</strong> Run the DomainPreflight Propagation checker to confirm MX records are live across all resolvers.</div>
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What is an MX record?</h3>
+        <p>An MX record tells mail servers where to deliver email for your domain. Without one, your domain can't receive email.</p>
+        <h3>Can I have multiple MX records?</h3>
+        <p>Yes — multiple MX records provide redundancy. Lower priority numbers are tried first. If the primary is down, the next is tried automatically.</p>
+        <h3>What does MX priority mean?</h3>
+        <p>Lower number = higher priority. Priority 1 is tried before priority 5. If you have one server, use priority 10.</p>
+        <h3>How long do MX record changes take?</h3>
+        <p>Up to 48 hours. Use DomainPreflight Propagation checker to see when all resolvers have the new record.</p>
+        <h3>My MX records exist but email still bounces — why?</h3>
+        <p>Check that MX records point to a hostname (not an IP), the hostname has an A record, and your mail server is actually running.</p>
+      </section>
+      <div class="internal-links">
+        <p><a href="/dns/">← All DNS record guides</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DomainPreflight →</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>
