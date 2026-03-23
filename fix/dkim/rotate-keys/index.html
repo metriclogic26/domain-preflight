@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DKIM Key Rotation — Best Practice Guide — DomainPreflight</title>
+  <meta name="description" content="Rotate DKIM by publishing the new key first, waiting for propagation, switching signing, then removing the old key after a safe window.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/fix/dkim/rotate-keys/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"HowTo","name":"DKIM key rotation — best practice","description":"DKIM key rotation replaces an old signing key with a new one without causing email delivery failures. Publish the new key first, wait for propagation, then switch signing.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"Provider admin and DNS"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Day 1 publish new key","url":"https://domainpreflight.dev/fix/dkim/rotate-keys/#step1","text":"Step 1 (Day 1) Publish new key with new selector — keep old TXT in place"},{"@type":"HowToStep","position":2,"name":"Day 2-3 verify DNS","url":"https://domainpreflight.dev/fix/dkim/rotate-keys/#step2","text":"Step 2 (Day 2–3) Verify new key in DNS Preflight from multiple vantage points if available"},{"@type":"HowToStep","position":3,"name":"Day 3 switch signing","url":"https://domainpreflight.dev/fix/dkim/rotate-keys/#step3","text":"Step 3 (Day 3) Switch signing to the new selector"},{"@type":"HowToStep","position":4,"name":"Day 7 remove old","url":"https://domainpreflight.dev/fix/dkim/rotate-keys/#step4","text":"Step 4 (Day 7) Remove old selector's TXT record"},{"@type":"HowToStep","position":5,"name":"Monitor DMARC","url":"https://domainpreflight.dev/fix/dkim/rotate-keys/#step5","text":"Step 5 Monitor DMARC aggregate reports for dkim=pass rates"}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How often should I rotate DKIM keys?","acceptedAnswer":{"@type":"Answer","text":"Typically yearly or on policy/incident — not on a fixed calendar for all orgs."}},{"@type":"Question","name":"How do I rotate without downtime?","acceptedAnswer":{"@type":"Answer","text":"Overlap DNS keys; only remove the old key after signing has moved."}},{"@type":"Question","name":"Can multiple keys exist during transition?","acceptedAnswer":{"@type":"Answer","text":"Yes — both selectors can exist in DNS during overlap."}},{"@type":"Question","name":"What happens to in-flight emails during rotation?","acceptedAnswer":{"@type":"Answer","text":"Old signatures verify until you delete the old public key."}},{"@type":"Question","name":"When is rotation required?","acceptedAnswer":{"@type":"Answer","text":"Compromise, key length upgrades, or compliance requirements."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DKIM Fixes","item":"https://domainpreflight.dev/fix/dkim/"},{"@type":"ListItem","position":4,"name":"Key Rotation","item":"https://domainpreflight.dev/fix/dkim/rotate-keys/"}]}
+  </script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.9rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    .subtitle { color: var(--text2); font-size: 0.95rem; margin-bottom: 2rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .howto-step { margin-bottom: 1.35rem; padding: 0.85rem 0 0.85rem 1rem; border-left: 3px solid var(--purple); scroll-margin-top: 5rem; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { color: var(--text); margin-bottom: 0.5rem !important; }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/fix/">Fix Guides</a> <span aria-hidden="true">›</span> <a href="/fix/dkim/">DKIM Fixes</a> <span aria-hidden="true">›</span> Key Rotation</nav>
+    <article>
+      <p class="hero-label">DKIM fix</p>
+      <h1>DKIM Key Rotation — Best Practice Guide</h1>
+      <p class="subtitle">Rotate DKIM without taking mail down: ship the new TXT first, let DNS settle, point signing at the new selector, then retire the old TXT after a quiet week.</p>
+
+      <h2>Timeline (example)</h2>
+      <ul>
+        <li><strong>Day 1:</strong> Publish new key with a new <a href="/fix/dkim/selector/">selector</a></li>
+        <li><strong>Day 2–3:</strong> Verify new key globally via DNS Preflight</li>
+        <li><strong>Day 3:</strong> Switch signing to the new selector in your provider</li>
+        <li><strong>Day 7:</strong> Remove old key TXT after queues clear</li>
+      </ul>
+
+      <h2>Steps (HowTo)</h2>
+      <div class="howto-step" id="step1"><strong>Step 1 (Day 1)</strong> Publish new key with new selector — keep old TXT in place</div>
+      <div class="howto-step" id="step2"><strong>Step 2 (Day 2–3)</strong> Verify new key in DNS Preflight from multiple vantage points if available</div>
+      <div class="howto-step" id="step3"><strong>Step 3 (Day 3)</strong> Switch signing to the new selector</div>
+      <div class="howto-step" id="step4"><strong>Step 4 (Day 7)</strong> Remove old selector's TXT record</div>
+      <div class="howto-step" id="step5"><strong>Step 5</strong> Monitor <a href="/glossary/dmarc/">DMARC</a> aggregate reports for <strong>dkim=pass</strong> rates</div>
+
+      <div class="tool-cta">
+        <p>Verify keys in DNS</p>
+        <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
+      </div>
+
+      <div class="glossary-links"><strong>Related glossary:</strong>
+        <a href="/glossary/dkim/">DKIM</a> ·
+        <a href="/fix/dkim/key-length/">Key length</a>
+      </div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>How often to rotate?</h3>
+        <p>Typically yearly or on policy/incident — not on a fixed calendar for all orgs.</p>
+        <h3>Rotation without downtime?</h3>
+        <p>Overlap DNS keys; only remove the old key after signing has moved.</p>
+        <h3>Multiple keys during transition?</h3>
+        <p>Yes — both selectors can exist in DNS during overlap.</p>
+        <h3>In-flight email?</h3>
+        <p>Old signatures verify until you delete the old public key.</p>
+        <h3>When is rotation required?</h3>
+        <p>Compromise, <a href="/fix/dkim/key-length/">key length</a> upgrades, or compliance requirements.</p>
+      </section>
+
+      <div class="internal-links">
+        <p><a href="/fix/dkim/">← All DKIM fix guides</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>

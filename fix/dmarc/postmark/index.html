@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Postmark","description":"Postmark DMARC alignment requires adding a custom Return-Path CNAME and DKIM record to your DNS. Postmark is one of the easiest providers to configure for full alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Sender Signatures","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step1","text":"Postmark → Sender Signatures → your domain"},{"@type":"HowToStep","position":2,"name":"Add DKIM TXT","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step2","text":"Copy the DKIM TXT record Postmark provides"},{"@type":"HowToStep","position":3,"name":"Add Return-Path CNAME","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step3","text":"Add pm-bounces or equivalent CNAME for bounce domain"},{"@type":"HowToStep","position":4,"name":"Publish DNS","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step4","text":"Add records at your DNS provider"},{"@type":"HowToStep","position":5,"name":"Verify in Postmark","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step5","text":"Wait for green verification in Postmark"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step6","text":"Confirm DKIM and SPF alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Postmark","description":"Postmark DMARC alignment requires adding a custom Return-Path CNAME and DKIM record to your DNS. Postmark is one of the easiest providers to configure for full alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Sender Signatures","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step1","text":"Step 1 Postmark → Sender Signatures → your domain"},{"@type":"HowToStep","position":2,"name":"Add DKIM TXT","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step2","text":"Step 2 Copy the DKIM TXT record Postmark provides"},{"@type":"HowToStep","position":3,"name":"Add Return-Path CNAME","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step3","text":"Step 3 Add Return-Path CNAME (e.g. pm-bounces) for bounce domain"},{"@type":"HowToStep","position":4,"name":"Publish DNS","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step4","text":"Step 4 Add records at your DNS provider"},{"@type":"HowToStep","position":5,"name":"Verify in Postmark","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step5","text":"Step 5 Wait for green verification in Postmark"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/postmark/#step6","text":"Step 6 Confirm DKIM and SPF alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the Postmark DMARC alignment steps?","acceptedAnswer":{"@type":"Answer","text":"Add DKIM TXT and Return-Path CNAME from Postmark's Sender Signatures, verify in Postmark, then confirm with DNS Preflight."}},{"@type":"Question","name":"Why is Postmark easier than other ESPs for alignment?","acceptedAnswer":{"@type":"Answer","text":"Postmark uses a small, clear set of DNS records and strong documentation — typically DKIM TXT plus one bounce CNAME."}},{"@type":"Question","name":"How do I verify Postmark DNS?","acceptedAnswer":{"@type":"Answer","text":"Postmark dashboard shows verification status. DNS Preflight can confirm public DKIM and SPF records."}},{"@type":"Question","name":"Can I get both SPF and DKIM alignment with Postmark?","acceptedAnswer":{"@type":"Answer","text":"Yes — the Return-Path CNAME enables SPF alignment; DKIM TXT enables DKIM alignment."}},{"@type":"Question","name":"Does Postmark support DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes when alignment passes — monitor reports when tightening policy."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Postmark</h1>
-      <p class="subtitle">Postmark DMARC alignment requires adding a custom Return-Path CNAME and DKIM record to your DNS. Postmark is one of the easiest providers to configure for full alignment.</p>
+      <p class="subtitle">Postmark makes alignment easy: add their bounce CNAME + DKIM TXT — two moves, done.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Without sender signature DNS, Postmark cannot <a href="/glossary/dmarc-alignment/">align</a> <a href="/glossary/dkim/">DKIM</a> and <a href="/glossary/spf-record/">SPF</a> with your From: domain.</p>
+      <h2>Why Postmark trips DMARC</h2>
+      <p>You skipped sender signatures — Postmark can’t line up <a href="/glossary/dkim/">DKIM</a> or bounce-path <a href="/glossary/spf-record/">SPF</a> with your From: domain until those records exist. That’s <a href="/glossary/dmarc-alignment/">alignment</a> in a nutshell.</p>
 
       <h2>Exact DNS records</h2>
       <div class="dns-block">pm-bounces.yourdomain.com → CNAME → (target from Postmark)
@@ -104,7 +104,7 @@ DKIM TXT at host shown in Postmark (e.g. pm._domainkey or similar)</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Confirm DKIM and SPF alignment with DNS Preflight</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -131,12 +131,12 @@ DKIM TXT at host shown in Postmark (e.g. pm._domainkey or similar)</div>
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

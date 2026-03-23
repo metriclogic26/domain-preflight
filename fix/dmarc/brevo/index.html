@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Brevo","description":"Brevo (formerly Sendinblue) DMARC alignment requires adding DKIM and Return-Path records to your DNS via the Brevo sender authentication dashboard.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Domains in Brevo","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step1","text":"Brevo → Senders and IP → Domains"},{"@type":"HowToStep","position":2,"name":"Authenticate domain","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step2","text":"Add your domain and copy DKIM TXT + Return-Path CNAME"},{"@type":"HowToStep","position":3,"name":"Publish DNS","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step3","text":"Add records at your DNS host"},{"@type":"HowToStep","position":4,"name":"Verify SPF","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step4","text":"Ensure SPF TXT authorizes Brevo per their current include"},{"@type":"HowToStep","position":5,"name":"Verify in Brevo","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step5","text":"Wait for authenticated status in Brevo"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step6","text":"Confirm alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Brevo","description":"Brevo (formerly Sendinblue) DMARC alignment requires adding DKIM and Return-Path records to your DNS via the Brevo sender authentication dashboard.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Domains in Brevo","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step1","text":"Step 1 Brevo → Senders & IP → Domains"},{"@type":"HowToStep","position":2,"name":"Authenticate domain","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step2","text":"Step 2 Add your domain and copy DKIM TXT + Return-Path CNAME"},{"@type":"HowToStep","position":3,"name":"Publish DNS","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step3","text":"Step 3 Add records at your DNS host"},{"@type":"HowToStep","position":4,"name":"Verify SPF","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step4","text":"Step 4 Ensure SPF TXT authorizes Brevo per their current include"},{"@type":"HowToStep","position":5,"name":"Verify in Brevo","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step5","text":"Step 5 Wait for authenticated status in Brevo"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/brevo/#step6","text":"Step 6 Confirm alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is Brevo the same as Sendinblue for DNS setup?","acceptedAnswer":{"@type":"Answer","text":"Yes — Brevo is the rebranded Sendinblue. Use the Brevo dashboard; DNS record types are DKIM TXT and Return-Path CNAME as shown in Domains."}},{"@type":"Question","name":"What are the Brevo DMARC alignment steps?","acceptedAnswer":{"@type":"Answer","text":"Authenticate your domain in Brevo, add DKIM and bounce CNAME records, verify SPF include, then confirm in DNS Preflight."}},{"@type":"Question","name":"How do I verify Brevo domain authentication?","acceptedAnswer":{"@type":"Answer","text":"Brevo shows domain status when DNS is correct. Use DNS Preflight for an independent check of TXT and CNAME records."}},{"@type":"Question","name":"How does SPF alignment work with Brevo?","acceptedAnswer":{"@type":"Answer","text":"Return-Path customization plus correct SPF TXT allows SPF to align for your sending domain."}},{"@type":"Question","name":"Does Brevo support DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes when DKIM and SPF alignment pass — monitor aggregate reports when tightening policy."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Brevo (Sendinblue)</h1>
-      <p class="subtitle">Brevo (formerly Sendinblue) DMARC alignment requires adding DKIM and Return-Path records to your DNS via the Brevo sender authentication dashboard.</p>
+      <p class="subtitle">Line up Brevo with DMARC: copy their DKIM + bounce-domain records from the sender auth screen into DNS.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Without domain authentication, Brevo cannot <a href="/glossary/dmarc-alignment/">align</a> <a href="/glossary/dkim/">DKIM</a> and bounce <a href="/glossary/spf-record/">SPF</a> with your From: domain.</p>
+      <h2>Why Brevo trips DMARC</h2>
+      <p>No auth in the Brevo dashboard means they still bounce as them — wire up <a href="/glossary/dkim/">DKIM</a> + bounce domain so <a href="/glossary/dmarc-alignment/">alignment</a> matches your brand <a href="/glossary/spf-record/">SPF</a> story.</p>
 
       <h2>Exact DNS records</h2>
       <div class="dns-block">DKIM TXT + Return-Path CNAME — copy from Brevo → Senders → Domains
@@ -104,7 +104,7 @@ SPF: include per Brevo documentation (verify current value)</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Confirm alignment with DNS Preflight</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -131,12 +131,12 @@ SPF: include per Brevo documentation (verify current value)</div>
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Klaviyo","description":"Klaviyo DMARC alignment requires dedicated sending domain setup — adding CNAME records for DKIM and a custom Return-Path to enable full SPF and DKIM alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Dedicated Sending Domain","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step1","text":"Klaviyo → Settings → Email → Dedicated Sending Domain"},{"@type":"HowToStep","position":2,"name":"Choose subdomain or root","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step2","text":"Klaviyo recommends a subdomain such as email.yourdomain.com"},{"@type":"HowToStep","position":3,"name":"Copy DNS records","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step3","text":"Copy DKIM and Return-Path CNAME records from Klaviyo"},{"@type":"HowToStep","position":4,"name":"Publish DNS","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step4","text":"Add all records at your DNS host"},{"@type":"HowToStep","position":5,"name":"Verify in Klaviyo","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step5","text":"Wait for Klaviyo to verify — up to 48 hours"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step6","text":"Confirm alignment with DNS Preflight"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Klaviyo","description":"Klaviyo DMARC alignment requires dedicated sending domain setup — adding CNAME records for DKIM and a custom Return-Path to enable full SPF and DKIM alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Dedicated Sending Domain","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step1","text":"Step 1 Klaviyo → Settings → Email → Dedicated Sending Domain"},{"@type":"HowToStep","position":2,"name":"Choose subdomain or root","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step2","text":"Step 2 Klaviyo recommends a subdomain such as email.yourdomain.com"},{"@type":"HowToStep","position":3,"name":"Copy DNS records","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step3","text":"Step 3 Copy DKIM and Return-Path CNAME records from Klaviyo"},{"@type":"HowToStep","position":4,"name":"Publish DNS","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step4","text":"Step 4 Add all records at your DNS host"},{"@type":"HowToStep","position":5,"name":"Verify in Klaviyo","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step5","text":"Step 5 Wait for Klaviyo to verify — up to 48 hours"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step6","text":"Step 6 Confirm alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I set up Klaviyo DMARC alignment?","acceptedAnswer":{"@type":"Answer","text":"Enable a dedicated sending domain in Klaviyo, add the provided DKIM and bounce/Return-Path CNAMEs to DNS, then verify in Klaviyo."}},{"@type":"Question","name":"Should I use a subdomain or root domain for Klaviyo?","acceptedAnswer":{"@type":"Answer","text":"Klaviyo often recommends a subdomain (e.g. email.yourdomain.com) for sending — follow their UI guidance for your account."}},{"@type":"Question","name":"How long does Klaviyo domain verification take?","acceptedAnswer":{"@type":"Answer","text":"Typically up to 24-48 hours for full DNS propagation."}},{"@type":"Question","name":"How does Klaviyo SPF alignment work?","acceptedAnswer":{"@type":"Answer","text":"The custom Return-Path CNAME lets SPF align for the bounce domain Klaviyo uses for your mail."}},{"@type":"Question","name":"Is Klaviyo compatible with DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes once DKIM and SPF alignment pass — phase in policy and monitor reports."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Klaviyo</h1>
-      <p class="subtitle">Klaviyo DMARC alignment requires dedicated sending domain setup — adding CNAME records for DKIM and a custom Return-Path to enable full SPF and DKIM alignment.</p>
+      <p class="subtitle">Klaviyo needs a dedicated sending domain: paste their DKIM + Return-Path CNAMEs so both SPF and DKIM align.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Without a dedicated sending domain, Klaviyo cannot <a href="/glossary/dmarc-alignment/">align</a> bounces and <a href="/glossary/dkim/">DKIM</a> with your brand domain. Use Klaviyo's DNS wizard for exact hostnames.</p>
+      <h2>Why Klaviyo trips DMARC</h2>
+      <p>Shared pools send until you claim a dedicated domain — wire their bounce + <a href="/glossary/dkim/">DKIM</a> hostnames from the wizard so <a href="/glossary/dmarc-alignment/">alignment</a> matches your brand.</p>
 
       <h2>Exact DNS records</h2>
       <div class="dns-block">(From Klaviyo → Dedicated Sending Domain — copy exactly)
@@ -105,7 +105,7 @@ SPF may include Klaviyo via TXT on root or subdomain per setup</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Confirm alignment with DNS Preflight</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -132,12 +132,12 @@ SPF may include Klaviyo via TXT on root or subdomain per setup</div>
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for HubSpot","description":"HubSpot email alignment requires connecting a custom sending domain in HubSpot settings and adding CNAME records to your DNS for DKIM signing.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Sending Domains","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step1","text":"HubSpot → Settings → Website → Domains and URLs or Marketing → Email → Sending domains"},{"@type":"HowToStep","position":2,"name":"Connect sending domain","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step2","text":"Add your domain and start the authentication flow"},{"@type":"HowToStep","position":3,"name":"Add DKIM CNAMEs","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step3","text":"Copy the two CNAME records HubSpot provides for DKIM"},{"@type":"HowToStep","position":4,"name":"Add SPF include","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step4","text":"Ensure SPF includes HubSpot's sending range — verify current value in HubSpot docs"},{"@type":"HowToStep","position":5,"name":"Verify in HubSpot","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step5","text":"Wait for HubSpot to verify DNS — can take up to 48 hours"},{"@type":"HowToStep","position":6,"name":"Confirm with DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step6","text":"Run DNS Preflight to confirm DKIM and alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for HubSpot","description":"HubSpot email alignment requires connecting a custom sending domain in HubSpot settings and adding CNAME records to your DNS for DKIM signing.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Sending Domains","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step1","text":"Step 1 HubSpot → Settings → find Domains / Sending domains (path may vary by hub)"},{"@type":"HowToStep","position":2,"name":"Connect sending domain","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step2","text":"Step 2 Add your domain and start the authentication flow"},{"@type":"HowToStep","position":3,"name":"Add DKIM CNAMEs","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step3","text":"Step 3 Copy the two CNAME records HubSpot provides for DKIM"},{"@type":"HowToStep","position":4,"name":"Add SPF include","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step4","text":"Step 4 Ensure SPF includes HubSpot's sending range — verify current value in HubSpot docs"},{"@type":"HowToStep","position":5,"name":"Verify in HubSpot","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step5","text":"Step 5 Wait for HubSpot to verify DNS — can take up to 48 hours"},{"@type":"HowToStep","position":6,"name":"Confirm with DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/hubspot/#step6","text":"Step 6 Run DNS Preflight to confirm DKIM and alignment"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the HubSpot DMARC alignment setup steps?","acceptedAnswer":{"@type":"Answer","text":"Connect a sending domain in HubSpot, add the provided DKIM CNAME records to DNS, ensure SPF includes HubSpot's servers, then verify in HubSpot."}},{"@type":"Question","name":"Why does HubSpot email fail DMARC?","acceptedAnswer":{"@type":"Answer","text":"Usually missing or incorrect DKIM CNAMEs, or SPF that does not authorize HubSpot sending for your domain."}},{"@type":"Question","name":"How do I verify HubSpot DNS authentication?","acceptedAnswer":{"@type":"Answer","text":"HubSpot shows verification status in settings. Cross-check with DNS Preflight for public DNS visibility."}},{"@type":"Question","name":"What SPF include does HubSpot use?","acceptedAnswer":{"@type":"Answer","text":"HubSpot documents the current SPF include — check HubSpot knowledge base for include:servers.mcsv.net or updated values."}},{"@type":"Question","name":"Does HubSpot support DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes when DKIM and SPF alignment pass. Roll out gradually and monitor DMARC aggregate reports."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for HubSpot</h1>
-      <p class="subtitle">HubSpot email alignment requires connecting a custom sending domain in HubSpot settings and adding CNAME records to your DNS for DKIM signing.</p>
+      <p class="subtitle">Wire HubSpot’s custom sending domain in settings, then drop their DKIM CNAMEs in your zone — alignment follows.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Without authenticated sending, HubSpot may not <a href="/glossary/dmarc-alignment/">align</a> <a href="/glossary/dkim/">DKIM</a> with your From: domain. You need the dashboard-provided CNAMEs plus a correct <a href="/glossary/spf-record/">SPF</a> include.</p>
+      <h2>Why HubSpot trips DMARC</h2>
+      <p>Marketing sends from HubSpot’s pool until you connect a custom domain — add their CNAMEs and fix <a href="/glossary/spf-record/">SPF</a> so <a href="/glossary/dkim/">DKIM</a> <a href="/glossary/dmarc-alignment/">aligns</a> with From:.</p>
 
       <h2>Exact DNS records</h2>
       <p>HubSpot shows two DKIM CNAMEs per domain. SPF typically uses an include such as <code>include:servers.mcsv.net</code> — confirm the current value in HubSpot documentation.</p>
@@ -106,7 +106,7 @@ second._domainkey record as shown in HubSpot</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Run DNS Preflight to confirm DKIM and alignment</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -133,12 +133,12 @@ second._domainkey record as shown in HubSpot</div>
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

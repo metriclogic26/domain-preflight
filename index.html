@@ -749,7 +749,7 @@
   </header>
 
   <div id="spamhausBanner" class="spamhaus-banner" role="alert" style="display: none;">
-    <span class="spamhaus-banner-text">⚠️ Spamhaus is sunsetting public DNS mirrors on April 8, 2026. Mail servers using public resolvers for blocklist lookups will start failing. Check if your setup is affected.</span>
+    <span class="spamhaus-banner-text">⚠️ Spamhaus turns off public DNS mirrors on April 8, 2026. If your mail server asks public resolvers for blocklist lookups, those lookups can break. See if that’s you.</span>
     <a href="https://www.spamhaus.org/resource-hub/dns/using-our-public-mirrors-will-stop-working-in-2026/" target="_blank" rel="noopener" class="spamhaus-banner-link">Learn more →</a>
     <button type="button" class="spamhaus-banner-dismiss" aria-label="Dismiss">×</button>
   </div>
@@ -758,7 +758,7 @@
     <section class="hero">
       <div class="hero-label">DNS PREFLIGHT</div>
       <h1>Check before you send. Not after.</h1>
-      <p class="hero-sub">DomainPreflight checks PTR/rDNS records, SPF lookup count, DKIM key strength, and DMARC alignment before you send a single email — catching misconfigurations that cause silent delivery failures and spam folder routing. No sending required. No signup. Nothing leaves your browser.</p>
+      <p class="hero-sub">Your mail can land in spam or vanish quietly when DNS is wrong. We check PTR (reverse DNS), SPF, DKIM, and DMARC before you send — in your browser. No signup. Nothing uploads to us.</p>
     </section>
 
     <div class="main-grid">
@@ -793,7 +793,7 @@
               </div>
               <div>
                 <div class="score-grade" id="scoreGrade">—</div>
-                <div class="score-summary" id="scoreSummary">Run a preflight to see your score.</div>
+                <div class="score-summary" id="scoreSummary">Hit Run Preflight to see how your domain scores.</div>
               </div>
             </div>
             <button type="button" class="btn-copy-link" id="copyLinkBtn">Copy link</button>
@@ -810,7 +810,7 @@
         <div class="right-column-results" id="rightColumnResults">
           <div class="section-label">Actions</div>
           <div class="action-section" id="actionSection">
-            <div class="all-checks-passed hidden" id="allChecksPassed">✓ No issues found — configuration looks healthy</div>
+            <div class="all-checks-passed hidden" id="allChecksPassed">✓ Looks good — we didn’t spot red flags</div>
             <div class="action-cards" id="actionCards"></div>
           </div>
         </div>
@@ -820,18 +820,18 @@
 
   <section class="faq-section">
     <h2>What does DomainPreflight check?</h2>
-    <p>DomainPreflight checks PTR/rDNS records, IP reputation against Spamhaus DQS and SpamCop blocklists, SPF record validity and lookup count, DKIM key existence and strength, and DMARC policy level — before you send a single email.</p>
+    <p>Yes — PTR (who your IP claims to be), blocklists, SPF (who may send as your domain) and how many DNS hops that uses, DKIM keys, and DMARC policy. We run it all from your tab before you blast a campaign.</p>
     
     <h2>How is this different from MXToolbox?</h2>
-    <p>MXToolbox tells you what's wrong. DomainPreflight tells you exactly how to fix it, with copy-paste config for your specific setup. No account required.</p>
+    <p>MXToolbox lists errors. We try to hand you a fix you can paste — still free, still no account.</p>
     
     <h2>Does anything leave my browser?</h2>
-    <p>No. All checks use DNS-over-HTTPS queries made directly from your browser. No data is sent to any DomainPreflight server.</p>
+    <p>No. Your browser talks DNS-over-HTTPS to resolvers. We don’t see your domain or IP on our servers.</p>
   </section>
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div class="footer-bar-left">
@@ -1900,7 +1900,7 @@ Value: ${valueText}`;
       const tier = current >= 80 ? 'ready' : current >= 60 ? 'warn' : 'critical';
       scoreGrade.textContent = current >= 80 ? 'Ready to send' : current >= 60 ? 'Needs attention' : 'Critical issues';
       scoreGrade.className = 'score-grade ' + tier;
-      scoreSummary.textContent = current >= 80 ? 'Your DNS and mail config look good for sending.' : current >= 60 ? 'Address the issues below to improve deliverability.' : 'Fix critical issues before sending to avoid bounces and blocks.';
+      scoreSummary.textContent = current >= 80 ? 'DNS and mail auth look solid for sending.' : current >= 60 ? 'Fix the items below before you rely on inbox placement.' : 'Fix the blockers below or expect bounces and spam folder.';
       scoreRing.setAttribute('class', 'score-ring-fill ' + tier);
       scoreRing.setAttribute('stroke-dashoffset', CIRCUMFERENCE - (current / 100) * CIRCUMFERENCE);
       if (t < 1) requestAnimationFrame(step);
@@ -1942,7 +1942,7 @@ Value: ${valueText}`;
       scoreValue.textContent = '0';
       scoreGrade.textContent = '—';
       scoreGrade.className = 'score-grade';
-      scoreSummary.textContent = 'Running checks…';
+      scoreSummary.textContent = 'Running checks… hang tight';
       scoreRing.setAttribute('class', 'score-ring-fill');
       scoreRing.setAttribute('stroke-dashoffset', CIRCUMFERENCE);
 

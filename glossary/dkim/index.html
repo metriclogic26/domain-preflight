@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "DKIM",
-    "description": "DKIM (DomainKeys Identified Mail) is an email authentication method that adds a digital signature to outgoing emails. The signature is verified by the receiving server using a public key published in your DNS — proving the email was not altered in transit and was sent by an authorized sender.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "DKIM",
+  "description": "DKIM adds a crypto signature to each outbound message. Receivers pull your public key from DNS and verify the body and headers weren’t tampered with. No signature or bad key = “DKIM fail” in headers.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is DKIM?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "DKIM is an email authentication standard that uses digital signatures to verify that an email was sent by an authorized server and was not altered in transit."
+          "text": "DKIM adds a crypto signature to outbound mail. Receivers pull your public key from DNS and verify the body and headers — no signature or bad key means DKIM fail in headers."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "What DKIM key size should I use?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Use a minimum of 2048-bit keys. 1024-bit keys are considered weak and should be rotated immediately."
+          "text": "Use 2048-bit keys today. 1024-bit is legacy — some receivers already side-eye it."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "What is a DKIM selector?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "A selector is a DNS prefix that identifies which DKIM public key to use for verification, allowing multiple keys per domain."
+          "text": "A name for which key you are using — it points receivers at selector._domainkey.yourdomain.com. Vendors pick names like google, s1, or selector1."
         }
       }
     ]
@@ -161,22 +161,22 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>DKIM — DomainKeys Identified Mail Explained</h1>
-      <p>DKIM (DomainKeys Identified Mail) is an email authentication method that adds a digital signature to outgoing emails. The signature is verified by the receiving server using a public key published in your DNS — proving the email was not altered in transit and was sent by an authorized sender.</p>
+      <p>DKIM adds a crypto signature to each outbound message. Receivers pull your public key from DNS and verify the body and headers weren’t tampered with. No signature or bad key = “DKIM fail” in headers.</p>
 
       <h2>How DKIM Works</h2>
-      <p>Your mail server signs each outgoing email with a private key. The receiving server looks up your DKIM public key in DNS (at selector._domainkey.yourdomain.com) and uses it to verify the signature. If the signature is valid, the email passes DKIM authentication.</p>
+      <p>Your MTA signs with a private key. DNS holds the public key at something like <code>selector._domainkey.yourdomain.com</code>. Match = pass.</p>
 
       <h2>DKIM Key Strength</h2>
-      <p>DKIM keys should be at least 2048 bits. Keys under 1024 bits are considered weak and can be broken by attackers. Many email providers now reject or penalize emails signed with weak keys.</p>
+      <p>Use 2048-bit keys today. 1024-bit is legacy — some receivers already side-eye it.</p>
 
       <h2>DKIM Selectors</h2>
-      <p>A DKIM selector is a prefix that identifies which public key to use. Common selectors include google, mail, default, dkim, and selector1. Each third-party sender uses their own selector.</p>
+      <p>The selector is just a name for which key you’re using — <code>google</code>, <code>s1</code>, <code>selector1</code>, etc. Different vendors use different ones.</p>
 
       <h2>How to Check Your DKIM</h2>
-      <p>Use DomainPreflight's DNS Preflight tool to check 14 common DKIM selectors and verify key strength.</p>
+      <p>DNS Preflight probes common selectors and shows key size. Paste your domain and go.</p>
 
       <div class="tool-cta">
-        <p>Run checks on your domain</p>
+        <p>Probe DKIM DNS in one click</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
     </article>
@@ -184,7 +184,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

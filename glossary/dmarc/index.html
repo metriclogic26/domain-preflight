@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "DMARC",
-    "description": "DMARC (Domain-based Message Authentication, Reporting, and Conformance) is an email authentication policy that tells receiving mail servers what to do when an email fails SPF or DKIM checks — either monitor, quarantine, or reject it. DMARC also enables aggregate reporting so you can see who is sending email using your domain.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "DMARC",
+  "description": "DMARC is the policy layer on top of SPF and DKIM. It answers: “If auth fails, junk it? bounce it? just watch?” It also sets where to email XML reports about who sent as your domain.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is DMARC?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "DMARC is an email authentication policy that specifies how receivers should handle emails that fail SPF or DKIM checks."
+          "text": "DMARC is the policy layer on top of SPF and DKIM. It says what to do when auth fails and where to send XML reports about who sent as your domain."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "What is the difference between p=none and p=reject?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "p=none monitors failures without blocking. p=reject blocks all unauthenticated emails from your domain."
+          "text": "p=none watches and reports without blocking yet. p=reject tells receivers to stop mail that fails DMARC when you are enforcing."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "Why is my DMARC failing even though SPF and DKIM pass?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "DMARC requires alignment — the From: domain must match the SPF or DKIM domain. Third-party senders often require additional CNAME records for alignment."
+          "text": "Pass is not alignment — the From: domain must match SPF or DKIM. ESPs often need their CNAMEs before alignment clears."
         }
       }
     ]
@@ -161,26 +161,26 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>DMARC — What It Is and How to Implement It</h1>
-      <p>DMARC (Domain-based Message Authentication, Reporting, and Conformance) is an email authentication policy that tells receiving mail servers what to do when an email fails SPF or DKIM checks — either monitor, quarantine, or reject it. DMARC also enables aggregate reporting so you can see who is sending email using your domain.</p>
+      <p>DMARC is the policy layer on top of SPF and DKIM. It answers: “If auth fails, junk it? bounce it? just watch?” It also sets where to email XML reports about who sent as your domain.</p>
 
       <h2>DMARC Policies</h2>
       <ul>
-        <li>p=none: Monitor only. Failed emails are delivered but reported.</li>
-        <li>p=quarantine: Failed emails go to spam.</li>
-        <li>p=reject: Failed emails are blocked entirely.</li>
+        <li><code>p=none</code>: watch and report — don’t block yet</li>
+        <li><code>p=quarantine</code>: failed mail should land in spam</li>
+        <li><code>p=reject</code>: failed mail shouldn’t arrive at all</li>
       </ul>
 
       <h2>DMARC Alignment</h2>
-      <p>DMARC alignment requires that the domain in the From: header matches the domain used for SPF or DKIM authentication. Misalignment is the most common cause of DMARC failures when using third-party email providers.</p>
+      <p>SPF or DKIM has to pass <em>and</em> match the From: domain. ESPs often break that until you add their CNAMEs.</p>
 
       <h2>DMARC Reports</h2>
-      <p>DMARC aggregate reports (rua=) are sent daily by major email providers like Google and Microsoft. They show every IP that sent email using your domain and whether SPF/DKIM passed.</p>
+      <p>Big inboxes ship daily XML zips to your <code>rua=</code> address — who sent, from which IP, pass/fail.</p>
 
       <h2>How to Check Your DMARC</h2>
-      <p>Use DomainPreflight to check your DMARC policy and analyze aggregate XML reports.</p>
+      <p>Read the TXT on <code>_dmarc</code> in Preflight, or paste aggregate XML into our DMARC tool.</p>
 
       <div class="tool-cta">
-        <p>DMARC policy and report analysis</p>
+        <p>Paste a DMARC XML and read the table</p>
         <a href="https://domainpreflight.dev/dmarc/">Open DMARC Report Analyzer →</a>
       </div>
     </article>
@@ -188,7 +188,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

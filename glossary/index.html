@@ -115,47 +115,47 @@
   <main>
     <p class="hero-label">Glossary</p>
     <h1>DNS &amp; email security terms</h1>
-    <p class="lead">Short definitions for SPF, DKIM, DMARC, and related concepts. Each entry links to the DomainPreflight tool that helps you verify or fix the issue.</p>
+    <p class="lead">Plain-English blurbs for the acronyms everyone throws around. Jump into a term, then open the tool we linked to prove it in DNS.</p>
 
     <ul class="term-list">
       <li>
         <a href="/glossary/spf-record/">SPF Record</a>
-        <p>DNS TXT that lists which mail servers may send email for your domain; subject to a 10-lookup limit.</p>
+        <p>A TXT record that says which servers may send mail for your domain. DNS only gives you ~10 “lookups” before mail servers throw up their hands.</p>
       </li>
       <li>
         <a href="/glossary/dkim/">DKIM</a>
-        <p>Digital signatures on outgoing mail, verified with a public key in DNS.</p>
+        <p>Cryptographic signatures on outgoing mail. Receivers fetch your public key from DNS and verify the message wasn’t tampered with.</p>
       </li>
       <li>
         <a href="/glossary/dmarc/">DMARC</a>
-        <p>Policy for SPF/DKIM failures plus aggregate reporting (rua).</p>
+        <p>Tells receivers what to do when SPF or DKIM fails, and where to email aggregate reports (<code>rua=</code>).</p>
       </li>
       <li>
         <a href="/glossary/dmarc-alignment/">DMARC Alignment</a>
-        <p>Requirement that From: matches SPF or DKIM domain — often breaks with third-party senders.</p>
+        <p>Your From: domain has to match the domain that passed SPF or DKIM — third-party ESPs break this unless you brand correctly.</p>
       </li>
       <li>
         <a href="/glossary/ptr-record/">PTR Record</a>
-        <p>Reverse DNS (IP → hostname); critical for inbox delivery.</p>
+        <p>Reverse DNS: IP → hostname. Spam filters expect it to line up with your sending name.</p>
       </li>
       <li>
         <a href="/glossary/email-spoofing/">Email Spoofing</a>
-        <p>Forging the From: header; mitigated by SPF, DKIM, and DMARC.</p>
+        <p>Faking the From: address. SPF, DKIM, and DMARC exist to make that harder.</p>
       </li>
       <li>
         <a href="/glossary/subdomain-takeover/">Subdomain Takeover</a>
-        <p>Dangling CNAMEs to deprovisioned cloud apps that attackers can reclaim.</p>
+        <p>You pointed <code>blog.example.com</code> at GitHub, then deleted the repo — an attacker can claim it and serve content on your subdomain.</p>
       </li>
       <li>
         <a href="/glossary/typosquatting/">Typosquatting</a>
-        <p>Lookalike domains for phishing and brand abuse.</p>
+        <p>Registering <code>gooogle.com</code>-style names to catch typos and phish your users.</p>
       </li>
     </ul>
   </main>
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

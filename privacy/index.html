@@ -127,17 +127,17 @@
 
     <div class="doc-section">
       <h2>What data we collect</h2>
-      <p>Nothing. We do not use cookies, analytics, or tracking. DomainPreflight is designed so you can check your DNS and email configuration without sending your data to us.</p>
+      <p>Nothing on purpose. No cookies, no ad trackers. The whole point is you can poke DNS without shipping your domains to us.</p>
     </div>
 
     <div class="doc-section">
       <h2>How checks work</h2>
-      <p>All DNS queries run from your browser via Cloudflare DNS-over-HTTPS (DoH). Your domain and IP are not sent to MetricLogic servers. No user data is stored or transmitted to MetricLogic.</p>
+      <p>Your browser fires DNS-over-HTTPS (DoH) straight to public resolvers. MetricLogic doesn’t sit in the middle and we don’t store what you type.</p>
     </div>
 
     <div class="doc-section">
       <h2>AbuseIPDB Worker (Email tool)</h2>
-      <p>When you explicitly run an IP reputation check on the Email page, the IP you enter is passed to the AbuseIPDB API via a worker. It is not logged by MetricLogic.</p>
+      <p>When you click run on the Email page, that IP goes to AbuseIPDB through a tiny worker so we don’t expose API keys in the browser. We don’t log it on our side.</p>
     </div>
 
     <div class="doc-section">

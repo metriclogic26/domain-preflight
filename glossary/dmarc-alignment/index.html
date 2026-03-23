@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "DMARC Alignment",
-    "description": "DMARC alignment is the requirement that the domain in the email's From: header matches the domain authenticated by SPF (the Return-Path domain) or DKIM (the d= tag). When you send email through a third-party provider like SendGrid or Mailgun, alignment often fails unless you configure the provider-specific CNAME records.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "DMARC Alignment",
+  "description": "Alignment means the domain people see in From: matches the domain that passed SPF (Return-Path) or DKIM ( d= ). Miss either and DMARC fails — super common when you blast mail through SendGrid or Mailchimp without their DNS pack.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is DMARC alignment?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "DMARC alignment requires the From: domain to match the domain used in SPF or DKIM authentication."
+          "text": "From: must match the domain that passed SPF (Return-Path) or DKIM (d=). Miss either and DMARC fails."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "Why does DMARC fail with SendGrid?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SendGrid sends from its own Return-Path domain, breaking SPF alignment. You need to add SendGrid's CNAME records to enable domain alignment."
+          "text": "Their default bounce domain is theirs, not yours — SPF will not align until you add their branding CNAMEs. Same pattern for other ESPs with their own return paths."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "Can I pass DMARC with only DKIM alignment?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. DMARC passes if either SPF or DKIM aligns with the From: domain — both are not required."
+          "text": "Yes — you only need one aligned pass. SPF and DKIM do not both need to align."
         }
       }
     ]
@@ -161,28 +161,28 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>DMARC Alignment — Why It Fails and How to Fix It</h1>
-      <p>DMARC alignment is the requirement that the domain in the email's From: header matches the domain authenticated by SPF (the Return-Path domain) or DKIM (the d= tag). When you send email through a third-party provider like SendGrid or Mailgun, alignment often fails unless you configure the provider-specific CNAME records.</p>
+      <p>Alignment means the domain people see in From: matches the domain that passed SPF (Return-Path) or DKIM (<code>d=</code>). Miss either and DMARC fails — super common when you blast mail through SendGrid or Mailchimp without their DNS pack.</p>
 
       <h2>SPF Alignment vs DKIM Alignment</h2>
-      <p>SPF alignment checks whether the Return-Path domain matches the From: domain. DKIM alignment checks whether the d= tag in the DKIM signature matches the From: domain. DMARC passes if either one aligns.</p>
+      <p>SPF alignment = Return-Path domain matches From:. DKIM alignment = signing domain matches From:. You only need one to align for DMARC to smile.</p>
 
       <h2>Why Third-Party Senders Break Alignment</h2>
-      <p>When you send via SendGrid, the Return-Path is @sendgrid.net — not your domain. This breaks SPF alignment. To fix it, SendGrid requires you to add specific CNAME records that point to their servers, allowing them to sign with your domain.</p>
+      <p>SendGrid’s default bounce domain is theirs, not yours — SPF won’t align until you CNAME-brand. Same story for other ESPs with their own return paths.</p>
 
       <h2>How to Fix DMARC Alignment</h2>
-      <p>Each provider requires different CNAME records:</p>
+      <p>Each ESP wants different CNAMEs — rough map:</p>
       <ul>
-        <li>Google Workspace: configured automatically</li>
-        <li>SendGrid: em####.yourdomain.com CNAME</li>
-        <li>Mailgun: specific CNAME records per region</li>
-        <li>Microsoft 365: selector1/selector2 CNAMEs</li>
+        <li>Google Workspace: usually lines up if From: is your Workspace domain</li>
+        <li>SendGrid: em#### + DKIM CNAMEs from their UI</li>
+        <li>Mailgun: region-specific CNAMEs from the control panel</li>
+        <li>Microsoft 365: <code>selector1</code>/<code>selector2</code> DKIM CNAMEs</li>
       </ul>
 
       <h2>How to Check Alignment</h2>
-      <p>Use DomainPreflight's alignment engine to detect which provider you're using and see exactly which CNAMEs are missing.</p>
+      <p>Run DNS Preflight — we try to spot the ESP and show what’s missing.</p>
 
       <div class="tool-cta">
-        <p>Full DNS and email authentication checks</p>
+        <p>Run the alignment check on your domain</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
     </article>
@@ -190,7 +190,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

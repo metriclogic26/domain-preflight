@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "Subdomain Takeover",
-    "description": "A subdomain takeover occurs when a subdomain's DNS record points to an external service that has been deleted or deprovisioned, allowing an attacker to claim that service and serve content on your subdomain. Common targets include GitHub Pages, AWS S3 buckets, Heroku apps, and Netlify sites.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "Subdomain Takeover",
+  "description": "Takeover happens when status.yourdomain.com still CNAMEs to GitHub or S3 you deleted — an attacker claims that bucket or repo and suddenly hosts a phishing page on your subdomain.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is a subdomain takeover?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "A subdomain takeover occurs when a CNAME points to a deprovisioned service, allowing an attacker to claim it and serve content on your subdomain."
+          "text": "A CNAME still points at GitHub, S3, or Heroku you deleted — someone reclaims that target and serves a phishing page on your hostname."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "Which services are most vulnerable?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "GitHub Pages, AWS S3, Heroku, Netlify, and Azure are the most commonly exploited services for subdomain takeovers."
+          "text": "Classic sinks include GitHub Pages, S3, Heroku, Netlify, and Azure — anything with a reclaimable cloud target."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "How do I check for dangling DNS records?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Use DomainPreflight's Dangling Records tool — it scans certificate logs and checks CNAMEs against known takeover fingerprints."
+          "text": "Run our Dangling Records tool — it scans for risky CNAMEs and known takeover fingerprints."
         }
       }
     ]
@@ -161,13 +161,13 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>Subdomain Takeover — Detection and Prevention</h1>
-      <p>A subdomain takeover occurs when a subdomain's DNS record points to an external service that has been deleted or deprovisioned, allowing an attacker to claim that service and serve content on your subdomain. Common targets include GitHub Pages, AWS S3 buckets, Heroku apps, and Netlify sites.</p>
+      <p>Takeover happens when <code>status.yourdomain.com</code> still CNAMEs to GitHub or S3 you deleted — an attacker claims that bucket or repo and suddenly hosts a phishing page on your subdomain.</p>
 
       <h2>How Subdomain Takeovers Happen</h2>
-      <p>When you delete a Heroku app but forget to remove the CNAME record pointing to it, the subdomain is left dangling. An attacker can register a new Heroku app with the same name and immediately serve content on your subdomain — passing off phishing pages as legitimate.</p>
+      <p>You tear down the Heroku app but leave the CNAME. Someone else creates a new app with the same target name. Now they control your hostname.</p>
 
       <h2>High-Risk Services</h2>
-      <p>Services most commonly exploited for subdomain takeovers include:</p>
+      <p>Classic sinks:</p>
       <ul>
         <li>GitHub Pages (*.github.io)</li>
         <li>AWS S3 (*.s3.amazonaws.com)</li>
@@ -178,13 +178,13 @@
 
       <h2>How to Prevent Subdomain Takeovers</h2>
       <ol style="color: var(--text2); font-size: 0.9rem; margin: 0.5rem 0 1rem 1.25rem;">
-        <li>Remove DNS records when deprovisioning services</li>
-        <li>Regularly audit CNAMEs in your DNS</li>
-        <li>Use DomainPreflight's Dangling Records tool to scan for vulnerable subdomains</li>
+        <li>Delete DNS when you kill the cloud resource</li>
+        <li>Audit CNAMEs quarterly — boring but cheap</li>
+        <li>Run our dangling scan when you inherit a zone</li>
       </ol>
 
       <div class="tool-cta">
-        <p>Scan for dangling records</p>
+        <p>Scan your zone for takeover bait</p>
         <a href="https://domainpreflight.dev/dangling/">Open Dangling Records →</a>
       </div>
     </article>
@@ -192,7 +192,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

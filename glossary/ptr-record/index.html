@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "PTR Record",
-    "description": "A PTR record (pointer record) maps an IP address back to a hostname — the reverse of an A record. For email delivery, PTR records are critical: many receiving mail servers perform a reverse DNS lookup on the sending IP and reject email if no PTR record exists or if the PTR hostname does not forward-resolve back to the same IP.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "PTR Record",
+  "description": "PTR is reverse DNS: IP → hostname. Big inboxes expect your sending IP to have a hostname that round-trips back to the same IP. Skip it and you’ll see 421s, spam folders, or silent drops.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is a PTR record?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "A PTR record maps an IP address to a hostname, enabling reverse DNS lookups used by mail servers to verify sending IPs."
+          "text": "PTR is reverse DNS: IP to hostname. Big inboxes expect your sending IP to round-trip to the same IP via forward DNS."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "Who controls PTR records?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Your hosting provider or ISP controls PTR records — not your domain registrar. Set them in your VPS control panel."
+          "text": "Your ISP or cloud host sets rDNS for the IP — not your domain registrar. Use their reverse DNS UI or a ticket."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "Will missing PTR cause email to bounce?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Many mail servers reject email from IPs with no PTR record or where the PTR hostname doesn't forward-resolve correctly."
+          "text": "Often yes — missing PTR or a PTR that does not forward-resolve makes you look like random bulk mail."
         }
       }
     ]
@@ -161,24 +161,24 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>PTR Record — Reverse DNS for Email Delivery</h1>
-      <p>A PTR record (pointer record) maps an IP address back to a hostname — the reverse of an A record. For email delivery, PTR records are critical: many receiving mail servers perform a reverse DNS lookup on the sending IP and reject email if no PTR record exists or if the PTR hostname does not forward-resolve back to the same IP.</p>
+      <p>PTR is reverse DNS: IP → hostname. Big inboxes expect your sending IP to have a hostname that round-trips back to the same IP. Skip it and you’ll see 421s, spam folders, or silent drops.</p>
 
       <h2>Why PTR Records Matter for Email</h2>
-      <p>Without a PTR record, major mail servers including Gmail, Outlook, and Yahoo may reject your email outright. A missing PTR record is one of the most common causes of email landing in spam or being rejected at the SMTP level.</p>
+      <p>Gmail and friends look up your IP’s name on connect. No PTR? You look like a random VPS blasting spam.</p>
 
       <h2>Forward-Confirmed Reverse DNS (FCrDNS)</h2>
-      <p>A valid PTR record requires forward confirmation:</p>
+      <p>They want the loop to close:</p>
       <ol style="color: var(--text2); font-size: 0.9rem; margin: 0.5rem 0 1rem 1.25rem;">
         <li>IP 192.0.2.1 → PTR → mail.example.com</li>
         <li>mail.example.com → A → 192.0.2.1</li>
       </ol>
-      <p>Both must match. If the PTR hostname resolves to a different IP, receivers may still reject.</p>
+      <p>If step two points somewhere else, you’re still suspect.</p>
 
       <h2>How to Add a PTR Record</h2>
-      <p>PTR records are set by your hosting provider or ISP — not in your domain's DNS. Contact Hetzner, DigitalOcean, AWS, or your VPS provider's control panel to set reverse DNS for your IP.</p>
+      <p>You don’t set PTR next to your MX — your ISP or cloud panel sets rDNS for the IP. Open a ticket or use their “reverse DNS” UI.</p>
 
       <div class="tool-cta">
-        <p>Check PTR and full email DNS</p>
+        <p>Check PTR + SPF/DKIM/DMARC together</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
     </article>
@@ -186,7 +186,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Mailchimp","description":"Mailchimp requires a custom sending domain setup to pass DMARC alignment. Without it, Mailchimp sends from @mailchimpapp.com, failing alignment with your From: domain.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Domains in Mailchimp","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step1","text":"Mailchimp → Account → Domains (or Settings → Domains)"},{"@type":"HowToStep","position":2,"name":"Add and verify domain","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step2","text":"Add your domain and complete verification via CNAME or TXT as instructed"},{"@type":"HowToStep","position":3,"name":"Authenticate email domain","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step3","text":"Add the CNAME records Mailchimp provides for DKIM alignment"},{"@type":"HowToStep","position":4,"name":"Wait for verification","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step4","text":"Wait for DNS propagation — up to 48 hours"},{"@type":"HowToStep","position":5,"name":"Mandrill users","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step5","text":"For transactional email, configure Mandrill domain authentication separately"},{"@type":"HowToStep","position":6,"name":"Verify with DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step6","text":"Run DNS Preflight on your domain to confirm alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Mailchimp","description":"Mailchimp requires a custom sending domain setup to pass DMARC alignment. Without it, Mailchimp sends from @mailchimpapp.com, failing alignment with your From: domain.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Domains in Mailchimp","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step1","text":"Step 1 Mailchimp → Account → Domains"},{"@type":"HowToStep","position":2,"name":"Add and verify domain","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step2","text":"Step 2 Add your domain and complete verification (CNAME or TXT)"},{"@type":"HowToStep","position":3,"name":"Authenticate email domain","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step3","text":"Step 3 Add the CNAME records Mailchimp provides for email authentication"},{"@type":"HowToStep","position":4,"name":"Wait for verification","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step4","text":"Step 4 Wait for DNS propagation — up to 48 hours"},{"@type":"HowToStep","position":5,"name":"Mandrill users","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step5","text":"Step 5 For Mandrill: configure domain auth in the Mandrill dashboard separately"},{"@type":"HowToStep","position":6,"name":"Verify with DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/#step6","text":"Step 6 Run DNS Preflight to confirm records and alignment"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does Mailchimp fail DMARC alignment?","acceptedAnswer":{"@type":"Answer","text":"Without a verified custom sending domain, Mailchimp uses its own infrastructure domains for signing and bounce handling, which do not align with your From: domain."}},{"@type":"Question","name":"What is the difference between Mailchimp marketing and Mandrill auth?","acceptedAnswer":{"@type":"Answer","text":"Mailchimp marketing domains are configured in Account → Domains. Mandrill (transactional) requires a separate domain setup in the Mandrill dashboard with its own DNS records."}},{"@type":"Question","name":"How do I verify Mailchimp domain authentication?","acceptedAnswer":{"@type":"Answer","text":"Complete all CNAME and TXT steps in Mailchimp, then verify green checks in the dashboard. Use DNS Preflight to double-check DKIM and SPF records publicly."}},{"@type":"Question","name":"What are common Mailchimp DNS mistakes?","acceptedAnswer":{"@type":"Answer","text":"Wrong host names, typos in CNAME targets, or verifying only marketing while Mandrill still uses an unauthenticated domain for transactional mail."}},{"@type":"Question","name":"Does Mailchimp work with DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes once DKIM and SPF alignment pass for your sending domain. Start with p=none or quarantine and monitor aggregate reports before moving to reject."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Mailchimp</h1>
-      <p class="subtitle">Mailchimp requires a custom sending domain setup to pass DMARC alignment. Without it, Mailchimp sends from @mailchimpapp.com, failing alignment with your From: domain.</p>
+      <p class="subtitle">Mailchimp sends as @mailchimpapp.com until you verify a custom domain — do that or DMARC never lines up with your From: address.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Mailchimp requires domain verification via CNAME or TXT, then <a href="/glossary/dkim/">DKIM</a>-style records for authenticated sending. Marketing vs <strong>Mandrill</strong> (transactional) uses separate authentication flows. See <a href="/glossary/dmarc-alignment/">DMARC alignment</a>.</p>
+      <h2>Why Mailchimp trips DMARC</h2>
+      <p>They bulk-send from their infrastructure until you verify the domain — finish CNAME/TXT, then <a href="/glossary/dkim/">DKIM</a> can match your From: line. Mandrill uses a different flow. <a href="/glossary/dmarc-alignment/">Alignment</a> basics still apply.</p>
 
       <h2>Exact DNS records</h2>
       <p>Values are generated per account. You will typically add verification TXT/CNAME, then DKIM CNAMEs shown in <strong>Account → Domains</strong>:</p>
@@ -105,7 +105,7 @@ k2._domainkey / k3._domainkey style CNAMEs to mailchimp domains)</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Run DNS Preflight to confirm records and alignment</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -132,12 +132,12 @@ k2._domainkey / k3._domainkey style CNAMEs to mailchimp domains)</div>
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

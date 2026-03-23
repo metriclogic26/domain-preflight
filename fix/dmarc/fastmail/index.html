@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Fastmail","description":"Fastmail DMARC alignment works automatically when you host your domain with Fastmail DNS. For external DNS providers, add Fastmail SPF include and DKIM TXT record.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Fastmail Domains","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step1","text":"Fastmail → Settings → Domains"},{"@type":"HowToStep","position":2,"name":"Get DNS instructions","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step2","text":"Copy SPF include:spf.messagingengine.com and DKIM TXT"},{"@type":"HowToStep","position":3,"name":"Publish DKIM","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step3","text":"Add DKIM at fm1._domainkey / fm2 / fm3 as Fastmail shows"},{"@type":"HowToStep","position":4,"name":"Merge SPF","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step4","text":"Ensure single SPF TXT with include:spf.messagingengine.com"},{"@type":"HowToStep","position":5,"name":"Verify","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step5","text":"Wait for DNS propagation"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step6","text":"Confirm DKIM and alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Fastmail","description":"Fastmail DMARC alignment works automatically when you host your domain with Fastmail DNS. For external DNS providers, add Fastmail SPF include and DKIM TXT record.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Fastmail Domains","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step1","text":"Step 1 Fastmail → Settings → Domains"},{"@type":"HowToStep","position":2,"name":"Get DNS instructions","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step2","text":"Step 2 Copy SPF include:spf.messagingengine.com and DKIM TXT"},{"@type":"HowToStep","position":3,"name":"Publish DKIM","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step3","text":"Step 3 Add DKIM at fm1._domainkey / fm2 / fm3 as Fastmail shows"},{"@type":"HowToStep","position":4,"name":"Merge SPF","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step4","text":"Step 4 Ensure single SPF TXT with include:spf.messagingengine.com"},{"@type":"HowToStep","position":5,"name":"Verify","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step5","text":"Step 5 Wait for DNS propagation"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/fastmail/#step6","text":"Step 6 Confirm DKIM and alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Fastmail DNS vs external DNS for DMARC?","acceptedAnswer":{"@type":"Answer","text":"Fastmail can manage DNS for you with one click. On external DNS, manually add SPF and DKIM TXT values from Fastmail settings."}},{"@type":"Question","name":"What DKIM selectors does Fastmail use?","acceptedAnswer":{"@type":"Answer","text":"Fastmail may use fm1, fm2, fm3 selectors — follow the exact hostnames in your domain panel."}},{"@type":"Question","name":"What SPF include does Fastmail need?","acceptedAnswer":{"@type":"Answer","text":"include:spf.messagingengine.com in your SPF TXT."}},{"@type":"Question","name":"How do I verify Fastmail DKIM?","acceptedAnswer":{"@type":"Answer","text":"Fastmail shows status when records are correct. DNS Preflight can verify public DKIM keys."}},{"@type":"Question","name":"Does Fastmail support DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes when alignment passes — monitor reports."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Fastmail</h1>
-      <p class="subtitle">Fastmail DMARC alignment works automatically when you host your domain with Fastmail's DNS. For external DNS providers, add Fastmail's SPF include and DKIM TXT record.</p>
+      <p class="subtitle">On Fastmail DNS you’re mostly done — bring your own DNS elsewhere? Add their SPF include + DKIM TXT by hand.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>External DNS without Fastmail's <a href="/glossary/spf-record/">SPF</a> and <a href="/glossary/dkim/">DKIM</a> records breaks <a href="/glossary/dmarc-alignment/">alignment</a> for outbound mail.</p>
+      <h2>Why Fastmail + external DNS fights you</h2>
+      <p>You moved DNS away from Fastmail but didn’t paste their <a href="/glossary/spf-record/">SPF</a> + <a href="/glossary/dkim/">DKIM</a> — outbound mail won’t <a href="/glossary/dmarc-alignment/">align</a> until you do.</p>
 
       <h2>Exact DNS records</h2>
       <div class="dns-block">SPF: include:spf.messagingengine.com
@@ -104,7 +104,7 @@ DKIM: TXT at fm1._domainkey / fm2._domainkey / fm3._domainkey (per Fastmail UI)<
       <div class="howto-step" id="step6"><strong>Step 6</strong> Confirm DKIM and alignment with DNS Preflight</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -131,12 +131,12 @@ DKIM: TXT at fm1._domainkey / fm2._domainkey / fm3._domainkey (per Fastmail UI)<
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

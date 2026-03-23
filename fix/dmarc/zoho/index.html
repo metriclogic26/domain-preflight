@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Zoho Mail","description":"Zoho Mail DMARC alignment requires adding SPF, DKIM, and optionally a custom Return-Path to your DNS. Zoho provides all required records in the domain verification dashboard.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Zoho Domains","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step1","text":"Zoho Admin → Domains → Email Authentication"},{"@type":"HowToStep","position":2,"name":"Choose data center","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step2","text":"Use zoho.com or zoho.eu includes based on your account region"},{"@type":"HowToStep","position":3,"name":"Add MX records","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step3","text":"Add Zoho MX records so mail routes correctly"},{"@type":"HowToStep","position":4,"name":"Add SPF and DKIM","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step4","text":"Publish SPF TXT and DKIM TXT from Zoho"},{"@type":"HowToStep","position":5,"name":"Verify domain","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step5","text":"Complete verification in Zoho Admin"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step6","text":"Confirm alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Zoho Mail","description":"Zoho Mail DMARC alignment requires adding SPF, DKIM, and optionally a custom Return-Path to your DNS. Zoho provides all required records in the domain verification dashboard.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Zoho Domains","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step1","text":"Step 1 Zoho Admin → Domains → Email Authentication"},{"@type":"HowToStep","position":2,"name":"Choose data center","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step2","text":"Step 2 Use zoho.com or zoho.eu includes based on your account region"},{"@type":"HowToStep","position":3,"name":"Add MX records","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step3","text":"Step 3 Add Zoho MX records so mail routes correctly"},{"@type":"HowToStep","position":4,"name":"Add SPF and DKIM","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step4","text":"Step 4 Publish SPF TXT and DKIM TXT from Zoho"},{"@type":"HowToStep","position":5,"name":"Verify domain","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step5","text":"Step 5 Complete verification in Zoho Admin"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/zoho/#step6","text":"Step 6 Confirm alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Zoho.com vs Zoho.eu — which SPF include?","acceptedAnswer":{"@type":"Answer","text":"Use the include and MX hosts for the region where your Zoho Mail tenant is hosted — Zoho documentation lists both."}},{"@type":"Question","name":"How do I set up Zoho DMARC alignment?","acceptedAnswer":{"@type":"Answer","text":"Add MX, SPF, and DKIM from Zoho's domain setup wizard, verify the domain, then check alignment with DNS Preflight."}},{"@type":"Question","name":"How do MX records interact with DMARC?","acceptedAnswer":{"@type":"Answer","text":"MX controls where mail is delivered; DMARC still requires aligned SPF and/or DKIM for messages you send."}},{"@type":"Question","name":"How do I verify Zoho DKIM?","acceptedAnswer":{"@type":"Answer","text":"Zoho shows DKIM status when the TXT is published. DNS Preflight can read the public DKIM record."}},{"@type":"Question","name":"Does Zoho support DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes when SPF/DKIM alignment pass — phase policy carefully."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Zoho Mail</h1>
-      <p class="subtitle">Zoho Mail DMARC alignment requires adding SPF, DKIM, and optionally a custom Return-Path to your DNS. Zoho provides all required records in the domain verification dashboard.</p>
+      <p class="subtitle">Zoho hands you SPF, DKIM, optional bounce — grab them from domain verification and paste into DNS.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Missing MX, <a href="/glossary/spf-record/">SPF</a>, or <a href="/glossary/dkim/">DKIM</a> from Zoho's wizard prevents <a href="/glossary/dmarc-alignment/">alignment</a> for mail sent through Zoho.</p>
+      <h2>Why Zoho trips DMARC</h2>
+      <p>You skipped rows from their domain wizard — Zoho mail needs their MX + <a href="/glossary/spf-record/">SPF</a> + <a href="/glossary/dkim/">DKIM</a> or <a href="/glossary/dmarc-alignment/">alignment</a> never locks in.</p>
 
       <h2>Exact DNS records</h2>
       <div class="dns-block">SPF: include:zoho.com OR include:zoho.eu (per your region)
@@ -105,7 +105,7 @@ MX: per Zoho setup wizard</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Confirm alignment with DNS Preflight</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -132,12 +132,12 @@ MX: per Zoho setup wizard</div>
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

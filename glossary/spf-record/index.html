@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "SPF Record",
-    "description": "An SPF (Sender Policy Framework) record is a DNS TXT record that lists which mail servers are authorized to send email on behalf of your domain. Receiving mail servers check your SPF record to verify that incoming email from your domain was sent by an authorized server — if the check fails, the email may be rejected or marked as spam.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "SPF Record",
+  "description": "SPF is a TXT record that answers: “which IPs may send mail as my domain?” Receivers check it before they trust the From: header. Fail the check and you often land in spam or bounce — even when the mail is real.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is an SPF record?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "An SPF record is a DNS TXT record that authorizes specific mail servers to send email for your domain."
+          "text": "SPF is a TXT record that answers which IPs may send mail as your domain. Receivers check it against the connecting server before they trust the From: header."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "How many DNS lookups does SPF allow?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "SPF allows a maximum of 10 DNS lookups. Exceeding this limit causes a PermError."
+          "text": "Ten — every include:, a:, or mx: burns one lookup. Blow past 10 and you hit PermError; many receivers treat that like no SPF."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "What happens if I have two SPF records?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Having two SPF records causes an immediate PermError — receivers will reject both. Merge all rules into a single TXT record."
+          "text": "Two TXT records that both start with v=spf1 are invalid. Merge everything into one SPF string."
         }
       }
     ]
@@ -161,27 +161,27 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>SPF Record — What It Is and How to Fix It</h1>
-      <p>An SPF (Sender Policy Framework) record is a DNS TXT record that lists which mail servers are authorized to send email on behalf of your domain. Receiving mail servers check your SPF record to verify that incoming email from your domain was sent by an authorized server — if the check fails, the email may be rejected or marked as spam.</p>
+      <p>SPF is a TXT record that answers: “which IPs may send mail as my domain?” Receivers check it before they trust the From: header. Fail the check and you often land in spam or bounce — even when the mail is real.</p>
 
       <h2>How SPF Records Work</h2>
-      <p>SPF works by publishing a list of authorized IP addresses and mail servers in your DNS. When an email arrives, the receiving server looks up your SPF record and checks whether the sending IP is on the list. The result is either pass, fail, softfail, or neutral.</p>
+      <p>You publish IPs and includes in DNS. The receiver compares the connecting server to that list. They’ll mark pass, fail, softfail, or neutral — and DMARC may still fail if you don’t align later.</p>
 
       <h2>The SPF 10-Lookup Limit</h2>
-      <p>SPF records are limited to 10 DNS lookups during evaluation. Each include:, a:, and mx: mechanism triggers a lookup. Exceeding 10 lookups causes a PermError, which many receiving servers treat as a hard fail — causing your legitimate emails to bounce.</p>
+      <p>SPF only gets 10 DNS lookups. Every <code>include:</code>, <code>a:</code>, <code>mx:</code> costs one. Blow past 10 and you hit PermError — many receivers treat that like “no SPF,” so legit mail dies.</p>
 
       <h2>Common SPF Problems</h2>
       <ul>
-        <li>Too many include: statements (over 10 lookups)</li>
-        <li>Multiple SPF records on the same domain</li>
-        <li>Using +all instead of ~all or -all</li>
-        <li>Missing include for a third-party sender like SendGrid or Mailgun</li>
+        <li>Too many include: chains (nested ESPs eat lookups fast)</li>
+        <li>Two TXT records that both start with v=spf1 — that’s invalid</li>
+        <li>Using +all (allows anyone — don’t)</li>
+        <li>Forget to add your ESP’s include</li>
       </ul>
 
       <h2>How to Check Your SPF Record</h2>
-      <p>Use DomainPreflight's DNS Preflight tool to check your SPF record, count DNS lookups, and get a copy-paste fix.</p>
+      <p>Open DNS Preflight, expand the SPF tree, and see exactly where lookups go. We also show fixes you can paste.</p>
 
       <div class="tool-cta">
-        <p>Run checks on your domain</p>
+        <p>Check SPF and lookup count now</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
     </article>
@@ -189,7 +189,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

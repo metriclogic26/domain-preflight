@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "Typosquatting",
-    "description": "Typosquatting is the registration of domain names that are intentional misspellings or lookalikes of legitimate domains, used to intercept traffic, conduct phishing attacks, or impersonate brands. Common techniques include character substitution, missing letters, doubled characters, and homoglyph attacks using visually similar Unicode characters.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "Typosquatting",
+  "description": "Typosquatting is buying domains that look almost like yours — swapped letters, extra hyphens, cyrillic “a” — so fat-fingered users land on a fake login page.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is typosquatting?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Typosquatting is registering misspelled or lookalike versions of legitimate domain names to intercept traffic or conduct phishing attacks."
+          "text": "Buying domains that look almost like yours — swapped letters, wrong TLDs, Unicode tricks — so typos land on phishing."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "How do I know if someone is typosquatting my domain?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Use DomainPreflight's Typosquat Monitor to check which lookalike domains currently resolve to active websites."
+          "text": "Use Typosquat Monitor — we DNS-check dozens of variants in one pass and flag what resolves."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "What is a homoglyph attack?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "A homoglyph attack uses visually identical Unicode characters to create domains that look identical to the target but are technically different — e.g. using a Cyrillic 'а' instead of Latin 'a'."
+          "text": "Same look, different Unicode — e.g. Cyrillic а instead of Latin a. The bar looks identical; DNS sees a different name."
         }
       }
     ]
@@ -161,29 +161,29 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>Typosquatting — Domain Impersonation and Detection</h1>
-      <p>Typosquatting is the registration of domain names that are intentional misspellings or lookalikes of legitimate domains, used to intercept traffic, conduct phishing attacks, or impersonate brands. Common techniques include character substitution, missing letters, doubled characters, and homoglyph attacks using visually similar Unicode characters.</p>
+      <p>Typosquatting is buying domains that look almost like yours — swapped letters, extra hyphens, cyrillic “a” — so fat-fingered users land on a fake login page.</p>
 
       <h2>Common Typosquatting Techniques</h2>
       <ul>
-        <li>Character substitution: paypa1.com (l→1)</li>
-        <li>Missing character: paypl.com</li>
-        <li>Doubled character: paypall.com</li>
-        <li>Homoglyphs: pаypal.com (Cyrillic а)</li>
-        <li>TLD swap: paypal.net, paypal.co</li>
-        <li>Prefix/suffix: mypaypal.com, paypalapp.com</li>
+        <li>Swap a letter for a number: paypa1.com</li>
+        <li>Drop a letter: paypl.com</li>
+        <li>Double a letter: paypall.com</li>
+        <li>Unicode tricks: Cyrillic <code>а</code> instead of Latin <code>a</code></li>
+        <li>Wrong TLD: paypal.net</li>
+        <li>Keyword glue: mypaypal-login.com</li>
       </ul>
 
       <h2>Typosquatting vs Cybersquatting</h2>
-      <p>Typosquatting specifically targets users who mistype a URL. Cybersquatting is the broader practice of registering trademarked names. Both are used for phishing and brand abuse.</p>
+      <p>Typos aim at mistakes in the bar. Cybersquatting is the wider game of parking trademark-ish names. Both fuel phishing.</p>
 
       <h2>How to Detect Typosquatting</h2>
-      <p>Monitor domain variants that resolve to active websites — these are the highest risk. A registered domain that doesn't resolve is less immediately dangerous than one serving live content.</p>
+      <p>Watch names that resolve <em>and</em> serve HTTP — parked junk matters less than live phishing.</p>
 
       <h2>How to Check for Typosquats</h2>
-      <p>Use DomainPreflight's Typosquat Monitor to check 30-50 variants of your domain against live DNS — seeing which ones resolve and their risk level.</p>
+      <p>Fire up Typosquat Monitor — we DNS-check dozens of variants in one go.</p>
 
       <div class="tool-cta">
-        <p>Check lookalike domains</p>
+        <p>Hunt lookalikes that actually resolve</p>
         <a href="https://domainpreflight.dev/typosquat/">Open Typosquat Monitor →</a>
       </div>
     </article>
@@ -191,7 +191,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

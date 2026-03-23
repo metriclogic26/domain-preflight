@@ -277,7 +277,7 @@
     <section class="hero">
       <div class="hero-label">DMARC REPORT ANALYZER</div>
       <h1>Understand your DMARC aggregate reports.</h1>
-      <p class="hero-sub">Paste your DMARC aggregate report XML and instantly see which senders are aligned, which are failing, and whether anyone is spoofing your domain — with copy-paste fixes for Cloudflare and Namecheap. Parsed entirely in your browser.</p>
+      <p class="hero-sub">Paste the .xml from your DMARC inbox. We show who sent mail as you, who passed SPF/DKIM, and who didn’t — plus copy-paste DNS fixes. Parsing stays in your browser.</p>
     </section>
 
     <section id="dmarcAnalyzer" class="dmarc-section">
@@ -296,7 +296,7 @@
         <div style="margin-top: 1rem;">
           <details class="dmarc-get-report">
             <summary>How do I get this?</summary>
-            <p>Check the email address set in your rua= DMARC record. Google, Yahoo, and others send daily XML reports as .zip attachments. Unzip and paste the XML contents here.</p>
+            <p>Look at the address in your DMARC record’s <code>rua=</code> tag — that inbox gets zipped XML from Gmail, Yahoo, and others. Unzip, open the .xml, paste it here.</p>
           </details>
         </div>
       </div>
@@ -328,19 +328,19 @@
 
     <section class="faq-section">
       <h2>How do I get a DMARC report?</h2>
-      <p>Check the email address in your DMARC record's rua= tag. Major providers (Google, Yahoo, Microsoft, etc.) send daily aggregate reports as .zip attachments. Unzip and open the .xml file, then paste its contents here.</p>
+      <p>Yes — use the mailbox in <code>rua=</code>. Big providers email you a .zip every day. Unzip it, copy the .xml body, paste here.</p>
 
       <h2>What do pass and fail mean?</h2>
-      <p>DKIM pass means the message was signed and the signature verified. SPF pass means the sending IP was allowed by your SPF record. If both fail for a source IP, that IP is sending as your domain without authorization — possible spoofing.</p>
+      <p>DKIM pass = signature checked out. SPF pass = the sending IP matched your SPF list. If both fail for an IP, that IP sent as you without matching either check — treat it as possible spoofing or a misconfigured sender.</p>
 
       <h2>Does anything leave my browser?</h2>
-      <p>No. Parsing and analysis run entirely in your browser. Your report XML is never sent to any server.</p>
+      <p>No. We parse the XML locally. Nothing uploads to us.</p>
     </section>
   </main>
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div class="footer-bar-left">

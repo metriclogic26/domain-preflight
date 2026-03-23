@@ -191,7 +191,7 @@
     <section class="hero">
       <div class="hero-label">DANGLING RECORDS</div>
       <h1>Find subdomains attackers can claim.</h1>
-      <p class="hero-sub">Detect subdomains pointing to unclaimed services that attackers can take over — scanning certificate logs and matching against known takeover fingerprints for GitHub Pages, S3, Netlify, Vercel, and 20+ other services. No signup. Nothing leaves your browser.</p>
+      <p class="hero-sub">Old CNAMEs to GitHub, S3, Netlify, and friends can point at nothing you control. Someone else can host content on your subdomain. We hunt those dangling records from cert logs + fingerprints.</p>
     </section>
 
     <div class="input-card">
@@ -229,15 +229,15 @@
   <section class="how-to-use">
     <div class="how-to-use-label">HOW TO USE</div>
     <ol class="how-to-use-steps">
-      <li>Enter your domain name</li>
-      <li>Click Scan Domain — subdomains discovered via certificate logs</li>
-      <li>Review flagged CNAMEs — delete or claim the service to close the takeover risk</li>
+      <li>Type your root domain.</li>
+      <li>Click Scan Domain. We pull hostnames from cert logs.</li>
+      <li>Fix or delete risky CNAMEs — or claim the cloud resource so you own it again.</li>
     </ol>
   </section>
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
       <p class="footer-row2">Takeover fingerprints via <a href="https://github.com/EdOverflow/can-i-take-over-xyz" target="_blank" rel="noopener">can-i-take-over-xyz</a> (MIT)</p>
     </div>
     <div class="footer-bar">

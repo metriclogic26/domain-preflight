@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Mailgun","description":"Mailgun DMARC alignment requires adding a custom sending domain with CNAME records for DKIM signing and a custom Return-Path. Without these, Mailgun sends from @mailgun.org, failing DMARC alignment with your From: domain.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Add domain in Mailgun","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step1","text":"Mailgun → Sending → Domains → Add new domain"},{"@type":"HowToStep","position":2,"name":"Use root domain","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step2","text":"Enter your domain name (use yourdomain.com not mg.yourdomain.com for best alignment)"},{"@type":"HowToStep","position":3,"name":"Copy Mailgun DNS records","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step3","text":"Copy all DNS records Mailgun provides — TXT for SPF, CNAME/TXT for DKIM, CNAME for tracking"},{"@type":"HowToStep","position":4,"name":"Add records to DNS","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step4","text":"Add all records to your DNS provider"},{"@type":"HowToStep","position":5,"name":"Verify in Mailgun","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step5","text":"Click Verify DNS settings in Mailgun — wait up to 48 hours"},{"@type":"HowToStep","position":6,"name":"Confirm with DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step6","text":"Run DNS Preflight to confirm DKIM and SPF alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Mailgun","description":"Mailgun DMARC alignment requires adding a custom sending domain with CNAME records for DKIM signing and a custom Return-Path. Without these, Mailgun sends from @mailgun.org, failing DMARC alignment with your From: domain.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Add domain in Mailgun","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step1","text":"Step 1 Mailgun → Sending → Domains → Add new domain"},{"@type":"HowToStep","position":2,"name":"Use root domain","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step2","text":"Step 2 Enter your domain name (use yourdomain.com not mg.yourdomain.com for best alignment)"},{"@type":"HowToStep","position":3,"name":"Copy Mailgun DNS records","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step3","text":"Step 3 Copy all DNS records Mailgun provides — TXT for SPF, CNAME/TXT for DKIM, CNAME for tracking"},{"@type":"HowToStep","position":4,"name":"Add records to DNS","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step4","text":"Step 4 Add all records to your DNS provider"},{"@type":"HowToStep","position":5,"name":"Verify in Mailgun","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step5","text":"Step 5 Click Verify DNS settings in Mailgun — wait up to 48 hours"},{"@type":"HowToStep","position":6,"name":"Confirm with DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/mailgun/#step6","text":"Step 6 Run DNS Preflight to confirm DKIM and SPF alignment"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Should I use yourdomain.com or mg.yourdomain.com as my Mailgun domain?","acceptedAnswer":{"@type":"Answer","text":"Use your root domain (yourdomain.com) for best DMARC alignment. Using a subdomain like mg.yourdomain.com can cause alignment failures with strict DMARC policies."}},{"@type":"Question","name":"Why does Mailgun fail DMARC even after adding DNS records?","acceptedAnswer":{"@type":"Answer","text":"Check that you added the domain-specific DKIM record, not just SPF. Also verify the Return-Path CNAME is added — this enables SPF alignment."}},{"@type":"Question","name":"How many DNS records does Mailgun require?","acceptedAnswer":{"@type":"Answer","text":"Typically 3: one TXT for SPF (include:mailgun.org), one TXT or CNAME for DKIM, and one CNAME for the Return-Path (tracking subdomain)."}},{"@type":"Question","name":"What is the Mailgun DKIM selector?","acceptedAnswer":{"@type":"Answer","text":"Mailgun uses k1 as the default DKIM selector. Your DKIM record goes at k1._domainkey.yourdomain.com."}},{"@type":"Question","name":"How long does Mailgun domain verification take?","acceptedAnswer":{"@type":"Answer","text":"DNS propagation takes up to 48 hours. Mailgun's dashboard shows a green checkmark when all records are verified."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Mailgun</h1>
-      <p class="subtitle">Mailgun DMARC alignment requires adding a custom sending domain with CNAME records for DKIM signing and a custom Return-Path. Without these, Mailgun sends from @mailgun.org, failing DMARC alignment with your From: domain.</p>
+      <p class="subtitle">Mailgun uses @mailgun.org until you add a verified domain with DKIM + bounce CNAMEs — then you’re aligned with your brand.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Without a verified sending domain, Mailgun uses a Return-Path that doesn't match your From: domain. <a href="/glossary/dmarc-alignment/">DMARC alignment</a> needs aligned <a href="/glossary/spf-record/">SPF</a> and/or <a href="/glossary/dkim/">DKIM</a> for your brand domain.</p>
+      <h2>Why Mailgun trips DMARC</h2>
+      <p>Unverified domain = bounce path @mailgun.org while From: says your startup — <a href="/glossary/dmarc-alignment/">DMARC</a> wants <a href="/glossary/spf-record/">SPF</a> or <a href="/glossary/dkim/">DKIM</a> to match your brand.</p>
 
       <h2>Exact DNS records (pattern)</h2>
       <p>Mailgun shows exact values per domain. Typical patterns:</p>
@@ -109,7 +109,7 @@ k1._domainkey.yourdomain.com → CNAME →
       <div class="howto-step" id="step6"><strong>Step 6</strong> Run DNS Preflight to confirm DKIM and SPF alignment</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -136,12 +136,12 @@ k1._domainkey.yourdomain.com → CNAME →
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

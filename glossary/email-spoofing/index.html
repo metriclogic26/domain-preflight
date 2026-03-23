@@ -12,12 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "Email Spoofing",
-    "description": "Email spoofing is the forgery of an email's From: header to make it appear to come from a domain the sender does not control. Attackers use spoofed emails for phishing, fraud, and brand impersonation. SPF, DKIM, and DMARC are the three DNS-based standards that together prevent email spoofing.",
-    "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
-  }
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "Email Spoofing",
+  "description": "Spoofing = faking the From: line so mail looks like it came from your CEO or your brand. SMTP never trusted From: — you add SPF, DKIM, and DMARC so receivers can reject the liars.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
   </script>
   <script type="application/ld+json">
   {
@@ -29,7 +29,7 @@
         "name": "What is email spoofing?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Email spoofing is forging the From: header to impersonate a domain the sender does not control."
+          "text": "Spoofing is faking the From: line so mail looks like your CEO or brand. SPF, DKIM, and DMARC let receivers reject impostors."
         }
       },
       {
@@ -37,7 +37,7 @@
         "name": "How does DMARC prevent spoofing?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "DMARC p=reject instructs receivers to block emails that fail SPF and DKIM alignment, preventing spoofed emails from being delivered."
+          "text": "At p=reject, mail that fails both aligned SPF and DKIM should bounce — phishers hate that."
         }
       },
       {
@@ -45,7 +45,7 @@
         "name": "Can I check if my domain is being spoofed?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes — enable DMARC with rua= reporting and use DomainPreflight's DMARC Report Analyzer to see all senders using your domain."
+          "text": "Yes — enable DMARC with rua= and read aggregate XML. Paste reports into our DMARC Report Analyzer to see who sent as you."
         }
       }
     ]
@@ -161,24 +161,24 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>Email Spoofing — How It Works and How to Stop It</h1>
-      <p>Email spoofing is the forgery of an email's From: header to make it appear to come from a domain the sender does not control. Attackers use spoofed emails for phishing, fraud, and brand impersonation. SPF, DKIM, and DMARC are the three DNS-based standards that together prevent email spoofing.</p>
+      <p>Spoofing = faking the From: line so mail looks like it came from your CEO or your brand. SMTP never trusted From: — you add SPF, DKIM, and DMARC so receivers can reject the liars.</p>
 
       <h2>How Email Spoofing Works</h2>
-      <p>SMTP does not verify the From: header by default. Any mail server can claim to send from any domain. Without SPF, DKIM, and DMARC configured, anyone can send email appearing to come from your domain.</p>
+      <p>Anyone can pipe a message through an open relay with From: <code>ceo@yourbank.com</code>. Without auth records, receivers can’t tell prank from payroll.</p>
 
       <h2>How to Prevent Email Spoofing</h2>
       <ol style="color: var(--text2); font-size: 0.9rem; margin: 0.5rem 0 1rem 1.25rem;">
-        <li>Publish an SPF record listing authorized senders</li>
-        <li>Enable DKIM signing on your mail server</li>
-        <li>Set DMARC to p=quarantine or p=reject</li>
-        <li>Monitor DMARC aggregate reports for unauthorized senders</li>
+        <li>Publish SPF so only your IPs and ESPs can pass</li>
+        <li>Turn on DKIM signing</li>
+        <li>Creep DMARC from <code>p=none</code> to <code>quarantine</code> / <code>reject</code></li>
+        <li>Read aggregate reports for mystery senders</li>
       </ol>
 
       <h2>DMARC p=reject Stops Spoofing</h2>
-      <p>With DMARC p=reject, receiving servers will block any email that fails both SPF and DKIM alignment — preventing spoofed emails from reaching inboxes entirely.</p>
+      <p>At <code>p=reject</code>, mail that fails both aligned SPF and DKIM should bounce — phishers hate that.</p>
 
       <div class="tool-cta">
-        <p>Analyze DMARC aggregate reports</p>
+        <p>Paste DMARC XML and read who sent as you</p>
         <a href="https://domainpreflight.dev/dmarc/">Open DMARC Report Analyzer →</a>
       </div>
     </article>
@@ -186,7 +186,7 @@
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div>

@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Proofpoint","description":"Proofpoint DMARC alignment in gateway and relay configurations requires coordinating SPF, DKIM signing settings in the Proofpoint admin console and ensuring your From: domain matches the signing domain.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Review Proofpoint email auth","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step1","text":"Proofpoint → Email Authentication / DKIM settings (path varies by product)"},{"@type":"HowToStep","position":2,"name":"Enable DKIM per domain","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step2","text":"Enable DKIM signing for each sending domain"},{"@type":"HowToStep","position":3,"name":"Publish DKIM DNS","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step3","text":"Add selector TXT records Proofpoint provides"},{"@type":"HowToStep","position":4,"name":"Align SPF with relay path","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step4","text":"Ensure SPF includes authorized hops for your mail flow"},{"@type":"HowToStep","position":5,"name":"Test message flow","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step5","text":"Send test mail and inspect Authentication-Results headers"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step6","text":"Confirm public DKIM and SPF where applicable"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Proofpoint","description":"Proofpoint DMARC alignment in gateway and relay configurations requires coordinating SPF, DKIM signing settings in the Proofpoint admin console and ensuring your From: domain matches the signing domain.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Review Proofpoint email auth","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step1","text":"Step 1 Proofpoint → Email Authentication / DKIM settings (path varies by product)"},{"@type":"HowToStep","position":2,"name":"Enable DKIM per domain","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step2","text":"Step 2 Enable DKIM signing for each sending domain"},{"@type":"HowToStep","position":3,"name":"Publish DKIM DNS","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step3","text":"Step 3 Add selector TXT records Proofpoint provides"},{"@type":"HowToStep","position":4,"name":"Align SPF with relay path","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step4","text":"Step 4 Ensure SPF includes authorized hops for your mail flow"},{"@type":"HowToStep","position":5,"name":"Test message flow","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step5","text":"Step 5 Send test mail and inspect Authentication-Results headers"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/#step6","text":"Step 6 Confirm public DKIM and SPF with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Gateway vs relay — how does alignment differ?","acceptedAnswer":{"@type":"Answer","text":"Relays change which IP and envelope domain receivers see. Work with Proofpoint documentation for your deployment so SPF and DKIM d= align with From:."}},{"@type":"Question","name":"How do I enable DKIM in Proofpoint?","acceptedAnswer":{"@type":"Answer","text":"Use the admin console for your Proofpoint product to generate keys and publish DNS TXT records at the given selectors."}},{"@type":"Question","name":"How does SPF alignment work with relays?","acceptedAnswer":{"@type":"Answer","text":"Return-Path and sending IP must match your SPF design; complex relays may need SRS or aligned bounce domains — consult Proofpoint support."}},{"@type":"Question","name":"Why is Proofpoint alignment complex?","acceptedAnswer":{"@type":"Answer","text":"Enterprise mail paths often involve multiple hops and gateways — alignment must be validated end-to-end."}},{"@type":"Question","name":"How do I verify alignment?","acceptedAnswer":{"@type":"Answer","text":"Inspect headers on test messages, use DMARC reports, and DNS Preflight for published DNS."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for Proofpoint</h1>
-      <p class="subtitle">Proofpoint DMARC alignment in gateway and relay configurations requires coordinating SPF, DKIM signing settings in the Proofpoint admin console and ensuring your From: domain matches the signing domain.</p>
+      <p class="subtitle">Running Proofpoint in front of mail? Match their DKIM/signing settings to your From: domain and keep SPF honest — this page is the checklist.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Enterprise gateways alter mail paths; <a href="/glossary/dmarc-alignment/">alignment</a> requires consistent <a href="/glossary/dkim/">DKIM</a> d= and <a href="/glossary/spf-record/">SPF</a> evaluation for your published policy.</p>
+      <h2>Why Proofpoint + DMARC gets messy</h2>
+      <p>Gateways rewrite paths — keep <a href="/glossary/dkim/">DKIM</a> d= and <a href="/glossary/spf-record/">SPF</a> consistent with what you actually send, or <a href="/glossary/dmarc-alignment/">alignment</a> flakes under policy.</p>
 
       <h2>Exact DNS records</h2>
       <div class="dns-block">DKIM TXT at selectors Proofpoint provides
@@ -104,7 +104,7 @@ SPF: authorize all legitimate sending paths (consult Proofpoint for your topolog
       <div class="howto-step" id="step6"><strong>Step 6</strong> Confirm public DKIM and SPF with DNS Preflight</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -131,12 +131,12 @@ SPF: authorize all legitimate sending paths (consult Proofpoint for your topolog
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

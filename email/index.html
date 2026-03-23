@@ -478,7 +478,7 @@
     <section class="hero">
       <div class="hero-label">EMAIL DELIVERABILITY</div>
       <h1>Is your IP clean before you send?</h1>
-      <p class="hero-sub">Check your sending IP's reputation against 10+ blacklists and diagnose email delivery failures using raw email headers — before your emails start bouncing. No signup. Nothing leaves your browser.</p>
+      <p class="hero-sub">See if blacklists flag your sending IP. Paste raw headers to debug why a message bounced or hit spam — still in your browser, no signup.</p>
     </section>
 
     <div class="input-card">
@@ -537,16 +537,16 @@
   <section class="how-to-use">
     <div class="how-to-use-label">HOW TO USE</div>
     <ol class="how-to-use-steps">
-      <li>Enter your mail server's sending IP address</li>
-      <li>Click Run Checks — reputation checked instantly</li>
-      <li>Paste raw email headers in the analyzer below to diagnose delivery issues</li>
+      <li>Paste your outbound mail server’s IP.</li>
+      <li>Click Run Checks.</li>
+      <li>Drop full headers into the analyzer to see SPF/DKIM/DMARC results.</li>
     </ol>
-    <p class="how-to-use-note">To get headers in Gmail: open email → ⋮ → Show original</p>
+    <p class="how-to-use-note">Gmail: open the message → ⋮ → Show original.</p>
   </section>
 
   <footer>
     <div class="footer-inner">
-      <p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p>
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
     </div>
     <div class="footer-bar">
       <div class="footer-bar-left">

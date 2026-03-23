@@ -71,22 +71,22 @@
     <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> Error fixes</nav>
     <p class="hero-label">Errors</p>
     <h1>Email &amp; DNS Error Message Fixes</h1>
-    <p class="lead">Copy the exact error message you're seeing. Find the cause and the fix.</p>
+    <p class="lead">Paste the bounce or dashboard error into Google, or start here — we grouped the usual suspects.</p>
     <div class="card-grid">
-      <a class="hub-card" href="/error/dmarc-policy-none/"><div><div class="hub-card-title">DMARC Policy None</div><p class="hub-card-desc">Monitoring mode — failures visible but not blocked.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/spf-permerror/"><div><div class="hub-card-title">SPF PermError</div><p class="hub-card-desc">Too many lookups or invalid SPF syntax.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/dkim-signature-failed/"><div><div class="hub-card-title">DKIM Signature Failed</div><p class="hub-card-desc">Key mismatch, wrong selector, or altered body.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/dmarc-alignment-failed/"><div><div class="hub-card-title">DMARC Alignment Failed</div><p class="hub-card-desc">From: domain doesn't match SPF or DKIM domain.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/emails-going-to-spam/"><div><div class="hub-card-title">Emails Going to Spam</div><p class="hub-card-desc">Reputation, auth, and content signals.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/blacklisted-ip/"><div><div class="hub-card-title">Blacklisted IP</div><p class="hub-card-desc">Delisting and warming sending IP.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/550-5-7-1-rejected/"><div><div class="hub-card-title">550 5.7.1 Rejected</div><p class="hub-card-desc">Common SMTP rejection codes and fixes.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/dkim-none/"><div><div class="hub-card-title">DKIM None</div><p class="hub-card-desc">No DKIM signature on the message.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/ptr-mismatch/"><div><div class="hub-card-title">PTR Mismatch</div><p class="hub-card-desc">Reverse DNS doesn't forward-resolve to sending IP.</p></div><span class="hub-card-arrow">→</span></a>
-      <a class="hub-card" href="/error/no-mx-record/"><div><div class="hub-card-title">No MX Record</div><p class="hub-card-desc">Domain can't receive mail — add or fix MX.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/dmarc-policy-none/"><div><div class="hub-card-title">DMARC Policy None</div><p class="hub-card-desc">You’re only watching — nothing gets blocked yet.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/spf-permerror/"><div><div class="hub-card-title">SPF PermError</div><p class="hub-card-desc">Fix a broken SPF or trim lookups before receivers rage-quit.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/dkim-signature-failed/"><div><div class="hub-card-title">DKIM Signature Failed</div><p class="hub-card-desc">Bad key, wrong selector, or something mangled the body.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/dmarc-alignment-failed/"><div><div class="hub-card-title">DMARC Alignment Failed</div><p class="hub-card-desc">From: doesn’t match the SPF or DKIM domain — tighten auth.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/emails-going-to-spam/"><div><div class="hub-card-title">Emails Going to Spam</div><p class="hub-card-desc">Chase reputation, auth, and content — in that order.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/blacklisted-ip/"><div><div class="hub-card-title">Blacklisted IP</div><p class="hub-card-desc">Delist, then warm the IP so you’re not “that” sender.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/550-5-7-1-rejected/"><div><div class="hub-card-title">550 5.7.1 Rejected</div><p class="hub-card-desc">Decode the SMTP tantrum and patch the real cause.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/dkim-none/"><div><div class="hub-card-title">DKIM None</div><p class="hub-card-desc">No signature at all — turn on signing or fix DNS.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/ptr-mismatch/"><div><div class="hub-card-title">PTR Mismatch</div><p class="hub-card-desc">Your IP’s hostname doesn’t round-trip — fix rDNS.</p></div><span class="hub-card-arrow">→</span></a>
+      <a class="hub-card" href="/error/no-mx-record/"><div><div class="hub-card-title">No MX Record</div><p class="hub-card-desc">Inbox can’t exist — add MX or point mail elsewhere.</p></div><span class="hub-card-arrow">→</span></a>
     </div>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>

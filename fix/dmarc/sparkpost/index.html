@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for SparkPost","description":"SparkPost (now part of MessageBird) DMARC alignment requires a dedicated sending domain with CNAME records for DKIM and a custom bounce domain for SPF alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Sending Domains","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step1","text":"SparkPost → Account → Sending Domains"},{"@type":"HowToStep","position":2,"name":"Add domain","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step2","text":"Create sending domain and copy DNS records"},{"@type":"HowToStep","position":3,"name":"Add DKIM CNAMEs","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step3","text":"Point DKIM CNAMEs to SparkPost DKIM hosts"},{"@type":"HowToStep","position":4,"name":"Configure bounce domain","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step4","text":"Add bounce domain CNAME for SPF alignment"},{"@type":"HowToStep","position":5,"name":"Verify in SparkPost","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step5","text":"Wait for verification"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step6","text":"Confirm alignment"}]}
+  {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for SparkPost","description":"SparkPost (now part of MessageBird) DMARC alignment requires a dedicated sending domain with CNAME records for DKIM and a custom bounce domain for SPF alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Sending Domains","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step1","text":"Step 1 SparkPost → Account → Sending Domains"},{"@type":"HowToStep","position":2,"name":"Add domain","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step2","text":"Step 2 Create sending domain and copy DNS records"},{"@type":"HowToStep","position":3,"name":"Add DKIM CNAMEs","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step3","text":"Step 3 Point DKIM CNAMEs to SparkPost DKIM hosts"},{"@type":"HowToStep","position":4,"name":"Configure bounce domain","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step4","text":"Step 4 Add bounce domain CNAME for SPF alignment"},{"@type":"HowToStep","position":5,"name":"Verify in SparkPost","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step5","text":"Step 5 Wait for verification in SparkPost"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step6","text":"Step 6 Confirm alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is SparkPost the same as MessageBird Email?","acceptedAnswer":{"@type":"Answer","text":"SparkPost joined MessageBird — use the current SparkPost/MessageBird dashboard for sending domains and DNS records."}},{"@type":"Question","name":"What DNS does SparkPost need for alignment?","acceptedAnswer":{"@type":"Answer","text":"DKIM CNAMEs to SparkPost and a bounce domain setup for Return-Path / SPF alignment — copy exact values from the console."}},{"@type":"Question","name":"What is the bounce domain for?","acceptedAnswer":{"@type":"Answer","text":"It lets SparkPost use a Return-Path under your domain so SPF can align."}},{"@type":"Question","name":"How does SPF alignment work with SparkPost?","acceptedAnswer":{"@type":"Answer","text":"With bounce domain configured, SPF aligns to the bounce subdomain SparkPost uses for your mail."}},{"@type":"Question","name":"Does SparkPost support DMARC p=reject?","acceptedAnswer":{"@type":"Answer","text":"Yes when DKIM or SPF alignment passes — monitor reports when tightening policy."}}]}
@@ -86,10 +86,10 @@
     <article>
       <p class="hero-label">Fix guide</p>
       <h1>How to Fix DMARC Alignment for SparkPost</h1>
-      <p class="subtitle">SparkPost (now part of MessageBird) DMARC alignment requires a dedicated sending domain with CNAME records for DKIM and a custom bounce domain for SPF alignment.</p>
+      <p class="subtitle">SparkPost (MessageBird) wants a dedicated sending domain with DKIM + bounce CNAMEs — wire those and alignment clears.</p>
 
-      <h2>Why alignment fails</h2>
-      <p>Without sending domain DNS, SparkPost cannot <a href="/glossary/dmarc-alignment/">align</a> <a href="/glossary/dkim/">DKIM</a> or bounce <a href="/glossary/spf-record/">SPF</a> with your From: domain.</p>
+      <h2>Why SparkPost trips DMARC</h2>
+      <p>No sending-domain DNS — no aligned <a href="/glossary/dkim/">DKIM</a> or bounce <a href="/glossary/spf-record/">SPF</a>. Paste what SparkPost gives you and <a href="/glossary/dmarc-alignment/">alignment</a> follows.</p>
 
       <h2>Exact DNS records</h2>
       <div class="dns-block">DKIM: CNAMEs to SparkPost DKIM endpoints (from console)
@@ -104,7 +104,7 @@ Bounce domain: CNAME for Return-Path alignment (per SparkPost UI)</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Confirm alignment with DNS Preflight</div>
 
       <div class="tool-cta">
-        <p>Verify alignment and DNS in your browser</p>
+        <p>Run your domain through DNS Preflight</p>
         <a href="https://domainpreflight.dev/">Open DNS Preflight →</a>
       </div>
 
@@ -131,12 +131,12 @@ Bounce domain: CNAME for Return-Path alignment (per SparkPost UI)</div>
 
       <div class="internal-links">
         <p><a href="/fix/dmarc/">← All DMARC fix guides</a></p>
-        <p><a href="https://domainpreflight.dev/">Run checks on domainpreflight.dev →</a></p>
+        <p><a href="https://domainpreflight.dev/">Open DNS Preflight and re-check your zone →</a></p>
       </div>
     </article>
   </main>
   <footer>
-    <div class="footer-inner"><p class="footer-disclaimer">Results are for informational purposes only. Always verify configuration in your own environment before making changes. MetricLogic provides no warranty on the accuracy of results.</p></div>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
     <div class="footer-bar">
       <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
