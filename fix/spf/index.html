@@ -11,13 +11,39 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"CollectionPage","name":"SPF Record Fixes","url":"https://domainpreflight.dev/fix/spf/","hasPart":{"@type":"ItemList","name":"SPF Fix Guides","numberOfItems":10,"itemListElement":[{"@type":"ListItem","position":1,"name":"Too Many DNS Lookups","url":"https://domainpreflight.dev/fix/spf/too-many-lookups/"},{"@type":"ListItem","position":2,"name":"SendGrid SPF","url":"https://domainpreflight.dev/fix/spf/sendgrid/"},{"@type":"ListItem","position":3,"name":"Google Workspace SPF","url":"https://domainpreflight.dev/fix/spf/google-workspace/"},{"@type":"ListItem","position":4,"name":"Microsoft 365 SPF","url":"https://domainpreflight.dev/fix/spf/microsoft-365/"},{"@type":"ListItem","position":5,"name":"Multiple Providers","url":"https://domainpreflight.dev/fix/spf/multiple-providers/"},{"@type":"ListItem","position":6,"name":"Softfail vs Hardfail","url":"https://domainpreflight.dev/fix/spf/softfail-vs-hardfail/"},{"@type":"ListItem","position":7,"name":"Cloudflare SPF","url":"https://domainpreflight.dev/fix/spf/cloudflare/"},{"@type":"ListItem","position":8,"name":"Namecheap SPF","url":"https://domainpreflight.dev/fix/spf/namecheap/"},{"@type":"ListItem","position":9,"name":"GoDaddy SPF","url":"https://domainpreflight.dev/fix/spf/godaddy/"},{"@type":"ListItem","position":10,"name":"AWS Route 53 SPF","url":"https://domainpreflight.dev/fix/spf/aws-route53/"}]}}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"SPF Fixes","item":"https://domainpreflight.dev/fix/spf/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "SPF Record Fixes — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 3,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Open the guide that matches your issue or DNS host."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Merge or edit your SPF TXT at the DNS host as shown — keep a single v=spf1 record."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Run DNS Preflight to confirm SPF resolves and stays under the lookup limit."
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
@@ -48,6 +74,8 @@
     .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
     .footer-bar a { color: var(--text2); text-decoration: none; }
     .footer-bar a:hover { color: var(--text); }
+    .howto-step { margin-bottom: 1rem; padding: 0.75rem 0 0.75rem 1rem; border-left: 3px solid var(--purple); font-size: 0.85rem; color: var(--text2); line-height: 1.55; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.88rem; }
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -84,6 +112,10 @@
       <a class="hub-card" href="/fix/spf/godaddy/"><div><div class="hub-card-title">GoDaddy SPF</div><p class="hub-card-desc">SPF TXT record on GoDaddy DNS.</p></div><span class="hub-card-arrow">→</span></a>
       <a class="hub-card" href="/fix/spf/aws-route53/"><div><div class="hub-card-title">AWS Route 53 SPF</div><p class="hub-card-desc">Route 53 TXT records and split strings.</p></div><span class="hub-card-arrow">→</span></a>
     </div>
+    <p class="hero-label" style="margin-top: 2.5rem;">How to use these guides</p>
+    <div class="howto-step" id="step1"><strong>Step 1</strong> Open the guide that matches your issue or DNS host.</div>
+    <div class="howto-step" id="step2"><strong>Step 2</strong> Merge or edit your SPF TXT at the DNS host as shown — keep a single v=spf1 record.</div>
+    <div class="howto-step" id="step3"><strong>Step 3</strong> Run DNS Preflight to confirm SPF resolves and stays under the lookup limit.</div>
   </main>
   <footer>
     <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>

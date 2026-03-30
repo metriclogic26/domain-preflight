@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Article","headline":"How to Set Up DMARC: The Complete Guide","description":"Complete DMARC setup: SPF, DKIM, first record, aggregate reports, alignment fixes, and a safe path from p=none to p=reject.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/learn/dmarc/"}}
   </script>
   <script type="application/ld+json">
@@ -23,7 +23,48 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Learn","item":"https://domainpreflight.dev/learn/"},{"@type":"ListItem","position":3,"name":"DMARC","item":"https://domainpreflight.dev/learn/dmarc/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Set Up DMARC: The Complete Guide — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inventory Google, Microsoft, ESPs, and apps. Resolve spf/dkim failures before relying on DMARC policy."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Use v=DMARC1; p=none; rua=mailto:... and optional fo=1. Document the record and TTL."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Inbox or alias must accept mail from major receivers. Unzip a sample report to confirm parsing."
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Use the DMARC Report Analyzer and /fix/dmarc/ guides. One sender at a time until aligned."
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Increase pct gradually or set full quarantine once stakeholders agree on rollback."
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Keep rua= active. Revisit if new vendors onboard or domains are acquired."
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

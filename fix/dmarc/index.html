@@ -11,13 +11,39 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"CollectionPage","name":"DMARC Alignment Fixes by Email Provider","url":"https://domainpreflight.dev/fix/dmarc/","hasPart":{"@type":"ItemList","name":"DMARC providers","numberOfItems":15,"itemListElement":[{"@type":"ListItem","position":1,"name":"SendGrid","url":"https://domainpreflight.dev/fix/dmarc/sendgrid/"},{"@type":"ListItem","position":2,"name":"Mailgun","url":"https://domainpreflight.dev/fix/dmarc/mailgun/"},{"@type":"ListItem","position":3,"name":"Google Workspace","url":"https://domainpreflight.dev/fix/dmarc/google-workspace/"},{"@type":"ListItem","position":4,"name":"Microsoft 365","url":"https://domainpreflight.dev/fix/dmarc/microsoft-365/"},{"@type":"ListItem","position":5,"name":"Mailchimp","url":"https://domainpreflight.dev/fix/dmarc/mailchimp/"},{"@type":"ListItem","position":6,"name":"Klaviyo","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/"},{"@type":"ListItem","position":7,"name":"HubSpot","url":"https://domainpreflight.dev/fix/dmarc/hubspot/"},{"@type":"ListItem","position":8,"name":"Postmark","url":"https://domainpreflight.dev/fix/dmarc/postmark/"},{"@type":"ListItem","position":9,"name":"Amazon SES","url":"https://domainpreflight.dev/fix/dmarc/amazon-ses/"},{"@type":"ListItem","position":10,"name":"Brevo","url":"https://domainpreflight.dev/fix/dmarc/brevo/"},{"@type":"ListItem","position":11,"name":"Zoho Mail","url":"https://domainpreflight.dev/fix/dmarc/zoho/"},{"@type":"ListItem","position":12,"name":"Fastmail","url":"https://domainpreflight.dev/fix/dmarc/fastmail/"},{"@type":"ListItem","position":13,"name":"Proofpoint","url":"https://domainpreflight.dev/fix/dmarc/proofpoint/"},{"@type":"ListItem","position":14,"name":"Mimecast","url":"https://domainpreflight.dev/fix/dmarc/mimecast/"},{"@type":"ListItem","position":15,"name":"SparkPost","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/"}]}}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DMARC Fixes","item":"https://domainpreflight.dev/fix/dmarc/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "DMARC Alignment Fixes by Email Provider — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 3,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Open the guide that matches your email provider or gateway."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Complete each DNS step in order at your DNS host."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Run DNS Preflight to confirm DKIM, SPF, and DMARC alignment."
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
@@ -48,6 +74,8 @@
     .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
     .footer-bar a { color: var(--text2); text-decoration: none; }
     .footer-bar a:hover { color: var(--text); }
+    .howto-step { margin-bottom: 1rem; padding: 0.75rem 0 0.75rem 1rem; border-left: 3px solid var(--purple); font-size: 0.85rem; color: var(--text2); line-height: 1.55; }
+    .howto-step strong { color: var(--text); display: block; margin-bottom: 0.35rem; font-size: 0.88rem; }
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -89,6 +117,10 @@
       <a class="hub-card" href="/fix/dmarc/mimecast/"><div><div class="hub-card-title">Mimecast</div><p class="hub-card-desc">Mimecast DNS and DMARC.</p></div><span class="hub-card-arrow">→</span></a>
       <a class="hub-card" href="/fix/dmarc/sparkpost/"><div><div class="hub-card-title">SparkPost</div><p class="hub-card-desc">SparkPost sending alignment.</p></div><span class="hub-card-arrow">→</span></a>
     </div>
+    <p class="hero-label" style="margin-top: 2.5rem;">How to use these guides</p>
+    <div class="howto-step" id="step1"><strong>Step 1</strong> Open the guide that matches your email provider or gateway.</div>
+    <div class="howto-step" id="step2"><strong>Step 2</strong> Complete each DNS step in order at your DNS host.</div>
+    <div class="howto-step" id="step3"><strong>Step 3</strong> Run DNS Preflight to confirm DKIM, SPF, and DMARC alignment.</div>
   </main>
   <footer>
     <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>

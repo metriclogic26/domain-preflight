@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"DKIM key length — 1024 vs 2048 bit","description":"DKIM keys should be at least 2048 bits. 1024-bit keys are cryptographically weak and should be rotated to 2048-bit.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"Email provider admin access"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Check key length","url":"https://domainpreflight.dev/fix/dkim/key-length/#step1","text":"Step 1 Run DNS Preflight and note DKIM key length"},{"@type":"HowToStep","position":2,"name":"Generate 2048-bit key","url":"https://domainpreflight.dev/fix/dkim/key-length/#step2","text":"Step 2 In your provider dashboard, generate a new 2048-bit key"},{"@type":"HowToStep","position":3,"name":"Publish new TXT","url":"https://domainpreflight.dev/fix/dkim/key-length/#step3","text":"Step 3 Publish the new TXT at selector._domainkey"},{"@type":"HowToStep","position":4,"name":"Enable new key","url":"https://domainpreflight.dev/fix/dkim/key-length/#step4","text":"Step 4 Enable signing with the new key after propagation"},{"@type":"HowToStep","position":5,"name":"Remove old key","url":"https://domainpreflight.dev/fix/dkim/key-length/#step5","text":"Step 5 Remove the old TXT after a safe overlap window (often 48+ hours)"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,43 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DKIM Fixes","item":"https://domainpreflight.dev/fix/dkim/"},{"@type":"ListItem","position":4,"name":"Key Length","item":"https://domainpreflight.dev/fix/dkim/key-length/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "DKIM Key Length — 1024 vs 2048 Bit — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 5,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Run DNS Preflight and note DKIM key length"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "In your provider dashboard, generate a new 2048-bit key"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Publish the new TXT at selector._domainkey"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Enable signing with the new key after propagation"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Remove the old TXT after a safe overlap window (often 48+ hours)"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

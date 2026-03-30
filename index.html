@@ -33,6 +33,59 @@
     }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "DNS Preflight",
+    "description": "Check SPF, DKIM, DMARC alignment and IP reputation for any domain — free, no signup required.",
+    "url": "https://domainpreflight.dev/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "MetricLogic",
+      "url": "https://metriclogic.dev"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "DNS Preflight Checker — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 4,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Enter your domain and optional sending IP (for PTR and blocklist checks)."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Click Run Preflight."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Review the score, check cards, and copy-paste fixes under Actions."
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Use Copy link to share this check."
+    }
+  ]
+}
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -725,6 +778,9 @@
       transform: translateY(0);
       opacity: 1;
     }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; }
+    .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
   </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <link rel="icon" type="image/png" href="/favicon.png">
@@ -817,6 +873,16 @@
       </div>
     </div>
   </main>
+
+  <section class="how-to-use">
+    <div class="how-to-use-label">HOW TO USE</div>
+    <ol class="how-to-use-steps">
+      <li>Enter your domain and optional sending IP (for PTR and blocklist checks).</li>
+      <li>Click Run Preflight.</li>
+      <li>Review the score, check cards, and copy-paste fixes under Actions.</li>
+      <li>Use Copy link to share this check.</li>
+    </ol>
+  </section>
 
   <section class="faq-section">
     <h2>What does DomainPreflight check?</h2>

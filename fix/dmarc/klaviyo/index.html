@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Klaviyo","description":"Klaviyo DMARC alignment requires dedicated sending domain setup — adding CNAME records for DKIM and a custom Return-Path to enable full SPF and DKIM alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Dedicated Sending Domain","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step1","text":"Step 1 Klaviyo → Settings → Email → Dedicated Sending Domain"},{"@type":"HowToStep","position":2,"name":"Choose subdomain or root","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step2","text":"Step 2 Klaviyo recommends a subdomain such as email.yourdomain.com"},{"@type":"HowToStep","position":3,"name":"Copy DNS records","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step3","text":"Step 3 Copy DKIM and Return-Path CNAME records from Klaviyo"},{"@type":"HowToStep","position":4,"name":"Publish DNS","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step4","text":"Step 4 Add all records at your DNS host"},{"@type":"HowToStep","position":5,"name":"Verify in Klaviyo","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step5","text":"Step 5 Wait for Klaviyo to verify — up to 48 hours"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/klaviyo/#step6","text":"Step 6 Confirm alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,48 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DMARC Fixes","item":"https://domainpreflight.dev/fix/dmarc/"},{"@type":"ListItem","position":4,"name":"Klaviyo","item":"https://domainpreflight.dev/fix/dmarc/klaviyo/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Fix DMARC Alignment for Klaviyo — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Klaviyo → Settings → Email → Dedicated Sending Domain"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Klaviyo recommends a subdomain such as email.yourdomain.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Copy DKIM and Return-Path CNAME records from Klaviyo"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Add all records at your DNS host"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Wait for Klaviyo to verify — up to 48 hours"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Confirm alignment with DNS Preflight"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

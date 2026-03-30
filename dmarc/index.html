@@ -20,7 +20,60 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebApplication","name":"DMARC Report Analyzer","url":"https://domainpreflight.dev/dmarc/","description":"Paste DMARC aggregate report XML and see who's sending as your domain, what's failing, and how to fix it.","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0"}}
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "DMARC Report Analyzer",
+    "description": "Paste your DMARC XML report and get a visual summary of passing and failing senders.",
+    "url": "https://domainpreflight.dev/dmarc/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "MetricLogic",
+      "url": "https://metriclogic.dev"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "DMARC Report Analyzer — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 4,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Unzip your DMARC aggregate report XML from the mailbox in rua=."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Paste the full XML into the textarea."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Click Analyze Report."
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Review source IPs, SPF/DKIM results, disposition, and suggested fixes."
+    }
+  ]
+}
+  </script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
@@ -251,6 +304,9 @@
       transition: transform 0.25s ease, opacity 0.25s ease;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; }
+    .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -337,6 +393,16 @@
       <p>No. We parse the XML locally. Nothing uploads to us.</p>
     </section>
   </main>
+
+  <section class="how-to-use">
+    <div class="how-to-use-label">HOW TO USE</div>
+    <ol class="how-to-use-steps">
+      <li>Unzip your DMARC aggregate report XML from the mailbox in rua=.</li>
+      <li>Paste the full XML into the textarea.</li>
+      <li>Click Analyze Report.</li>
+      <li>Review source IPs, SPF/DKIM results, disposition, and suggested fixes.</li>
+    </ol>
+  </section>
 
   <footer>
     <div class="footer-inner">

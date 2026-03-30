@@ -18,9 +18,71 @@
   <meta name="twitter:title" content="DNS Propagation Checker — DomainPreflight">
   <meta name="twitter:description" content="See if your DNS has propagated globally.">
   <script type="application/ld+json">
-  {\"@context\":\"https://schema.org\",\"@type\":\"WebApplication\",\"name\":\"DNS Propagation Checker\",\"url\":\"https://domainpreflight.dev/propagation/\",\"description\":\"See if your DNS has propagated globally across multiple public resolvers.\",\"applicationCategory\":\"DeveloperApplication\",\"operatingSystem\":\"Any\",\"offers\":{\"@type\":\"Offer\",\"price\":\"0\"}}
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DNS Propagation Checker",
+    "url": "https://domainpreflight.dev/propagation/",
+    "description": "See if your DNS has propagated globally across multiple public resolvers.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0" }
+  }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "DNS Propagation Checker",
+    "description": "Check DNS propagation across 5 resolvers in real time — free browser tool.",
+    "url": "https://domainpreflight.dev/propagation/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "MetricLogic",
+      "url": "https://metriclogic.dev"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "DNS Propagation Checker — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 4,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Enter the domain to query."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Select the record type (A, AAAA, MX, TXT, or CNAME)."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Click Check Propagation."
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Compare resolver responses for split-brain or incomplete propagation."
+    }
+  ]
+}
+  </script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
@@ -264,6 +326,9 @@
       transition: transform 0.25s ease, opacity 0.25s ease;
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+    .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; }
+    .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -348,6 +413,16 @@
       </p>
     </section>
   </main>
+
+  <section class="how-to-use">
+    <div class="how-to-use-label">HOW TO USE</div>
+    <ol class="how-to-use-steps">
+      <li>Enter the domain to query.</li>
+      <li>Select the record type (A, AAAA, MX, TXT, or CNAME).</li>
+      <li>Click Check Propagation.</li>
+      <li>Compare resolver responses for split-brain or incomplete propagation.</li>
+    </ol>
+  </section>
 
   <footer>
     <div class="footer-inner">

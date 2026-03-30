@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"DKIM for subdomain email","description":"DKIM for subdomains requires publishing a separate DKIM TXT at selector._domainkey.subdomain.domain. Parent domain DKIM does not automatically cover subdomains.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Identify sending subdomain","url":"https://domainpreflight.dev/fix/dkim/subdomain/#step1","text":"Step 1 Identify the subdomain that sends mail and the From / signing domain"},{"@type":"HowToStep","position":2,"name":"Get DKIM from provider","url":"https://domainpreflight.dev/fix/dkim/subdomain/#step2","text":"Step 2 Obtain selector and record values from your ESP or MTA"},{"@type":"HowToStep","position":3,"name":"Publish under subdomain zone","url":"https://domainpreflight.dev/fix/dkim/subdomain/#step3","text":"Step 3 Publish at selector._domainkey.<subdomain>.yourdomain.com"},{"@type":"HowToStep","position":4,"name":"Align DMARC","url":"https://domainpreflight.dev/fix/dkim/subdomain/#step4","text":"Step 4 Align DMARC: use sp= or subdomain DMARC as needed"},{"@type":"HowToStep","position":5,"name":"Verify","url":"https://domainpreflight.dev/fix/dkim/subdomain/#step5","text":"Step 5 Verify in DNS Preflight and with a live test send"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,43 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DKIM Fixes","item":"https://domainpreflight.dev/fix/dkim/"},{"@type":"ListItem","position":4,"name":"Subdomain","item":"https://domainpreflight.dev/fix/dkim/subdomain/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "DKIM for Subdomain Email — Setup Guide — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 5,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Identify the subdomain that sends mail and the From / signing domain"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Obtain selector and record values from your ESP or MTA"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Publish at selector._domainkey.<subdomain>.yourdomain.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Align DMARC: use sp= or subdomain DMARC as needed"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Verify in DNS Preflight and with a live test send"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

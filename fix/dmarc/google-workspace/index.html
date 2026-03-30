@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for Google Workspace","description":"Google Workspace automatically handles DMARC alignment when DKIM is enabled in Google Admin. The most common failure is DKIM not being turned on — Google signs email with a temporary key until you generate and publish your own 2048-bit DKIM key.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Gmail Authenticate email","url":"https://domainpreflight.dev/fix/dmarc/google-workspace/#step1","text":"Step 1 Google Admin → Apps → Gmail → Authenticate email"},{"@type":"HowToStep","position":2,"name":"Select domain and generate record","url":"https://domainpreflight.dev/fix/dmarc/google-workspace/#step2","text":"Step 2 Select your domain and click Generate new record"},{"@type":"HowToStep","position":3,"name":"Choose 2048-bit key","url":"https://domainpreflight.dev/fix/dmarc/google-workspace/#step3","text":"Step 3 Choose 2048-bit key length"},{"@type":"HowToStep","position":4,"name":"Publish TXT at google._domainkey","url":"https://domainpreflight.dev/fix/dmarc/google-workspace/#step4","text":"Step 4 Copy the TXT record value and add it to your DNS at google._domainkey.yourdomain.com"},{"@type":"HowToStep","position":5,"name":"Start authentication in Admin","url":"https://domainpreflight.dev/fix/dmarc/google-workspace/#step5","text":"Step 5 Return to Google Admin and click Start authentication"},{"@type":"HowToStep","position":6,"name":"Verify with DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/google-workspace/#step6","text":"Step 6 Run DNS Preflight to confirm DKIM pass and alignment"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,48 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DMARC Fixes","item":"https://domainpreflight.dev/fix/dmarc/"},{"@type":"ListItem","position":4,"name":"Google Workspace","item":"https://domainpreflight.dev/fix/dmarc/google-workspace/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Fix DMARC Alignment for Google Workspace — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Google Admin → Apps → Gmail → Authenticate email"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Select your domain and click Generate new record"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Choose 2048-bit key length"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Copy the TXT record value and add it to your DNS at google._domainkey.yourdomain.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Return to Google Admin and click Start authentication"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Run DNS Preflight to confirm DKIM pass and alignment"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

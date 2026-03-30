@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Article","headline":"Subdomain Security: Dangling Records and Takeover Prevention","description":"Dangling CNAMEs, takeover mechanics, cloud targets, and how to find and delete risky records.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/learn/subdomain-security/"}}
   </script>
   <script type="application/ld+json">
@@ -23,7 +23,48 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Learn","item":"https://domainpreflight.dev/learn/"},{"@type":"ListItem","position":3,"name":"Subdomain security","item":"https://domainpreflight.dev/learn/subdomain-security/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Subdomain Security: Dangling Records and Takeover Prevention — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Old marketing sites and POC apps are common culprits."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Fingerprint known takeover patterns quickly."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "If NXDOMAIN or unclaimed bucket — you are exposed."
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Removing the CNAME removes attacker control."
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Avoid pointing names at resources you cannot claim."
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Quarterly audits catch drift between teams."
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to set up SPF for Microsoft 365","description":"To authorize Microsoft 365 to send email for your domain, add include:spf.protection.outlook.com to your SPF TXT record. This covers all Microsoft 365 sending infrastructure.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Check existing SPF","url":"https://domainpreflight.dev/fix/spf/microsoft-365/#step1","text":"Step 1 Check existing SPF record"},{"@type":"HowToStep","position":2,"name":"Add M365 include","url":"https://domainpreflight.dev/fix/spf/microsoft-365/#step2","text":"Step 2 Add include:spf.protection.outlook.com"},{"@type":"HowToStep","position":3,"name":"Verify in DNS Preflight","url":"https://domainpreflight.dev/fix/spf/microsoft-365/#step3","text":"Step 3 Verify in DNS Preflight"},{"@type":"HowToStep","position":4,"name":"Configure DKIM","url":"https://domainpreflight.dev/fix/spf/microsoft-365/#step4","text":"Step 4 Also configure DKIM selectors for full alignment — see DKIM for Microsoft 365"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,38 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"SPF Fixes","item":"https://domainpreflight.dev/fix/spf/"},{"@type":"ListItem","position":4,"name":"Microsoft 365","item":"https://domainpreflight.dev/fix/spf/microsoft-365/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Set Up SPF for Microsoft 365 — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 4,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Check existing SPF record"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Add include:spf.protection.outlook.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Verify in DNS Preflight"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Also configure DKIM selectors for full alignment — see DKIM for Microsoft 365"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

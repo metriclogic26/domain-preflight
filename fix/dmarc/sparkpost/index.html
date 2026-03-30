@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to fix DMARC alignment for SparkPost","description":"SparkPost (now part of MessageBird) DMARC alignment requires a dedicated sending domain with CNAME records for DKIM and a custom bounce domain for SPF alignment.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Sending Domains","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step1","text":"Step 1 SparkPost → Account → Sending Domains"},{"@type":"HowToStep","position":2,"name":"Add domain","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step2","text":"Step 2 Create sending domain and copy DNS records"},{"@type":"HowToStep","position":3,"name":"Add DKIM CNAMEs","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step3","text":"Step 3 Point DKIM CNAMEs to SparkPost DKIM hosts"},{"@type":"HowToStep","position":4,"name":"Configure bounce domain","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step4","text":"Step 4 Add bounce domain CNAME for SPF alignment"},{"@type":"HowToStep","position":5,"name":"Verify in SparkPost","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step5","text":"Step 5 Wait for verification in SparkPost"},{"@type":"HowToStep","position":6,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/fix/dmarc/sparkpost/#step6","text":"Step 6 Confirm alignment with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,48 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DMARC Fixes","item":"https://domainpreflight.dev/fix/dmarc/"},{"@type":"ListItem","position":4,"name":"SparkPost","item":"https://domainpreflight.dev/fix/dmarc/sparkpost/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Fix DMARC Alignment for SparkPost — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "SparkPost → Account → Sending Domains"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Create sending domain and copy DNS records"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Point DKIM CNAMEs to SparkPost DKIM hosts"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Add bounce domain CNAME for SPF alignment"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Wait for verification in SparkPost"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Confirm alignment with DNS Preflight"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

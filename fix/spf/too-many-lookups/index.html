@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to fix SPF PermError: Too Many DNS Lookups","description":"SPF allows a maximum of 10 DNS lookups during evaluation. When your SPF record triggers more than 10 lookups, receiving servers return a PermError. The fix is to flatten your SPF record by replacing include: references with their resolved IP addresses.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Run DNS Preflight SPF tree","url":"https://domainpreflight.dev/fix/spf/too-many-lookups/#step1","text":"Step 1 Run DNS Preflight and expand the SPF lookup tree to see your current count"},{"@type":"HowToStep","position":2,"name":"Identify heavy includes","url":"https://domainpreflight.dev/fix/spf/too-many-lookups/#step2","text":"Step 2 Identify which includes are consuming the most lookups"},{"@type":"HowToStep","position":3,"name":"Fetch provider IP ranges","url":"https://domainpreflight.dev/fix/spf/too-many-lookups/#step3","text":"Step 3 For high-lookup providers, fetch their current IP ranges from their documentation"},{"@type":"HowToStep","position":4,"name":"Replace with ip4 and ip6","url":"https://domainpreflight.dev/fix/spf/too-many-lookups/#step4","text":"Step 4 Replace include: with ip4: and ip6: entries for those providers"},{"@type":"HowToStep","position":5,"name":"Verify under 10 lookups","url":"https://domainpreflight.dev/fix/spf/too-many-lookups/#step5","text":"Step 5 Verify your new record stays under 10 lookups using DNS Preflight"},{"@type":"HowToStep","position":6,"name":"Publish and re-check","url":"https://domainpreflight.dev/fix/spf/too-many-lookups/#step6","text":"Step 6 Publish the updated TXT record and re-run DNS Preflight to confirm"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,48 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"SPF Fixes","item":"https://domainpreflight.dev/fix/spf/"},{"@type":"ListItem","position":4,"name":"Too Many Lookups","item":"https://domainpreflight.dev/fix/spf/too-many-lookups/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Fix SPF PermError: Too Many DNS Lookups — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Run DNS Preflight and expand the SPF lookup tree to see your current count"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Identify which includes are consuming the most lookups"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "For high-lookup providers, fetch their current IP ranges from their documentation"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Replace include: with ip4: and ip6: entries for those providers"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Verify your new record stays under 10 lookups using DNS Preflight"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Publish the updated TXT record and re-run DNS Preflight to confirm"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

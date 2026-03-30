@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Article","headline":"How to Set Up an SPF Record: The Complete Guide","description":"Build a valid SPF record, stay under the 10-lookup limit, fix PermError, and test with DNS Preflight.","datePublished":"2026-03-19","dateModified":"2026-03-19","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/learn/spf/"}}
   </script>
   <script type="application/ld+json">
@@ -23,7 +23,48 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Learn","item":"https://domainpreflight.dev/learn/"},{"@type":"ListItem","position":3,"name":"SPF Record","item":"https://domainpreflight.dev/learn/spf/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Set Up an SPF Record: The Complete Guide — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 6,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Mailboxes, marketing, support tools, billing — each may need an include or dedicated envelope domain."
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Example: v=spf1 include:_spf.google.com include:sendgrid.net ~all — adjust to your stack."
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Multiple SPF TXT strings at the same owner break SPF; consolidate."
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Stay under 10 lookups to avoid PermError; trim unused vendors first."
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Query authoritative NS before declaring victory."
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Use headers or DNS Preflight to confirm spf=pass on each path."
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

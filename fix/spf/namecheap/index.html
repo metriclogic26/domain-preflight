@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to add an SPF record in Namecheap","description":"Adding an SPF record in Namecheap requires creating a TXT record in Advanced DNS. Use @ as the host and your full SPF value as the record value.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"Namecheap account"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Namecheap domain","url":"https://domainpreflight.dev/fix/spf/namecheap/#step1","text":"Step 1 Namecheap → Domain List → Manage → Advanced DNS"},{"@type":"HowToStep","position":2,"name":"Add TXT record","url":"https://domainpreflight.dev/fix/spf/namecheap/#step2","text":"Step 2 Add New Record → TXT Record"},{"@type":"HowToStep","position":3,"name":"Host and value","url":"https://domainpreflight.dev/fix/spf/namecheap/#step3","text":"Step 3 Host: @ · Value: full SPF string"},{"@type":"HowToStep","position":4,"name":"TTL","url":"https://domainpreflight.dev/fix/spf/namecheap/#step4","text":"Step 4 TTL: Automatic (or 5–15 min while testing)"},{"@type":"HowToStep","position":5,"name":"Save and verify","url":"https://domainpreflight.dev/fix/spf/namecheap/#step5","text":"Step 5 Save and verify with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,43 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"SPF Fixes","item":"https://domainpreflight.dev/fix/spf/"},{"@type":"ListItem","position":4,"name":"Namecheap","item":"https://domainpreflight.dev/fix/spf/namecheap/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Add an SPF Record in Namecheap — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 5,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Namecheap → Domain List → Manage → Advanced DNS"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Add New Record → TXT Record"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Host: @ · Value: full SPF string"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "TTL: Automatic (or 5–15 min while testing)"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Save and verify with DNS Preflight"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

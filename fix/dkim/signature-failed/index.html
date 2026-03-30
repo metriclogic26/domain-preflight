@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"Fix DKIM signature verification failed","description":"DKIM signature verification fails when the public key in DNS does not match the private key, when the message body was altered in transit, or when the DKIM record is missing or malformed.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"Email headers and DNS access"},"tool":{"@type":"HowToTool","name":"DomainPreflight Email tool","url":"https://domainpreflight.dev/email/"},"step":[{"@type":"HowToStep","position":1,"name":"Capture headers","url":"https://domainpreflight.dev/fix/dkim/signature-failed/#step1","text":"Step 1 Export full headers from a failing message"},{"@type":"HowToStep","position":2,"name":"Note selector and d= domain","url":"https://domainpreflight.dev/fix/dkim/signature-failed/#step2","text":"Step 2 Read DKIM-Signature for s= (selector) and d= (signing domain)"},{"@type":"HowToStep","position":3,"name":"Check DNS at selector","url":"https://domainpreflight.dev/fix/dkim/signature-failed/#step3","text":"Step 3 Look up s._domainkey.d in DNS Preflight"},{"@type":"HowToStep","position":4,"name":"Compare with provider","url":"https://domainpreflight.dev/fix/dkim/signature-failed/#step4","text":"Step 4 Confirm the published key matches what your provider uses for signing"},{"@type":"HowToStep","position":5,"name":"Paste into Email tool","url":"https://domainpreflight.dev/fix/dkim/signature-failed/#step5","text":"Step 5 Paste headers into Email for structured analysis"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,43 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"DKIM Fixes","item":"https://domainpreflight.dev/fix/dkim/"},{"@type":"ListItem","position":4,"name":"Signature Failed","item":"https://domainpreflight.dev/fix/dkim/signature-failed/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "DKIM Signature Verification Failed — Fix Guide — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 5,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Export full headers from a failing message"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Read DKIM-Signature for s= (selector) and d= (signing domain)"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Look up s._domainkey.d in DNS Preflight"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Confirm the published key matches what your provider uses for signing"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Paste headers into Email for structured analysis"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

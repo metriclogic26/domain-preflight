@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to set up SPF with multiple email providers","description":"When you use multiple email providers, all providers must be listed in a single SPF record. Separate SPF records cause an immediate PermError.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS record editor"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"List sending services","url":"https://domainpreflight.dev/fix/spf/multiple-providers/#step1","text":"Step 1 List all services that send email for your domain"},{"@type":"HowToStep","position":2,"name":"Find each include","url":"https://domainpreflight.dev/fix/spf/multiple-providers/#step2","text":"Step 2 Find each provider's SPF include value"},{"@type":"HowToStep","position":3,"name":"Combine into one record","url":"https://domainpreflight.dev/fix/spf/multiple-providers/#step3","text":"Step 3 Combine into one TXT record with a single v=spf1 prefix"},{"@type":"HowToStep","position":4,"name":"Check lookup count","url":"https://domainpreflight.dev/fix/spf/multiple-providers/#step4","text":"Step 4 Check lookup count in DNS Preflight — must stay under 10"},{"@type":"HowToStep","position":5,"name":"Remove duplicates","url":"https://domainpreflight.dev/fix/spf/multiple-providers/#step5","text":"Step 5 Delete any duplicate SPF records"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,43 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"SPF Fixes","item":"https://domainpreflight.dev/fix/spf/"},{"@type":"ListItem","position":4,"name":"Multiple Providers","item":"https://domainpreflight.dev/fix/spf/multiple-providers/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Set Up SPF with Multiple Email Providers — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 5,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "List all services that send email for your domain"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Find each provider's SPF include value"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Combine into one TXT record with a single v=spf1 prefix"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Check lookup count in DNS Preflight — must stay under 10"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Delete any duplicate SPF records"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }

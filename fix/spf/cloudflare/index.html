@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
-  <script type="application/ld+json">
+    <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"How to add an SPF record in Cloudflare","description":"Adding an SPF record in Cloudflare requires creating a TXT record in the DNS dashboard. Add your email provider's include statement as the SPF value.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"Cloudflare DNS access"},"tool":{"@type":"HowToTool","name":"DomainPreflight DNS Preflight","url":"https://domainpreflight.dev/"},"step":[{"@type":"HowToStep","position":1,"name":"Open Cloudflare DNS","url":"https://domainpreflight.dev/fix/spf/cloudflare/#step1","text":"Step 1 Cloudflare → your domain → DNS → Records"},{"@type":"HowToStep","position":2,"name":"Add TXT record","url":"https://domainpreflight.dev/fix/spf/cloudflare/#step2","text":"Step 2 Add record → Type: TXT"},{"@type":"HowToStep","position":3,"name":"Set name and value","url":"https://domainpreflight.dev/fix/spf/cloudflare/#step3","text":"Step 3 Name: @ (apex). Value: full v=spf1 … ~all"},{"@type":"HowToStep","position":4,"name":"Proxy and TTL","url":"https://domainpreflight.dev/fix/spf/cloudflare/#step4","text":"Step 4 Use TTL: Auto . For mail-related records, keep orange-cloud off if your UI distinguishes proxy (often N/A for TXT)"},{"@type":"HowToStep","position":5,"name":"Save and verify","url":"https://domainpreflight.dev/fix/spf/cloudflare/#step5","text":"Step 5 Save and verify with DNS Preflight"}]}
   </script>
   <script type="application/ld+json">
@@ -20,7 +20,43 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://domainpreflight.dev/fix/"},{"@type":"ListItem","position":3,"name":"SPF Fixes","item":"https://domainpreflight.dev/fix/spf/"},{"@type":"ListItem","position":4,"name":"Cloudflare","item":"https://domainpreflight.dev/fix/spf/cloudflare/"}]}
   </script>
-  <style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "How to Add an SPF Record in Cloudflare — Step by Step",
+  "itemListOrder": "https://schema.org/ItemListOrderAscending",
+  "numberOfItems": 5,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Cloudflare → your domain → DNS → Records"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Add record → Type: TXT"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Name: @ (apex). Value: full v=spf1 … ~all"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Use TTL: Auto . For mail-related records, keep orange-cloud off if your UI distinguishes proxy (often N/A for TXT)"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Save and verify with DNS Preflight"
+    }
+  ]
+}
+  </script>
+      <style>
     :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
