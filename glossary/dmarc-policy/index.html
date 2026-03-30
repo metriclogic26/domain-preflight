@@ -15,7 +15,7 @@
   "@context": "https://schema.org",
   "@type": "DefinedTerm",
   "name": "DMARC Policy",
-  "description": "A DMARC policy (the p= tag in your DMARC record) tells receiving mail servers what to do with emails that fail DMARC checks. There are three policy levels: p=none (monitor only, deliver everything), p=quarantine (send failures to spam), and p=reject (block failures entirely). Start with p=none and progressively tighten after reviewing aggregate reports.",
+  "description": "DMARC p=none is monitoring mode — it means your DMARC record exists but doesn't block or quarantine anything. Emails that fail DMARC are still delivered. You receive daily aggregate reports showing what's failing, but nothing is enforced until you change to p=quarantine or p=reject.",
   "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
 }
   </script>
@@ -179,7 +179,7 @@
     <article>
       <p class="hero-label">Glossary</p>
       <h1>DMARC Policy — none, quarantine, reject Explained</h1>
-      <p>A DMARC policy (the p= tag in your DMARC record) tells receiving mail servers what to do with emails that fail DMARC checks. There are three policy levels: p=none (monitor only, deliver everything), p=quarantine (send failures to spam), and p=reject (block failures entirely). Start with p=none and progressively tighten after reviewing aggregate reports.</p>
+      <p>DMARC p=none is monitoring mode — it means your DMARC record exists but doesn't block or quarantine anything. Emails that fail DMARC are still delivered. You receive daily aggregate reports showing what's failing, but nothing is enforced until you change to p=quarantine or p=reject.</p>
       <h2>The Three Policy Levels</h2>
       <ul>
         <li><strong>p=none</strong> — monitoring mode. Failures are reported but all email is delivered. Safe starting point.</li>
