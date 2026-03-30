@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DMARC Record — How to Add Your Policy and Start Getting Reports — DomainPreflight</title>
-  <meta name="description" content="Add _dmarc TXT with p=none first, then tighten. Use DomainPreflight for policy checks and DMARC XML analyzer.">
+  <title>DMARC Record — Setup Guide and Generator | DomainPreflight</title>
+  <meta name="description" content="Generate your DMARC TXT record instantly. Set policy, reporting email, and subdomain policy — copy formatted for Cloudflare or Namecheap.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/dns/dmarc-record/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,6 +57,164 @@
     .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
     .internal-links a { color: var(--purple); text-decoration: none; }
     .internal-links a:hover { text-decoration: underline; }
+    .dmarc-generator {
+      background: var(--surface, #13151F);
+      border: 1px solid var(--border, #1E2236);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    article .dmarc-generator > h2 { margin-top: 0; }
+    .dmarc-generator > p { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.25rem; }
+    .dmarc-gen-fields { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 0.5rem; }
+    .dmarc-field { border: none; padding: 0; margin: 0; }
+    .gen-label,
+    .dmarc-field > label.gen-label {
+      display: block;
+      color: #8a8fb5;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.45rem;
+    }
+    .dmarc-radios { display: flex; flex-direction: column; gap: 0.5rem; }
+    .dmarc-radios label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: var(--text2);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .dmarc-radios input[type="radio"] {
+      accent-color: #6C63FF;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+    .dmarc-field-input {
+      width: 100%;
+      background: #0B0D14;
+      border: 1px solid #1E2236;
+      color: #E2E4F0;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .dmarc-field-input:focus {
+      outline: none;
+      border-color: #6C63FF;
+    }
+    .dmarc-field select.dmarc-field-input {
+      cursor: pointer;
+    }
+    .gen-helper {
+      color: #8a8fb5;
+      font-size: 11px;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .pct-row-inner { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .dmarc-field input[type="range"] {
+      flex: 1;
+      min-width: 8rem;
+      accent-color: #6C63FF;
+    }
+    .dmarc-pct-readout {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #6C63FF;
+      font-weight: 600;
+      min-width: 2.5rem;
+    }
+    .generator-output {
+      background: #0B0D14;
+      border: 1px solid #6C63FF;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .output-label {
+      color: var(--text2);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 0.25rem;
+    }
+    .output-record {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #22C55E;
+      word-break: break-all;
+      margin: 0.5rem 0 1rem;
+      line-height: 1.6;
+    }
+    .output-dns-fields {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .dns-field {
+      background: #1A1E2E;
+      border: 1px solid #2A2D3E;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #8a8fb5;
+    }
+    .copy-btn {
+      background: #6C63FF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .copy-btn:hover { filter: brightness(1.08); }
+    .copy-cf-btn, .copy-namecheap-btn {
+      background: transparent;
+      border: 1px solid #6C63FF;
+      color: #6C63FF;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .copy-cf-btn:hover, .copy-namecheap-btn:hover {
+      background: #6C63FF;
+      color: white;
+    }
+    .dmarc-toast {
+      position: fixed;
+      bottom: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      z-index: 200;
+      background: var(--surface);
+      border: 1px solid var(--purple);
+      color: var(--text);
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      pointer-events: none;
+      max-width: 90vw;
+    }
+    .dmarc-toast.is-visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
     footer { border-top: 1px solid var(--border); background: var(--surface); }
     .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
     .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
@@ -126,6 +284,67 @@
       <div class="howto-step" id="step4"><strong>Step 4</strong> Change to p=quarantine.</div>
       <div class="howto-step" id="step5"><strong>Step 5</strong> Monitor for 1 week → change to p=reject.</div>
       <div class="howto-step" id="step6"><strong>Step 6</strong> Run DNS Preflight to confirm new policy is live.</div>
+
+      <section class="dmarc-generator" id="dmarc-generator" aria-labelledby="dmarc-generator-heading">
+        <h2 id="dmarc-generator-heading">Generate Your DMARC Record</h2>
+        <p>Fill in your settings and copy the finished TXT record — ready to paste into your DNS provider.</p>
+
+        <div class="dmarc-gen-fields">
+          <fieldset class="dmarc-field">
+            <legend class="gen-label">Policy (p=)</legend>
+            <div class="dmarc-radios">
+              <label><input type="radio" name="dmarc-policy" value="none" checked> <span><strong>none</strong> — Monitor only, no enforcement</span></label>
+              <label><input type="radio" name="dmarc-policy" value="quarantine"> <span><strong>quarantine</strong> — Send failures to spam</span></label>
+              <label><input type="radio" name="dmarc-policy" value="reject"> <span><strong>reject</strong> — Block failures entirely</span></label>
+            </div>
+          </fieldset>
+
+          <div class="dmarc-field">
+            <label class="gen-label" for="dmarc-rua">Aggregate report email (rua=)</label>
+            <input type="email" class="dmarc-field-input" id="dmarc-rua" name="rua" placeholder="dmarc@yourdomain.com" autocomplete="email" inputmode="email">
+            <p class="gen-helper">Where daily XML reports are sent. Recommended — leave blank to skip.</p>
+          </div>
+
+          <div class="dmarc-field">
+            <label class="gen-label" for="dmarc-sp">Subdomain policy (sp=) — optional</label>
+            <select class="dmarc-field-input" id="dmarc-sp" name="sp">
+              <option value="">(same as p=)</option>
+              <option value="none">none</option>
+              <option value="quarantine">quarantine</option>
+              <option value="reject">reject</option>
+            </select>
+          </div>
+
+          <div class="dmarc-field" id="pct-row" style="display: none;">
+            <label class="gen-label" for="dmarc-pct">Enforcement percentage (pct=)</label>
+            <div class="pct-row-inner">
+              <input type="range" class="dmarc-pct-slider" id="dmarc-pct" name="pct" min="1" max="100" value="100" step="1" aria-describedby="dmarc-pct-help">
+              <span class="dmarc-pct-readout" id="dmarc-pct-readout" aria-live="polite">100</span><span class="dmarc-pct-readout" style="color:#8a8fb5;font-weight:400">%</span>
+            </div>
+            <p class="gen-helper" id="dmarc-pct-help">100 = enforce on all mail. Use lower % to roll out gradually.</p>
+          </div>
+
+          <div class="dmarc-field">
+            <label class="gen-label" for="dmarc-ruf">Forensic report email (ruf=) — optional</label>
+            <input type="email" class="dmarc-field-input" id="dmarc-ruf" name="ruf" placeholder="dmarc-forensic@yourdomain.com" autocomplete="email" inputmode="email">
+            <p class="gen-helper">Per-failure reports. Privacy-sensitive — most senders skip this.</p>
+          </div>
+        </div>
+
+        <div class="generator-output">
+          <div class="output-label">Your DMARC TXT record</div>
+          <div class="output-record" id="dmarc-output">v=DMARC1; p=none</div>
+          <div class="output-dns-fields">
+            <span class="dns-field">Type: TXT</span>
+            <span class="dns-field">Name: _dmarc</span>
+            <span class="dns-field">TTL: Auto</span>
+          </div>
+          <button type="button" class="copy-btn" onclick="copyDMARC()">Copy record</button>
+          <button type="button" class="copy-cf-btn" onclick="copyCloudflareDMARC()">Copy for Cloudflare →</button>
+          <button type="button" class="copy-namecheap-btn" onclick="copyNamecheapDMARC()">Copy for Namecheap →</button>
+        </div>
+      </section>
+
       <section class="faq-section" aria-label="FAQ">
         <h2>FAQ</h2>
         <h3>What is a DMARC record?</h3>
@@ -139,6 +358,7 @@
         <h3>What is the pct= tag?</h3>
         <p>Percentage of email to apply the policy to. pct=10 with p=quarantine affects 10% of failing emails — useful for gradual rollout.</p>
       </section>
+
       <div class="internal-links">
         <p><a href="/dns/">← All DNS record guides</a></p>
         <p><a href="https://domainpreflight.dev/">Open DomainPreflight →</a></p>
@@ -152,5 +372,95 @@
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
     </div>
   </footer>
+  <div id="dmarc-toast" class="dmarc-toast" role="status" aria-live="polite"></div>
+  <script>
+function showToast(msg) {
+  var el = document.getElementById("dmarc-toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add("is-visible");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(function () {
+    el.classList.remove("is-visible");
+  }, 2200);
+}
+
+function togglePct() {
+  var checked = document.querySelector('input[name="dmarc-policy"]:checked');
+  var policy = checked ? checked.value : "none";
+  var pctRow = document.getElementById("pct-row");
+  if (!pctRow) return;
+  pctRow.style.display = policy === "none" ? "none" : "block";
+}
+
+function buildDMARC() {
+  var policyEl = document.querySelector('input[name="dmarc-policy"]:checked');
+  var policy = policyEl ? policyEl.value : "none";
+  var rua = document.getElementById("dmarc-rua").value.trim();
+  var ruf = document.getElementById("dmarc-ruf").value.trim();
+  var sp = document.getElementById("dmarc-sp").value;
+  var pctEl = document.getElementById("dmarc-pct");
+  var pct = parseInt(pctEl.value, 10) || 100;
+  var readout = document.getElementById("dmarc-pct-readout");
+  if (readout) readout.textContent = String(pct);
+
+  var record = "v=DMARC1; p=" + policy;
+  if (rua) record += "; rua=mailto:" + rua;
+  if (ruf) record += "; ruf=mailto:" + ruf;
+  if (sp) record += "; sp=" + sp;
+  if (policy !== "none" && pct < 100) record += "; pct=" + pct;
+
+  document.getElementById("dmarc-output").textContent = record;
+  togglePct();
+}
+
+function copyText(text, toastMsg) {
+  function ok() {
+    showToast(toastMsg);
+  }
+  function fallback() {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+      ok();
+    } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(ok).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+function copyDMARC() {
+  var val = document.getElementById("dmarc-output").textContent;
+  copyText(val, "DMARC record copied \u2713");
+}
+
+function copyCloudflareDMARC() {
+  var val = document.getElementById("dmarc-output").textContent;
+  var cf = "Type: TXT\nName: _dmarc\nValue: " + val + "\nTTL: Auto";
+  copyText(cf, "Copied Cloudflare format \u2713");
+}
+
+function copyNamecheapDMARC() {
+  var val = document.getElementById("dmarc-output").textContent;
+  var nc = "Type: TXT Record\nHost: _dmarc\n" + "Value: " + val + "\nTTL: Automatic";
+  copyText(nc, "Copied Namecheap format \u2713");
+}
+
+document.querySelectorAll("#dmarc-generator input, #dmarc-generator select").forEach(function (el) {
+  el.addEventListener("input", buildDMARC);
+  el.addEventListener("change", buildDMARC);
+});
+
+buildDMARC();
+  </script>
 </body>
 </html>
