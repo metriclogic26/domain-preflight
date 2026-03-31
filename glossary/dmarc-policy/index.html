@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DMARC Policy — none, quarantine, reject Explained — DomainPreflight Glossary</title>
-  <meta name="description" content="DMARC policy (p=) tells receivers whether to monitor, quarantine, or reject mail that fails DMARC — start at none, tighten over time.">
+  <title>DMARC Policy p=none, quarantine, reject — What Each Means | DomainPreflight</title>
+  <meta name="description" content="DMARC p=none means monitor only — emails still deliver, nothing is blocked. quarantine sends failures to spam. reject blocks them entirely. Here's when to use each.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/glossary/dmarc-policy/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -151,6 +151,33 @@
     .internal-links a { color: var(--purple); text-decoration: none; }
     .internal-links a:hover { text-decoration: underline; }
 
+    .policy-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 1.5rem;
+    }
+    .policy-table th {
+      background: #1A1E2E;
+      color: #8a8fb5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    .policy-table td {
+      border-bottom: 1px solid #1E2236;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #E2E4F0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .policy-table td code {
+      color: #6C63FF;
+    }
+    .policy-table tbody tr:hover {
+      background: #13151F;
+    }
+
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -180,6 +207,36 @@
       <p class="hero-label">Glossary</p>
       <h1>DMARC Policy — none, quarantine, reject Explained</h1>
       <p>DMARC p=none is monitoring mode — it means your DMARC record exists but doesn't block or quarantine anything. Emails that fail DMARC are still delivered. You receive daily aggregate reports showing what's failing, but nothing is enforced until you change to p=quarantine or p=reject.</p>
+      <table class="policy-table">
+        <thead>
+          <tr>
+            <th>Policy</th>
+            <th>What it does</th>
+            <th>Emails blocked?</th>
+            <th>When to use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>p=none</code></td>
+            <td>Monitor only — collect reports</td>
+            <td>No — all email delivered</td>
+            <td>Starting out, first 2-4 weeks</td>
+          </tr>
+          <tr>
+            <td><code>p=quarantine</code></td>
+            <td>Send failures to spam folder</td>
+            <td>Partial — spam folder</td>
+            <td>After reports show clean senders</td>
+          </tr>
+          <tr>
+            <td><code>p=reject</code></td>
+            <td>Block failures entirely</td>
+            <td>Yes — hard reject</td>
+            <td>Full enforcement, all senders aligned</td>
+          </tr>
+        </tbody>
+      </table>
       <h2>The Three Policy Levels</h2>
       <ul>
         <li><strong>p=none</strong> — monitoring mode. Failures are reported but all email is delivered. Safe starting point.</li>
