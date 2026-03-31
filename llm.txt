@@ -108,3 +108,8 @@ Part of the MetricLogic network:
 - packagefix.dev — Dependency security scanner
 - stackfix.dev — Web app security fixers
 - metriclogic.dev — Network hub
+
+## Blog Posts (March 31 2026)
+- /blog/dmarc-none-vs-quarantine-vs-reject/ — DMARC p=none vs quarantine vs reject — which to use and when
+- /blog/spf-too-many-lookups-fix/ — SPF too many DNS lookups — how to find and fix
+- /blog/sendgrid-dmarc-alignment/ — SendGrid DMARC alignment — complete setup guide with 3 CNAMEs
