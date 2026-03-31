@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SendGrid DMARC Alignment — The Complete Setup Guide | DomainPreflight</title>
+  <meta name="description" content="Adding include:sendgrid.net to your SPF record is not enough for DMARC. You need three CNAME records for alignment. Here&#x27;s exactly what to add and why.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/blog/sendgrid-dmarc-alignment/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "SendGrid DMARC Alignment — The Complete Setup Guide",
+  "datePublished": "2026-03-31",
+  "dateModified": "2026-03-31",
+  "author": {
+    "@type": "Organization",
+    "name": "MetricLogic"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "DomainPreflight",
+    "url": "https://domainpreflight.dev/"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://domainpreflight.dev/blog/sendgrid-dmarc-alignment/"
+  }
+}
+  </script>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why does SendGrid fail DMARC even with SPF configured?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The SPF include authorises SendGrid's servers but doesn't fix alignment. The Return-Path still comes from sendgrid.net — not your domain. DMARC alignment fails."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the 3 SendGrid CNAME records for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "em[ID] fixes SPF alignment by routing Return-Path through your domain. s1 and s2 fix DKIM alignment by letting SendGrid sign with your domain's key."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do I find my SendGrid CNAME values?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SendGrid → Settings → Sender Authentication → Authenticate Your Domain. Values are account-specific — generated for your account ID."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will adding CNAMEs break my current sending?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Adding DNS records doesn't interrupt delivery. Alignment improves after SendGrid verifies the records."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I verify SendGrid alignment is working?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run DNS Preflight — the alignment engine checks for SendGrid CNAMEs and shows pass/fail with exactly which records are missing."
+      }
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://domainpreflight.dev/blog/"},{"@type":"ListItem","position":3,"name":"SendGrid DMARC Alignment — The Complete Setup Guide","item":"https://domainpreflight.dev/blog/sendgrid-dmarc-alignment/"}]}
+  </script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root { --bg: #0B0D14; --surface: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.78rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.85rem); font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
+    .post-date { color: var(--text2); font-size: 0.8rem; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+    article p, article li { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul, article ol { margin: 0.5rem 0 1rem 1.25rem; color: var(--text2); font-size: 0.9rem; }
+    pre.code-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .tool-cta { margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-left: 3px solid var(--purple); }
+    .tool-cta p { margin-bottom: 0.5rem; color: var(--text); }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .faq-section h2 { font-size: 1.05rem; margin-top: 2rem; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; color: var(--text2); font-size: 0.9rem; }
+    .internal-links { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.88rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+    footer { border-top: 1px solid var(--border); background: var(--surface); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo"><a href="/">DomainPreflight.</a><span class="pill">BETA</span></div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+        <a href="/blog/">Blog</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/blog/">Blog</a> <span aria-hidden="true">›</span> SendGrid DMARC alignment</nav>
+    <article>
+      <p class="hero-label">Blog</p>
+      <h1>SendGrid DMARC Alignment — The Complete Setup Guide</h1>
+      <p class="post-date"><time datetime="2026-03-31">March 31, 2026</time></p>
+      <p>You added SendGrid to your SPF record. SPF passes. DMARC still fails.</p>
+      <p>This is the most common SendGrid configuration mistake. The SPF include is necessary but not sufficient for DMARC alignment.</p>
+
+      <h2>Why the SPF include isn't enough</h2>
+      <p>SPF passing means SendGrid's servers are authorised to send as your domain.</p>
+      <p>But the Return-Path on your emails still shows @sendgrid.net — not @yourdomain.com.</p>
+      <p>DMARC checks whether the Return-Path domain matches your From: domain. It doesn't. DMARC fails.</p>
+
+      <h2>What You Actually Need — 3 CNAMEs</h2>
+      <p>SendGrid's Sender Authentication gives you three CNAME records. These do two things:</p>
+      <ol>
+        <li>Route your Return-Path through your domain (SPF alignment)</li>
+        <li>Sign email with your domain's DKIM key (DKIM alignment)</li>
+      </ol>
+      <p>Without them, SendGrid signs with sendgrid.net. With them, it signs with yourdomain.com.</p>
+
+      <h2>Where to Find Your CNAMEs</h2>
+      <p>SendGrid Dashboard → Settings → Sender Authentication → Authenticate Your Domain</p>
+      <p>The values are account-specific — your account ID appears in them. Don't copy someone else's values.</p>
+      <p>The pattern looks like this:</p>
+<pre class="code-block">em[ID].yourdomain.com
+CNAME → u[ID].wl.sendgrid.net
+s1._domainkey.yourdomain.com
+CNAME → s1.domainkey.u[ID].wl.sendgrid.net
+s2._domainkey.yourdomain.com
+CNAME → s2.domainkey.u[ID].wl.sendgrid.net</pre>
+
+      <h2>Adding the CNAMEs — by DNS provider</h2>
+      <p><strong>Cloudflare:</strong></p>
+<pre class="code-block">Type: CNAME
+Name: em[ID]  (not the full hostname)
+Target: u[ID].wl.sendgrid.net
+Proxy: DNS only (grey cloud)</pre>
+      <p><strong>Namecheap:</strong></p>
+<pre class="code-block">Type: CNAME
+Host: em[ID]
+Value: u[ID].wl.sendgrid.net
+TTL: Automatic</pre>
+
+      <h2>After Adding the CNAMEs</h2>
+      <p>Wait 48 hours for DNS propagation.</p>
+      <p>Return to SendGrid Sender Authentication and click Verify. SendGrid confirms the records are live.</p>
+      <p>Then run <a href="https://domainpreflight.dev/">DNS Preflight</a> — the alignment visual should show green with SendGrid CNAME confirmed.</p>
+
+      <h2>Still Failing After Adding CNAMEs?</h2>
+      <p>Check these:</p>
+      <ul>
+        <li>Did you add all 3 CNAMEs? All are required.</li>
+        <li>Is the proxy off in Cloudflare? CNAME records for DKIM must be DNS-only.</li>
+        <li>Has 48 hours passed? DNS propagation takes time.</li>
+        <li>Did you click Verify in SendGrid? SendGrid won't use the key until verified.</li>
+      </ul>
+
+      <div class="tool-cta">
+        <p>Check your SendGrid alignment</p>
+        <a href="https://domainpreflight.dev/">Check your SendGrid alignment →</a>
+      </div>
+
+      <div class="glossary-links"><strong>Also read:</strong>
+        <a href="/fix/dmarc/sendgrid/">Fix: SendGrid DMARC</a> ·
+        <a href="/fix/dkim/sendgrid/">Fix: SendGrid DKIM</a> ·
+        <a href="/fix/spf/sendgrid/">Fix: SendGrid SPF</a> ·
+        <a href="/glossary/dmarc-alignment/">DMARC alignment</a> ·
+        <a href="/glossary/dkim-selector/">DKIM selector</a> ·
+        <a href="/blog/sendgrid-cname-setup/">SendGrid CNAME setup</a> ·
+        <a href="/blog/spf-dkim-pass-dmarc-fails/">SPF/DKIM pass, DMARC fails</a>
+      </div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>Why does SendGrid fail DMARC even with SPF configured?</h3>
+        <p>The SPF include authorises SendGrid's servers but doesn't fix alignment. The Return-Path still comes from sendgrid.net — not your domain. DMARC alignment fails.</p>
+        <h3>What are the 3 SendGrid CNAME records for?</h3>
+        <p>em[ID] fixes SPF alignment by routing Return-Path through your domain. s1 and s2 fix DKIM alignment by letting SendGrid sign with your domain's key.</p>
+        <h3>Where do I find my SendGrid CNAME values?</h3>
+        <p>SendGrid → Settings → Sender Authentication → Authenticate Your Domain. Values are account-specific — generated for your account ID.</p>
+        <h3>Will adding CNAMEs break my current sending?</h3>
+        <p>No. Adding DNS records doesn't interrupt delivery. Alignment improves after SendGrid verifies the records.</p>
+        <h3>How do I verify SendGrid alignment is working?</h3>
+        <p>Run DNS Preflight — the alignment engine checks for SendGrid CNAMEs and shows pass/fail with exactly which records are missing.</p>
+      </section>
+      <div class="internal-links">
+        <p><a href="/blog/">← All posts</a></p>
+      </div>
+    </article>
+  </main>
+  <footer>
+    <div class="footer-inner"><p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p></div>
+    <div class="footer-bar">
+      <div><span>DomainPreflight by MetricLogic ·</span> <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a> <span>·</span> <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a> <span>·</span> <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a> <span>·</span> <a href="/glossary/">Glossary</a></div>
+      <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
+    </div>
+  </footer>
+</body>
+</html>
