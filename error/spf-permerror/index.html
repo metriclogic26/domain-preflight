@@ -62,6 +62,211 @@
     .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
     .footer-bar a { color: var(--text2); text-decoration: none; }
     .footer-bar a:hover { color: var(--text); }
+
+    .spf-counter {
+      background: #13151F;
+      border: 1px solid #1E2236;
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .spf-counter h2 {
+      margin-top: 0;
+      color: #E2E4F0;
+      font-size: 1.1rem;
+    }
+
+    .counter-input-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .counter-input-row input {
+      flex: 1;
+      min-width: 200px;
+      background: #0B0D14;
+      border: 1px solid #1E2236;
+      border-radius: 4px;
+      color: #E2E4F0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+    }
+
+    .counter-input-row input:focus {
+      border-color: #6C63FF;
+    }
+
+    .counter-input-row button {
+      background: #6C63FF;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 10px 20px;
+      white-space: nowrap;
+    }
+
+    .counter-input-row button:hover {
+      background: #5a52e0;
+    }
+
+    .counter-result {
+      margin-top: 1.5rem;
+    }
+
+    .lookup-score-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .lookup-score {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #E2E4F0;
+      line-height: 1;
+    }
+
+    .lookup-of {
+      font-size: 1rem;
+      color: #8a8fb5;
+    }
+
+    .lookup-label {
+      font-size: 12px;
+      color: #8a8fb5;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .lookup-bar-wrap {
+      background: #1A1E2E;
+      border-radius: 4px;
+      height: 6px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+
+    .lookup-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease, background 0.4s ease;
+      width: 0%;
+    }
+
+    .lookup-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-bottom: 1rem;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    .status-pass {
+      background: rgba(34,197,94,0.1);
+      color: #22C55E;
+      border: 1px solid rgba(34,197,94,0.2);
+    }
+
+    .status-warn {
+      background: rgba(249,115,22,0.1);
+      color: #F97316;
+      border: 1px solid rgba(249,115,22,0.2);
+    }
+
+    .status-fail {
+      background: rgba(239,68,68,0.1);
+      color: #EF4444;
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .status-neutral {
+      background: rgba(138,143,181,0.1);
+      color: #8a8fb5;
+      border: 1px solid rgba(138,143,181,0.2);
+    }
+
+    .spf-tree {
+      background: #0B0D14;
+      border: 1px solid #1E2236;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .tree-label {
+      color: #8a8fb5;
+      margin-bottom: 0.5rem;
+      font-size: 11px;
+    }
+
+    .tree-node {
+      padding: 2px 0;
+      color: #E2E4F0;
+      line-height: 1.6;
+    }
+
+    .tree-domain {
+      color: #6C63FF;
+    }
+
+    .tree-record {
+      color: #8a8fb5;
+      font-size: 11px;
+    }
+
+    .tree-error .tree-domain {
+      color: #EF4444;
+    }
+
+    .tree-mech .tree-domain {
+      color: #F97316;
+    }
+
+    .counter-cta {
+      margin-top: 0.75rem;
+    }
+
+    .cta-link {
+      color: #6C63FF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .cta-link:hover {
+      text-decoration: underline;
+    }
+
+    .counter-error {
+      color: #EF4444;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-top: 1rem;
+      padding: 8px 12px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 4px;
+    }
+
+    .counter-loading {
+      color: #8a8fb5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-top: 1rem;
+    }
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -88,6 +293,66 @@
       <p class="hero-label">Errors</p>
       <h1>SPF PermError — Your SPF Record Has Too Many Lookups</h1>
       <p class="subtitle">SPF PermError means your SPF record exceeded the 10 DNS lookup limit. Receiving servers treat this as a hard failure — your legitimate emails may be rejected or land in spam. The fix is to reduce your lookups by flattening includes into IP addresses.</p>
+
+      <section class="spf-counter" id="spf-counter">
+        <h2>Count Your SPF Lookups</h2>
+        <p>Enter your domain — see exactly how many lookups your SPF record uses and which providers are causing the problem.</p>
+
+        <div class="counter-input-row">
+          <input
+            type="text"
+            id="spf-domain-input"
+            placeholder="yourdomain.com"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+          />
+          <button type="button" id="spf-count-btn" onclick="countSPFLookups()">
+            Count lookups
+          </button>
+        </div>
+
+        <div id="spf-counter-result" class="counter-result" style="display:none">
+
+          <div class="lookup-score-row">
+            <div class="lookup-score" id="lookup-score-display">
+              <span id="lookup-count">0</span>
+              <span class="lookup-of">of 10</span>
+            </div>
+            <div class="lookup-label" id="lookup-label">
+              lookups used
+            </div>
+          </div>
+
+          <div class="lookup-bar-wrap">
+            <div class="lookup-bar" id="lookup-bar"></div>
+          </div>
+
+          <div id="lookup-status-msg" class="lookup-status"></div>
+
+          <div id="spf-tree-output" class="spf-tree"></div>
+
+          <div class="counter-cta">
+            <a href="https://domainpreflight.dev"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="cta-link">
+              Run full DNS Preflight for complete
+              SPF tree analysis →
+            </a>
+          </div>
+        </div>
+
+        <div id="spf-counter-error" class="counter-error"
+             style="display:none">
+        </div>
+
+        <div id="spf-counter-loading" class="counter-loading"
+             style="display:none">
+          Fetching SPF record...
+        </div>
+      </section>
+
       <h2>What this error means</h2>
       <p>SPF allows exactly 10 DNS lookups to evaluate your record. Add too many email providers — SendGrid, Mailgun, Google, HubSpot — and each one adds lookups. Go over 10 and receivers return PermError. They may reject the mail outright.</p>
 
@@ -144,6 +409,205 @@ After:  v=spf1 ip4:167.89.0.0/17 ip4:198.37.144.0/20 ~all</div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
     </div>
   </footer>
+  <script>
+async function countSPFLookups() {
+  const domain = document.getElementById(
+    'spf-domain-input').value.trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+
+  if (!domain) return;
+
+  const resultEl = document.getElementById(
+    'spf-counter-result');
+  const errorEl = document.getElementById(
+    'spf-counter-error');
+  const loadingEl = document.getElementById(
+    'spf-counter-loading');
+
+  resultEl.style.display = 'none';
+  errorEl.style.display = 'none';
+  loadingEl.style.display = 'block';
+
+  try {
+    const count = { value: 0 };
+    const tree = [];
+    await resolveSPF(domain, count, tree, 0);
+
+    loadingEl.style.display = 'none';
+    renderSPFResult(count.value, tree, domain);
+
+  } catch (err) {
+    loadingEl.style.display = 'none';
+    errorEl.textContent = 'Could not fetch SPF record for '
+      + domain + '. Check the domain and try again.';
+    errorEl.style.display = 'block';
+  }
+}
+
+async function resolveSPF(domain, count, tree, depth) {
+  if (depth > 5) return;
+
+  const url = 'https://cloudflare-dns.com/dns-query?name='
+    + encodeURIComponent(domain)
+    + '&type=TXT';
+
+  const res = await fetch(url, {
+    headers: { 'Accept': 'application/dns-json' }
+  });
+
+  if (!res.ok) throw new Error('DNS query failed');
+
+  const data = await res.json();
+  const answers = data.Answer || [];
+
+  const spfRecord = answers
+    .map(a => (a.data || '').replace(/"/g, '').trim())
+    .find(d => d.toLowerCase().startsWith('v=spf1'));
+
+  if (!spfRecord) {
+    tree.push({
+      domain,
+      record: 'No SPF record found',
+      depth,
+      error: true
+    });
+    return;
+  }
+
+  tree.push({ domain, record: spfRecord, depth });
+
+  const mechanisms = spfRecord.split(/\s+/);
+
+  for (const mech of mechanisms) {
+    const lower = mech.toLowerCase();
+
+    if (lower.startsWith('include:')) {
+      count.value++;
+      const includeDomain = mech.slice(8);
+      await resolveSPF(
+        includeDomain, count, tree, depth + 1
+      );
+    } else if (lower.startsWith('a:') ||
+               lower === 'a' ||
+               lower.startsWith('+a') ||
+               lower.startsWith('-a') ||
+               lower.startsWith('~a')) {
+      count.value++;
+      tree.push({
+        domain: lower.startsWith('a:')
+          ? mech.slice(2) : domain,
+        record: 'a mechanism',
+        depth: depth + 1,
+        mechanism: true
+      });
+    } else if (lower.startsWith('mx:') ||
+               lower === 'mx') {
+      count.value++;
+      tree.push({
+        domain: 'mx lookup',
+        record: 'mx mechanism',
+        depth: depth + 1,
+        mechanism: true
+      });
+    } else if (lower.startsWith('ptr:') ||
+               lower === 'ptr') {
+      count.value++;
+    } else if (lower.startsWith('exists:')) {
+      count.value++;
+    } else if (lower.startsWith('redirect=')) {
+      count.value++;
+      const redirectDomain = mech.slice(9);
+      await resolveSPF(
+        redirectDomain, count, tree, depth + 1
+      );
+    }
+  }
+}
+
+function renderSPFResult(count, tree, domain) {
+  const resultEl = document.getElementById(
+    'spf-counter-result');
+  const countEl = document.getElementById(
+    'lookup-count');
+  const barEl = document.getElementById(
+    'lookup-bar');
+  const statusEl = document.getElementById(
+    'lookup-status-msg');
+  const treeEl = document.getElementById(
+    'spf-tree-output');
+
+  countEl.textContent = count;
+
+  const pct = Math.min((count / 10) * 100, 100);
+  barEl.style.width = pct + '%';
+
+  let statusText = '';
+  let statusClass = '';
+
+  if (count === 0) {
+    barEl.style.background = '#8a8fb5';
+    statusText = 'No lookups found — '
+      + 'check your SPF record exists.';
+    statusClass = 'status-neutral';
+  } else if (count <= 7) {
+    barEl.style.background = '#22C55E';
+    statusText = 'You\'re under the limit. '
+      + 'Safe to add 1-2 more senders.';
+    statusClass = 'status-pass';
+  } else if (count <= 10) {
+    barEl.style.background = '#F97316';
+    statusText = 'Getting close to the limit. '
+      + 'Avoid adding more includes.';
+    statusClass = 'status-warn';
+  } else {
+    barEl.style.background = '#EF4444';
+    statusText = 'Over the 10-lookup limit — '
+      + 'SPF PermError. Fix this now.';
+    statusClass = 'status-fail';
+  }
+
+  statusEl.textContent = statusText;
+  statusEl.className = 'lookup-status ' + statusClass;
+
+  let treeHTML = '<div class="tree-label">'
+    + 'SPF lookup tree for '
+    + domain
+    + ':</div>';
+
+  tree.forEach(node => {
+    const indent = node.depth * 20;
+    const prefix = node.depth > 0 ? '└─ ' : '';
+    const cls = node.error
+      ? 'tree-node tree-error'
+      : node.mechanism
+        ? 'tree-node tree-mech'
+        : 'tree-node';
+
+    treeHTML += '<div class="' + cls + '" '
+      + 'style="padding-left:' + indent + 'px">'
+      + prefix
+      + '<span class="tree-domain">'
+      + node.domain + '</span>'
+      + (node.record && !node.mechanism
+        ? '<span class="tree-record"> → '
+          + node.record.substring(0, 60)
+          + (node.record.length > 60 ? '...' : '')
+          + '</span>'
+        : '')
+      + '</div>';
+  });
+
+  treeEl.innerHTML = treeHTML;
+  resultEl.style.display = 'block';
+}
+
+document.getElementById('spf-domain-input')
+  .addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') countSPFLookups();
+  });
+  </script>
 </body>
 </html>
 
