@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMARC ruf= Tag — Forensic Failure Reports — DomainPreflight Glossary</title>
+  <meta name="description" content="The ruf= tag in DMARC requests per-message forensic reports when mail fails DMARC. Why most senders skip ruf= and rely on rua= instead.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/glossary/dmarc-ruf/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "DMARC ruf= Tag (Forensic Reports)",
+  "description": "The ruf= tag in a DMARC record specifies where forensic (failure) reports are sent. Unlike aggregate reports (rua=) which are daily summaries, forensic reports are sent per-message when an email fails DMARC. They contain message-level detail including headers and sometimes message content. Most senders skip ruf= due to privacy concerns and low receiver support.",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the ruf= tag in DMARC?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The email address for per-message forensic failure reports. Unlike rua= aggregate reports, ruf= sends a report for each individual DMARC failure."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I add ruf= to my DMARC record?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most senders don't need it. rua= aggregate reports give sufficient visibility. ruf= is privacy-sensitive and many major providers don't send them anyway."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do Gmail and Yahoo send ruf= reports?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Most major providers don't send forensic reports due to privacy concerns. Only implement ruf= if you have a specific compliance requirement for it."
+        }
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Glossary","item":"https://domainpreflight.dev/glossary/"},{"@type":"ListItem","position":3,"name":"DMARC ruf= Tag","item":"https://domainpreflight.dev/glossary/dmarc-ruf/"}]}
+  </script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root { --bg: #0B0D14; --bg2: #10131f; --bg3: #161924; --border: #1e2236; --purple: #6c63ff; --text: #e2e4f0; --text2: #8a8fb5; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'JetBrains Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    header { position: sticky; top: 0; z-index: 100; background: rgba(11, 13, 20, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.8rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.85rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    article > p:first-of-type { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 1.75rem 0 0.65rem; color: var(--text); }
+    article p { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul { color: var(--text2); font-size: 0.9rem; margin: 0.5rem 0 1rem 1.25rem; }
+    article li { margin-bottom: 0.35rem; }
+    footer { border-top: 1px solid var(--border); padding: 0; background: var(--bg2); }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .faq-section h2 { font-size: 1.05rem; margin-top: 0.5rem; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.88rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight.</a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/glossary/">Glossary</a> <span aria-hidden="true">›</span> DMARC ruf= Tag</nav>
+    <article>
+      <p class="hero-label">Glossary</p>
+      <h1>DMARC ruf= Tag — Forensic Failure Reports</h1>
+      <p>The ruf= tag in a DMARC record specifies where forensic (failure) reports are sent. Unlike aggregate reports (rua=) which are daily summaries, forensic reports are sent per-message when an email fails DMARC. They contain message-level detail including headers and sometimes message content. Most senders skip ruf= due to privacy concerns and low receiver support.</p>
+
+      <h2>ruf= vs rua=</h2>
+      <ul>
+        <li>rua= — daily aggregate, always implement</li>
+        <li>ruf= — per-failure, privacy-sensitive, optional</li>
+      </ul>
+
+      <h2>Why Most Senders Skip ruf=</h2>
+      <p>Many major providers (Gmail, Yahoo) don't send forensic reports due to privacy concerns. The per-message detail can expose user data. Most organizations get sufficient visibility from rua= alone.</p>
+
+      <div class="glossary-links"><strong>Also read:</strong> <a href="/glossary/dmarc-aggregate-report/">DMARC aggregate report</a> · <a href="/glossary/dmarc/">DMARC</a></div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What is the ruf= tag in DMARC?</h3>
+        <p>The email address for per-message forensic failure reports. Unlike rua= aggregate reports, ruf= sends a report for each individual DMARC failure.</p>
+        <h3>Should I add ruf= to my DMARC record?</h3>
+        <p>Most senders don't need it. rua= aggregate reports give sufficient visibility. ruf= is privacy-sensitive and many major providers don't send them anyway.</p>
+        <h3>Do Gmail and Yahoo send ruf= reports?</h3>
+        <p>No. Most major providers don't send forensic reports due to privacy concerns. Only implement ruf= if you have a specific compliance requirement for it.</p>
+      </section>
+
+      <div class="internal-links">
+        <p><a href="/glossary/">← All glossary terms</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
+    </div>
+    <div class="footer-bar">
+      <div>
+        <span>DomainPreflight by MetricLogic ·</span>
+        <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a>
+        <span>·</span>
+        <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a>
+        <span>·</span>
+        <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a>
+        <span>·</span>
+        <a href="/glossary/">Glossary</a>
+      </div>
+      <div>
+        <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a>
+        <span> · </span>
+        <span>MIT Licensed</span>
+        <span> · </span>
+        <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

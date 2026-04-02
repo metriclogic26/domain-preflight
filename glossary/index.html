@@ -144,6 +144,46 @@
 
     <ul class="term-list">
       <li>
+        <a href="/glossary/dangling-dns/">Dangling DNS Record</a>
+        <p>A DNS entry — often a CNAME — still pointing at a deleted external service; attackers can claim the target and host content under your subdomain.</p>
+      </li>
+      <li>
+        <a href="/glossary/certificate-transparency/">Certificate Transparency</a>
+        <p>Public logs of every TLS certificate issued — used to discover subdomains (including forgotten ones) and to power dangling-record scans.</p>
+      </li>
+      <li>
+        <a href="/glossary/homoglyph/">Homoglyph Attack</a>
+        <p>Lookalike characters in domain names (0 vs O, 1 vs l) used to fool users and filters in phishing.</p>
+      </li>
+      <li>
+        <a href="/glossary/dmarc-rua/">DMARC rua= Tag</a>
+        <p>Where daily aggregate XML reports are mailed — without <code>rua=</code> you cannot monitor who sends as your domain.</p>
+      </li>
+      <li>
+        <a href="/glossary/dmarc-ruf/">DMARC ruf= Tag</a>
+        <p>Optional per-message forensic reports on DMARC failures — privacy-heavy; most senders rely on <code>rua=</code> only.</p>
+      </li>
+      <li>
+        <a href="/glossary/spf-include/">SPF include: Mechanism</a>
+        <p>Pulls another domain&apos;s SPF into yours; each <code>include:</code> costs lookups toward the SPF 10-lookup limit.</p>
+      </li>
+      <li>
+        <a href="/glossary/spf-all/">SPF ~all and -all</a>
+        <p>Default for senders not listed in SPF: softfail (<code>~all</code>) vs hardfail (<code>-all</code>).</p>
+      </li>
+      <li>
+        <a href="/glossary/mail-server/">Mail Server</a>
+        <p>Sends and receives email over SMTP; identified by MX; needs SPF, DKIM, DMARC, and PTR for healthy delivery.</p>
+      </li>
+      <li>
+        <a href="/glossary/tls-encryption/">TLS Encryption for Email</a>
+        <p>Encrypts mail in transit; STARTTLS alone is downgradeable without MTA-STS.</p>
+      </li>
+      <li>
+        <a href="/glossary/spf-neutral/">SPF Neutral (?all)</a>
+        <p>No policy assertion — treated like weak/absent SPF; use <code>~all</code> or <code>-all</code> instead.</p>
+      </li>
+      <li>
         <a href="/glossary/spf-record/">SPF Record</a>
         <p>A TXT record that says which servers may send mail for your domain. DNS only gives you ~10 “lookups” before mail servers throw up their hands.</p>
       </li>

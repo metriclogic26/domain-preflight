@@ -41,6 +41,56 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://domainpreflight.dev/glossary/dangling-dns/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/certificate-transparency/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/homoglyph/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/dmarc-rua/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/dmarc-ruf/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/spf-include/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/spf-all/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/mail-server/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/tls-encryption/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/glossary/spf-neutral/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://domainpreflight.dev/glossary/spf-record/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -294,6 +344,11 @@
     <loc>https://domainpreflight.dev/blog/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://domainpreflight.dev/blog/spamhaus-april-8-mirror-sunset/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://domainpreflight.dev/blog/dmarc-none-vs-quarantine-vs-reject/</loc>

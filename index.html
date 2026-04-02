@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DNS Preflight Checker — DomainPreflight</title>
-  <meta name="description" content="DomainPreflight checks PTR/rDNS records, SPF lookup count, DKIM key strength, and DMARC alignment before you send a single email — catching misconfigurations that cause silent delivery failures and spam folder routing. No sending required. No signup. Nothing leaves your browser.">
+  <title>DomainPreflight — Domain Security &amp; Email Authentication Tools</title>
+  <meta name="description" content="Find subdomain takeover risks, typosquat domains, DMARC misconfigurations, and email authentication failures. Free browser tools — no signup, nothing stored.">
   <meta name="keywords" content="SPF checker, DKIM checker, DMARC checker, DNS preflight, email deliverability, PTR record check, IP reputation, MXToolbox alternative">
   <meta name="robots" content="index, follow">
   <meta name="author" content="MetricLogic">
@@ -214,6 +214,57 @@
       max-width: 700px;
       margin-left: auto;
       margin-right: auto;
+    }
+    .hero-highlights {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      width: 100%;
+    }
+    @media (max-width: 640px) {
+      .hero-highlights { grid-template-columns: 1fr; }
+    }
+    .hero-hl-card {
+      display: block;
+      text-align: left;
+      text-decoration: none;
+      color: inherit;
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--purple);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    a.hero-hl-card:hover {
+      background: var(--bg2);
+      border-color: rgba(108, 99, 255, 0.35);
+      border-left-color: var(--purple);
+    }
+    .hero-hl-card--current {
+      cursor: default;
+      border-left-color: var(--purple);
+    }
+    .hero-hl-card--current:hover {
+      background: var(--bg);
+      border-color: var(--border);
+      border-left-color: var(--purple);
+    }
+    .hero-hl-title {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+      line-height: 1.35;
+    }
+    .hero-hl-desc {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--text2);
+      line-height: 1.45;
     }
     .main-grid {
       display: grid;
@@ -790,7 +841,6 @@
     <div class="header-inner">
       <div class="logo">
         <a href="/">DomainPreflight.</a>
-        <span class="pill">BETA</span>
       </div>
       <nav>
         <a href="#" class="active">DNS Preflight</a>
@@ -812,9 +862,9 @@
 
   <main>
     <section class="hero">
-      <div class="hero-label">DNS PREFLIGHT</div>
-      <h1>Check before you send. Not after.</h1>
-      <p class="hero-sub">Your mail can land in spam or vanish quietly when DNS is wrong. We check PTR (reverse DNS), SPF, DKIM, and DMARC before you send — in your browser. No signup. Nothing uploads to us.</p>
+      <div class="hero-label">DOMAIN SECURITY</div>
+      <h1>Find Security Risks Hiding in Your Domain</h1>
+      <p class="hero-sub">DomainPreflight finds subdomain takeover risks, lookalike phishing domains, DMARC misconfigurations, and email authentication failures — all in your browser, no signup required.</p>
     </section>
 
     <div class="main-grid">
@@ -835,6 +885,24 @@
             <button type="button" class="btn-clear" id="clearBtn">✕ Clear</button>
             <button type="button" class="btn-text" id="tryExample" onclick="loadExample()">Try an example</button>
           </div>
+        </div>
+        <div class="hero-highlights" aria-label="More DomainPreflight tools">
+          <a href="/dangling/" class="hero-hl-card">
+            <span class="hero-hl-title">Subdomain takeover detection</span>
+            <span class="hero-hl-desc">Find dangling CNAMEs before attackers do</span>
+          </a>
+          <a href="/typosquat/" class="hero-hl-card">
+            <span class="hero-hl-title">Typosquat monitoring</span>
+            <span class="hero-hl-desc">See which lookalike domains are already live</span>
+          </a>
+          <div class="hero-hl-card hero-hl-card--current">
+            <span class="hero-hl-title">DMARC alignment engine</span>
+            <span class="hero-hl-desc">Detect provider-specific alignment failures</span>
+          </div>
+          <a href="/dmarc/" class="hero-hl-card">
+            <span class="hero-hl-title">DMARC report analyzer</span>
+            <span class="hero-hl-desc">Paste XML — get instant visual breakdown</span>
+          </a>
         </div>
         <section id="results">
           <div class="results-header">
