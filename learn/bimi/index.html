@@ -141,6 +141,21 @@
         <li><strong>Verified Mark Certificate (VMC)</strong> — required for Gmail. Issued by Entrust or DigiCert. Roughly $1,000–1,500/year.</li>
       </ol>
 
+      <h2>What a BIMI DNS Record Looks Like</h2>
+      <p>With VMC (required for Gmail):</p>
+      <div class="dns-block">default._bimi.yourdomain.com TXT
+"v=BIMI1;
+l=https://yourdomain.com/logo.svg;
+a=https://yourdomain.com/vmc.pem"</div>
+      <p>Without VMC (Yahoo and Fastmail only):</p>
+      <div class="dns-block">default._bimi.yourdomain.com TXT
+"v=BIMI1;
+l=https://yourdomain.com/logo.svg;"</div>
+      <p>DNS fields:</p>
+      <div class="dns-block">Type: TXT
+Name: default._bimi
+TTL: Auto</div>
+
       <h2>Step 1 — Verify Your DMARC Policy</h2>
       <p>Run <a href="https://domainpreflight.dev/">DNS Preflight</a> on your domain. The DMARC card must show <code>p=quarantine</code> or <code>p=reject</code> — not <code>p=none</code>.</p>
       <p>If you're at <code>p=none</code>, fix that first. Follow the <a href="/learn/dmarc/">DMARC setup guide</a>.</p>

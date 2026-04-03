@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMARC p=quarantine — What It Means and When to Use It — DomainPreflight Glossary</title>
+  <meta name="description" content="DMARC p=quarantine sends emails that fail authentication to the spam folder instead of the inbox. It's the recommended step between p=none and p=reject. Here's what quarantine does, when to use it, and when to move to p=reject.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://domainpreflight.dev/glossary/dmarc-p-quarantine/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "DMARC p=quarantine",
+  "description": "DMARC p=quarantine tells receiving mail servers to send emails that fail DMARC authentication to the spam folder rather than the inbox. It provides partial protection — failing emails are separated from the inbox but not blocked entirely. p=quarantine is the recommended intermediate step between monitoring (p=none) and full enforcement (p=reject).",
+  "inDefinedTermSet": "https://domainpreflight.dev/glossary/"
+}
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What does DMARC p=quarantine mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Emails failing DMARC go to the spam folder instead of the inbox. Legitimate aligned email is unaffected. It's partial enforcement — between monitoring and full blocking."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is p=quarantine safe to enable?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes — if your DMARC reports show all legitimate senders are aligned. Use pct=10 first to test on 10% of failing mail before going to 100%."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between p=quarantine and p=reject?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "p=quarantine sends failing email to spam. p=reject blocks it entirely. Start with quarantine, move to reject after a clean week."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will p=quarantine affect my legitimate email?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only if some senders aren't properly aligned. Fix all alignment failures at p=none first — then quarantine only affects unauthenticated email."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long should I stay at p=quarantine?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "At least 1 week. Check that no legitimate email is landing in spam. Once reports show 99%+ pass rate — move to p=reject."
+        }
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Glossary","item":"https://domainpreflight.dev/glossary/"},{"@type":"ListItem","position":3,"name":"DMARC p=quarantine","item":"https://domainpreflight.dev/glossary/dmarc-p-quarantine/"}]}
+  </script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
+  <style>
+    :root {
+      --bg: #0B0D14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 13, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+    .logo a { color: var(--purple); text-decoration: none; }
+    .pill { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); margin-left: 0.5rem; color: var(--text2); }
+    nav { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: var(--text2); text-decoration: none; font-size: 0.8rem; }
+    nav a:hover { color: var(--text); }
+    main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
+    h1 { font-size: clamp(1.35rem, 3.5vw, 1.85rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.3; }
+    article > p:first-of-type { color: var(--text2); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.05rem; font-weight: 600; margin: 1.75rem 0 0.65rem; color: var(--text); }
+    article p { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.75rem; }
+    article ul, article ol { color: var(--text2); font-size: 0.9rem; margin: 0.5rem 0 1rem 1.25rem; }
+    article li { margin-bottom: 0.35rem; }
+    pre.code-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.15rem; font-size: 0.78rem; line-height: 1.55; overflow-x: auto; white-space: pre-wrap; word-break: break-word; color: var(--text); margin: 0.75rem 0 1rem; }
+    .policy-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 1.5rem;
+    }
+    .policy-table th {
+      background: #1A1E2E;
+      color: #8a8fb5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    .policy-table td {
+      border-bottom: 1px solid #1E2236;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #E2E4F0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .policy-table td code {
+      color: #6C63FF;
+    }
+    .policy-table tbody tr:hover {
+      background: #13151F;
+    }
+    .tool-cta {
+      margin-top: 2rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      border-left: 3px solid var(--purple);
+    }
+    .tool-cta p { margin-bottom: 0.75rem; color: var(--text); }
+    .tool-cta a { color: var(--purple); font-weight: 600; text-decoration: none; }
+    .tool-cta a:hover { text-decoration: underline; }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 0;
+      background: var(--bg2);
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+    .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
+    .footer-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text2);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-bar a { color: var(--text2); text-decoration: none; }
+    .footer-bar a:hover { color: var(--text); }
+    .breadcrumb { font-size: 0.8rem; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+    .breadcrumb a { color: var(--purple); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .faq-section h3 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.4rem; }
+    .faq-section p { margin-bottom: 0.5rem; }
+    .glossary-links { margin: 1.5rem 0; padding: 1rem 1.15rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; font-size: 0.85rem; color: var(--text2); }
+    .glossary-links a { color: var(--purple); text-decoration: none; }
+    .glossary-links a:hover { text-decoration: underline; }
+    .internal-links { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); font-size: 0.88rem; }
+    .internal-links a { color: var(--purple); text-decoration: none; }
+    .internal-links a:hover { text-decoration: underline; }
+  </style>
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <a href="/">DomainPreflight.</a>
+        <span class="pill">BETA</span>
+      </div>
+      <nav>
+        <a href="/">DNS Preflight</a>
+        <a href="/email/">Email</a>
+        <a href="/whois/">WHOIS</a>
+        <a href="/dangling/">Dangling Records</a>
+        <a href="/typosquat/">Typosquat</a>
+        <a href="/propagation/">Propagation</a>
+        <a href="/dmarc/">DMARC Report</a>
+        <a href="/glossary/">Glossary</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://domainpreflight.dev/">Home</a> <span aria-hidden="true">›</span> <a href="/glossary/">Glossary</a> <span aria-hidden="true">›</span> DMARC p=quarantine</nav>
+    <article>
+      <p class="hero-label">Glossary</p>
+      <h1>DMARC p=quarantine — Partial Enforcement Explained</h1>
+      <p>DMARC p=quarantine tells receiving mail servers to send emails that fail DMARC authentication to the spam folder rather than the inbox. It provides partial protection — failing emails are separated from the inbox but not blocked entirely. p=quarantine is the recommended intermediate step between monitoring (p=none) and full enforcement (p=reject).</p>
+
+      <h2>What p=quarantine Actually Does</h2>
+      <p>When an email fails DMARC under p=quarantine:</p>
+      <ul>
+        <li>It goes to the recipient's spam folder</li>
+        <li>It is not rejected or bounced</li>
+        <li>You still receive aggregate reports showing the failure</li>
+      </ul>
+      <p>Legitimate email from properly aligned senders is completely unaffected. Only failing email is quarantined.</p>
+
+      <h2>What the Record Looks Like</h2>
+      <p><code>_dmarc.yourdomain.com</code> TXT</p>
+<pre class="code-block">v=DMARC1; p=quarantine;
+rua=mailto:dmarc@yourdomain.com</pre>
+      <p>Gradual rollout with <code>pct=</code>:</p>
+<pre class="code-block">v=DMARC1; p=quarantine; pct=10;
+rua=mailto:dmarc@yourdomain.com</pre>
+      <p><code>pct=10</code> applies quarantine to 10% of failing mail. Use this to test before going to <code>pct=100</code>.</p>
+
+      <h2>p=quarantine vs p=none vs p=reject</h2>
+      <table class="policy-table">
+        <thead>
+          <tr>
+            <th>Policy</th>
+            <th>What happens to failing email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>p=none</code></td>
+            <td>Delivered to inbox — nothing blocked</td>
+          </tr>
+          <tr>
+            <td><code>p=quarantine</code></td>
+            <td>Sent to spam folder</td>
+          </tr>
+          <tr>
+            <td><code>p=reject</code></td>
+            <td>Blocked entirely — not delivered</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>When to Move to p=quarantine</h2>
+      <p>Move from <a href="/glossary/dmarc-p-none/">p=none</a> to p=quarantine when:</p>
+      <ul>
+        <li>You have at least 2 weeks of aggregate reports</li>
+        <li>All legitimate senders show as aligned in reports</li>
+        <li>No unexplained IPs sending as your domain</li>
+        <li>Aggregate pass rate is 95%+</li>
+      </ul>
+      <p>Run <a href="https://domainpreflight.dev/">DNS Preflight</a> to check your current <a href="/glossary/dmarc-policy/">DMARC policy</a> and <a href="/glossary/dmarc-alignment/">alignment</a> status.</p>
+
+      <h2>When to Move from p=quarantine to p=reject</h2>
+      <p>Stay at p=quarantine for at least 1 week. If no legitimate email ends up in spam and reports show 99%+ pass rate — move to <code>p=reject</code>.</p>
+      <p><code>p=reject</code> is the goal. It's the only policy that fully blocks spoofed email. See <a href="/learn/dmarc-reject-roadmap/">DMARC reject roadmap</a> for a staged path.</p>
+
+      <h2>The pct= Tag — Gradual Rollout</h2>
+      <p><code>pct=</code> applies the policy to a percentage of failing mail:</p>
+      <ul>
+        <li><code>pct=10</code> → quarantine 10% of failures</li>
+        <li><code>pct=50</code> → quarantine 50% of failures</li>
+        <li><code>pct=100</code> → quarantine all failures (default)</li>
+      </ul>
+      <p>Use <code>pct=10</code> for the first week at quarantine. If nothing breaks, go to <code>pct=100</code>.</p>
+
+      <div class="tool-cta">
+        <p>Check your DMARC policy in the browser</p>
+        <a href="https://domainpreflight.dev/">Check your DMARC policy →</a>
+      </div>
+
+      <div class="glossary-links"><strong>Related:</strong> <a href="/glossary/dmarc-policy/">DMARC policy</a> · <a href="/glossary/dmarc-p-none/">DMARC p=none</a> · <a href="/glossary/dmarc/">DMARC</a> · <a href="/glossary/dmarc-alignment/">DMARC alignment</a> · <a href="/glossary/dmarc-aggregate-report/">DMARC aggregate report</a> · <a href="/fix/dmarc/">DMARC fixes</a> · <a href="/learn/dmarc-reject-roadmap/">DMARC reject roadmap</a> · <a href="/blog/dmarc-none-vs-quarantine-vs-reject/">none vs quarantine vs reject</a> · <a href="https://domainpreflight.dev/dmarc/">DMARC Report Analyzer</a> · <a href="https://domainpreflight.dev/">DomainPreflight</a></div>
+
+      <section class="faq-section" aria-label="FAQ">
+        <h2>FAQ</h2>
+        <h3>What does DMARC p=quarantine mean?</h3>
+        <p>Emails failing DMARC go to the spam folder instead of the inbox. Legitimate aligned email is unaffected. It's partial enforcement — between monitoring and full blocking.</p>
+        <h3>Is p=quarantine safe to enable?</h3>
+        <p>Yes — if your DMARC reports show all legitimate senders are aligned. Use pct=10 first to test on 10% of failing mail before going to 100%.</p>
+        <h3>What is the difference between p=quarantine and p=reject?</h3>
+        <p>p=quarantine sends failing email to spam. p=reject blocks it entirely. Start with quarantine, move to reject after a clean week.</p>
+        <h3>Will p=quarantine affect my legitimate email?</h3>
+        <p>Only if some senders aren't properly aligned. Fix all alignment failures at p=none first — then quarantine only affects unauthenticated email.</p>
+        <h3>How long should I stay at p=quarantine?</h3>
+        <p>At least 1 week. Check that no legitimate email is landing in spam. Once reports show 99%+ pass rate — move to p=reject.</p>
+      </section>
+
+      <div class="internal-links">
+        <p><a href="/glossary/">← All glossary terms</a></p>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="footer-disclaimer">This is a free sanity check — not legal or production advice. Verify DNS and mail in your own stack before you change anything.</p>
+    </div>
+    <div class="footer-bar">
+      <div>
+        <span>DomainPreflight by MetricLogic ·</span>
+        <a href="https://configclarity.dev" target="_blank" rel="noopener">ConfigClarity</a>
+        <span>·</span>
+        <a href="https://domainpreflight.dev" target="_blank" rel="noopener">DomainPreflight</a>
+        <span>·</span>
+        <a href="https://packagefix.dev" target="_blank" rel="noopener">PackageFix</a>
+        <span>·</span>
+        <a href="/glossary/">Glossary</a>
+      </div>
+      <div>
+        <a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a>
+        <span> · </span>
+        <span>MIT Licensed</span>
+        <span> · </span>
+        <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

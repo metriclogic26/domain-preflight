@@ -236,6 +236,10 @@
         <p>Monitoring only — mail still lands in the inbox; <code>rua=</code> aggregate reports are why you run it.</p>
       </li>
       <li>
+        <a href="/glossary/dmarc-p-quarantine/">DMARC p=quarantine</a>
+        <p>Failing DMARC sends mail to spam — the step between <code>p=none</code> and full <code>p=reject</code>; use <code>pct=</code> for gradual rollout.</p>
+      </li>
+      <li>
         <a href="/glossary/spf-permerror/">SPF PermError</a>
         <p>SPF can’t be evaluated — usually too many lookups or bad syntax. Often treated like a hard fail.</p>
       </li>
