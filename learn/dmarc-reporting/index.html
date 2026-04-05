@@ -143,7 +143,7 @@
       <p class="subtitle">DMARC aggregate reports are the most underused tool in email security. They show exactly who is sending email as your domain — legitimate senders and attackers alike. Here's how to use them.</p>
       <p class="learn-meta">Updated <time datetime="2026-03-19">March 19, 2026</time></p>
 
-      <p>Aggregate reports are daily XML digests of who sent mail using your domain and whether SPF/DKIM passed and aligned. They are the feedback loop for DMARC policy. This guide covers mailboxes, XML structure, reading tools, triage, and forensic options. See <a href="/glossary/dmarc-aggregate-report/">aggregate reports</a> and <a href="/glossary/dmarc-policy/">policy</a>.</p>
+      <p>Aggregate reports are daily XML digests of who sent mail using your domain and whether SPF/DKIM passed and aligned. They are the feedback loop for DMARC policy. This guide covers mailboxes, XML structure, reading tools, triage, and <a href="/glossary/dmarc-ruf/">forensic</a> options. See <a href="/glossary/dmarc-aggregate-report/">aggregate reports</a> and <a href="/glossary/dmarc-policy/">policy</a>.</p>
 
       <h2>What DMARC reports are</h2>
       <p>Major receivers (Google, Microsoft, Yahoo, etc.) send compressed XML to <code>rua=</code> addresses. Each file contains records per source IP with auth results, DKIM domains, SPF domains, and disposition if policy applied.</p>

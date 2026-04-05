@@ -360,7 +360,7 @@
       <p>Run <strong>DNS Preflight</strong> on your domain. Expand the SPF lookup tree — it shows exactly which provider burns each lookup and your running total.</p>
 
       <h2>The fix</h2>
-      <p>Replace <code>include:</code> statements with the IP ranges they resolve to. You trade zero lookups for keeping the list updated when vendors move subnets.</p>
+      <p>Replace <a href="/glossary/spf-include/"><code>include:</code></a> statements with the IP ranges they resolve to. You trade zero lookups for keeping the list updated when vendors move subnets.</p>
       <div class="dns-block">Before: v=spf1 include:sendgrid.net ~all
 After:  v=spf1 ip4:167.89.0.0/17 ip4:198.37.144.0/20 ~all</div>
 

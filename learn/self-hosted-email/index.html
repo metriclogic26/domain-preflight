@@ -140,13 +140,13 @@
     <article>
       <p class="hero-label">Guide</p>
       <h1>Self-Hosted Email: SPF, DKIM, DMARC, and PTR Setup</h1>
-      <p class="subtitle">Running your own mail server is harder than it used to be. ISPs block port 25, major providers require PTR records, and DMARC is now mandatory for reliable delivery. This guide covers everything self-hosters need to configure.</p>
+      <p class="subtitle">Running your own <a href="/glossary/mail-server/">mail server</a> is harder than it used to be. ISPs block port 25, major providers require PTR records, and DMARC is now mandatory for reliable delivery. This guide covers everything self-hosters need to configure.</p>
       <p class="learn-meta">Updated <time datetime="2026-03-19">March 19, 2026</time></p>
 
       <p>Self-hosting mail in 2026 means fighting port blocks, IP reputation, and mandatory authentication. This guide covers provider choice, PTR, SPF, DKIM, DMARC, warm-up, and monitoring. See <a href="/glossary/ptr-record/">PTR</a>, <a href="/glossary/rdns/">rDNS</a>, and <a href="/glossary/email-deliverability/">deliverability</a>.</p>
 
       <h2>Why self-hosted email is hard in 2026</h2>
-      <p>Residential and many cloud IPs block outbound 25. Large receivers require aligned SPF/DKIM/DMARC and often sane PTR. New IPs have no reputation — warm-up is mandatory. Expect to spend engineering time on TLS, queues, and blocklists.</p>
+      <p>Residential and many cloud IPs block outbound 25. Large receivers require aligned SPF/DKIM/DMARC and often sane PTR. New IPs have no reputation — warm-up is mandatory. Expect to spend engineering time on <a href="/glossary/tls-encryption/">TLS</a>, queues, and blocklists.</p>
 
       <h2>Choosing a hosting provider</h2>
       <p>You need outbound SMTP allowed (or smart host), ability to set PTR for your IP, and ideally clean IP space. Common VPS providers allow port 25 with policy; hyperscalers often require unblock tickets. Verify before you build.</p>

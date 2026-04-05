@@ -157,7 +157,7 @@
       <p>Receivers return PermError. Email gets rejected or lands in spam. Nothing in your dashboard tells you why.</p>
 
       <h2>Why 10 Lookups Is Less Than You Think</h2>
-      <p>Every include: in your SPF record triggers a DNS lookup. And most providers nest their own includes inside.</p>
+      <p>Every <a href="/glossary/spf-include/">include:</a> in your SPF record triggers a DNS lookup. And most providers nest their own includes inside.</p>
       <p>include:sendgrid.net doesn't use 1 lookup. It uses 3 or 4 — because SendGrid's SPF record has its own includes.</p>
       <p>Add Google Workspace, SendGrid, HubSpot, Mailgun, and a CRM — and you're at 12-15 lookups before you know it.</p>
 

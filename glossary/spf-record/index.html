@@ -197,7 +197,7 @@
       <p>You publish IPs and includes in DNS. The receiver compares the connecting server to that list. They’ll mark pass, fail, softfail, or neutral — and DMARC may still fail if you don’t align later.</p>
 
       <h2>The SPF 10-Lookup Limit</h2>
-      <p>SPF only gets 10 DNS lookups. Every <code>include:</code>, <code>a:</code>, <code>mx:</code> costs one. Blow past 10 and you hit PermError — many receivers treat that like “no SPF,” so legit mail dies.</p>
+      <p>SPF only gets 10 DNS lookups. Every <a href="/glossary/spf-include/"><code>include:</code></a>, <code>a:</code>, <code>mx:</code> costs one. Blow past 10 and you hit PermError — many receivers treat that like “no SPF,” so legit mail dies.</p>
 
       <h2>Common SPF Problems</h2>
       <ul>

@@ -143,7 +143,7 @@
       <p class="subtitle">Every subdomain you've ever created is a potential attack surface if you didn't clean up the DNS when you were done. Here's how subdomain takeover works, which services are vulnerable, and how to find your exposure.</p>
       <p class="learn-meta">Updated <time datetime="2026-03-19">March 19, 2026</time></p>
 
-      <p>Subdomains are cheap to create and expensive to forget. A CNAME to a SaaS host you no longer own is a dangling record — attackers can claim the target and serve content on your domain. This guide explains dangling DNS, takeover mechanics, and cleanup. Core term: <a href="/glossary/subdomain-takeover/">subdomain takeover</a>; <a href="/glossary/cname-record/">CNAME</a> mechanics.</p>
+      <p>Subdomains are cheap to create and expensive to forget. A CNAME to a SaaS host you no longer own is a <a href="/glossary/dangling-dns/">dangling</a> record — attackers can claim the target and serve content on your domain. This guide explains dangling DNS, takeover mechanics, and cleanup. Core term: <a href="/glossary/subdomain-takeover/">subdomain takeover</a>; <a href="/glossary/cname-record/">CNAME</a> mechanics.</p>
 
       <h2>What is a dangling DNS record?</h2>
       <p>A record that still points to a resource you deleted — commonly a CNAME to <code>github.io</code>, <code>azurewebsites.net</code>, <code>herokuapp.com</code>, or similar. The cloud name is still delegatable; your DNS still routes traffic to it.</p>
