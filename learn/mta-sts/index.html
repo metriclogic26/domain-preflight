@@ -86,6 +86,195 @@
     .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
     .footer-bar a { color: var(--text2); text-decoration: none; }
     .footer-bar a:hover { color: var(--text); }
+
+    .mta-sts-checker {
+      background: #13151F;
+      border: 1px solid #1E2236;
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .mta-sts-checker h2 {
+      margin-top: 0;
+      color: #E2E4F0;
+      font-size: 1.1rem;
+    }
+
+    .checker-input-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .checker-input-row input {
+      flex: 1;
+      min-width: 200px;
+      background: #0B0D14;
+      border: 1px solid #1E2236;
+      border-radius: 4px;
+      color: #E2E4F0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+    }
+
+    .checker-input-row input:focus {
+      border-color: #6C63FF;
+    }
+
+    .checker-input-row button {
+      background: #6C63FF;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 10px 20px;
+      white-space: nowrap;
+    }
+
+    .checker-input-row button:hover {
+      background: #5a52e0;
+    }
+
+    .checker-input-row button.checker-btn-example {
+      background: transparent;
+      border: 1px solid #6C63FF;
+      color: #6C63FF;
+    }
+
+    .checker-input-row button.checker-btn-example:hover {
+      background: rgba(108, 99, 255, 0.12);
+      color: #8b84ff;
+      border-color: #8b84ff;
+    }
+
+    .checker-loading {
+      color: #8a8fb5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-top: 1rem;
+    }
+
+    .checker-error {
+      color: #EF4444;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-top: 1rem;
+      padding: 8px 12px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 4px;
+    }
+
+    .checker-result {
+      margin-top: 1.5rem;
+    }
+
+    .result-cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .result-cards-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .result-card {
+      background: #0B0D14;
+      border: 1px solid #1E2236;
+      border-radius: 6px;
+      padding: 1rem;
+    }
+
+    .card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #8a8fb5;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #8a8fb5;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .status-pass { color: #22C55E; }
+    .status-warn { color: #F97316; }
+    .status-fail { color: #EF4444; }
+    .status-neutral { color: #8a8fb5; }
+
+    .checker-details {
+      margin-bottom: 1rem;
+    }
+
+    .detail-row {
+      display: flex;
+      gap: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid #1E2236;
+    }
+
+    .detail-label {
+      color: #8a8fb5;
+      min-width: 130px;
+    }
+
+    .detail-value {
+      color: #E2E4F0;
+    }
+
+    .checker-recommendation {
+      margin-top: 0.5rem;
+    }
+
+    .rec {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+
+    .rec-pass {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: #22C55E;
+    }
+
+    .rec-warn {
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.2);
+      color: #F97316;
+    }
+
+    .rec-fail {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      color: #EF4444;
+    }
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -118,6 +307,73 @@
       <h1>MTA-STS: How to Force TLS Encryption on Incoming Email</h1>
       <p class="subtitle">MTA-STS (Mail Transfer Agent Strict Transport Security) tells sending mail servers they must use TLS when delivering email to your domain — and must verify your certificate. Without it, a network attacker can silently downgrade email connections to plain text.</p>
       <p class="learn-meta">Updated <time datetime="2026-03-31">March 31, 2026</time></p>
+
+      <section class="mta-sts-checker" id="mta-sts-checker">
+        <h2>Check Your MTA-STS Configuration</h2>
+        <p>Enter your domain — checks the DNS TXT record
+        and fetches the policy file in real time.</p>
+
+        <div class="checker-input-row">
+          <input
+            type="text"
+            id="mta-sts-domain"
+            placeholder="yourdomain.com"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+          />
+          <button type="button" id="mta-sts-btn" onclick="checkMTASTS()">
+            Check MTA-STS
+          </button>
+          <button type="button" id="mta-sts-example" class="checker-btn-example"
+                  onclick="tryMTASTSExample()">
+            Try an example
+          </button>
+        </div>
+
+        <div id="mta-sts-loading" style="display:none"
+             class="checker-loading">
+          Checking MTA-STS configuration...
+        </div>
+
+        <div id="mta-sts-error" style="display:none"
+             class="checker-error">
+        </div>
+
+        <div id="mta-sts-result" style="display:none"
+             class="checker-result">
+
+          <div class="result-cards-row">
+
+            <div class="result-card" id="card-txt">
+              <div class="card-label">DNS TXT Record</div>
+              <div class="card-status" id="txt-status"></div>
+              <div class="card-value" id="txt-value"></div>
+            </div>
+
+            <div class="result-card" id="card-policy">
+              <div class="card-label">Policy File</div>
+              <div class="card-status" id="policy-status"></div>
+              <div class="card-value" id="policy-value"></div>
+            </div>
+
+            <div class="result-card" id="card-mode">
+              <div class="card-label">Mode</div>
+              <div class="card-status" id="mode-status"></div>
+              <div class="card-value" id="mode-value"></div>
+            </div>
+
+          </div>
+
+          <div id="mta-sts-details" class="checker-details">
+          </div>
+
+          <div id="mta-sts-recommendation"
+               class="checker-recommendation">
+          </div>
+
+        </div>
+      </section>
 
       <p>Port 25 STARTTLS can be stripped in transit unless you publish a pinned policy over HTTPS. MTA-STS does that. Pair it with <a href="/learn/dmarc/">DMARC</a> and <a href="/learn/email-deliverability/">deliverability</a> hygiene. After you publish <a href="/dns/txt-record/">TXT</a>, confirm with <a href="https://domainpreflight.dev/">DNS Preflight</a>.</p>
 
@@ -235,5 +491,265 @@ max_age: 604800</div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
     </div>
   </footer>
+  <script>
+async function checkMTASTS() {
+  const input = document.getElementById(
+    'mta-sts-domain').value.trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+
+  if (!input) return;
+
+  const loadingEl = document.getElementById(
+    'mta-sts-loading');
+  const errorEl = document.getElementById(
+    'mta-sts-error');
+  const resultEl = document.getElementById(
+    'mta-sts-result');
+
+  loadingEl.style.display = 'block';
+  errorEl.style.display = 'none';
+  resultEl.style.display = 'none';
+
+  try {
+    const [txtResult, policyResult] =
+      await Promise.allSettled([
+        checkMTASTSTXT(input),
+        fetchMTASTSPolicy(input)
+      ]);
+
+    loadingEl.style.display = 'none';
+    renderMTASTSResult(input, txtResult, policyResult);
+
+  } catch (err) {
+    loadingEl.style.display = 'none';
+    errorEl.textContent = 'Could not check '
+      + input + '. Verify the domain and try again.';
+    errorEl.style.display = 'block';
+  }
+}
+
+function tryMTASTSExample() {
+  document.getElementById('mta-sts-domain')
+    .value = 'fastmail.com';
+  checkMTASTS();
+}
+
+async function checkMTASTSTXT(domain) {
+  const url = 'https://cloudflare-dns.com/dns-query'
+    + '?name=_mta-sts.'
+    + encodeURIComponent(domain)
+    + '&type=TXT';
+
+  const res = await fetch(url, {
+    headers: { 'Accept': 'application/dns-json' }
+  });
+
+  if (!res.ok) throw new Error('DNS query failed');
+
+  const data = await res.json();
+  const answers = data.Answer || [];
+
+  const record = answers
+    .map(a => (a.data || '').replace(/"/g, '').trim())
+    .find(d => d.startsWith('v=STSv1'));
+
+  return record || null;
+}
+
+async function fetchMTASTSPolicy(domain) {
+  const policyUrl = 'https://mta-sts.'
+    + domain
+    + '/.well-known/mta-sts.txt';
+
+  try {
+    const res = await fetch(policyUrl, {
+      mode: 'cors',
+      signal: AbortSignal.timeout(8000)
+    });
+
+    if (!res.ok) return null;
+
+    const text = await res.text();
+    return text;
+
+  } catch (e) {
+    return 'cors-blocked';
+  }
+}
+
+function parseMTASTSPolicy(policyText) {
+  if (!policyText || policyText === 'cors-blocked')
+    return null;
+
+  const lines = policyText.split('\n')
+    .map(l => l.trim())
+    .filter(l => l);
+
+  const result = {
+    version: null,
+    mode: null,
+    mx: [],
+    max_age: null
+  };
+
+  lines.forEach(line => {
+    const [key, ...rest] = line.split(':');
+    const val = rest.join(':').trim();
+
+    if (key === 'version') result.version = val;
+    if (key === 'mode') result.mode = val;
+    if (key === 'mx') result.mx.push(val);
+    if (key === 'max_age') result.max_age = val;
+  });
+
+  return result;
+}
+
+function renderMTASTSResult(domain, txtResult, policyResult) {
+  const resultEl = document.getElementById('mta-sts-result');
+  const detailsEl = document.getElementById('mta-sts-details');
+  const recEl = document.getElementById('mta-sts-recommendation');
+
+  const txtRecord = txtResult.status === 'fulfilled'
+    ? txtResult.value : null;
+  const policyText = policyResult.status === 'fulfilled'
+    ? policyResult.value : null;
+  const policy = parseMTASTSPolicy(policyText);
+
+  const txtStatusEl = document.getElementById('txt-status');
+  const txtValueEl = document.getElementById('txt-value');
+
+  if (txtRecord) {
+    txtStatusEl.textContent = '✓ Found';
+    txtStatusEl.className = 'card-status status-pass';
+    txtValueEl.textContent = txtRecord;
+  } else {
+    txtStatusEl.textContent = '✗ Not found';
+    txtStatusEl.className = 'card-status status-fail';
+    txtValueEl.textContent =
+      'No _mta-sts TXT record at ' + domain;
+  }
+
+  const policyStatusEl = document.getElementById(
+    'policy-status');
+  const policyValueEl = document.getElementById(
+    'policy-value');
+
+  if (policyText === 'cors-blocked') {
+    policyStatusEl.textContent = '? Unable to fetch';
+    policyStatusEl.className = 'card-status status-warn';
+    policyValueEl.textContent =
+      'Policy file likely exists — browsers '
+      + "can't fetch cross-origin files directly. "
+      + 'Verify manually: https://mta-sts.'
+      + domain + '/.well-known/mta-sts.txt';
+  } else if (policy) {
+    policyStatusEl.textContent = '✓ Found';
+    policyStatusEl.className = 'card-status status-pass';
+    policyValueEl.textContent =
+      'mta-sts.' + domain + '/.well-known/mta-sts.txt';
+  } else {
+    policyStatusEl.textContent = '✗ Not found';
+    policyStatusEl.className = 'card-status status-fail';
+    policyValueEl.textContent =
+      'No policy file at mta-sts.' + domain;
+  }
+
+  const modeStatusEl = document.getElementById('mode-status');
+  const modeValueEl = document.getElementById('mode-value');
+
+  if (policy && policy.mode) {
+    if (policy.mode === 'enforce') {
+      modeStatusEl.textContent = '✓ enforce';
+      modeStatusEl.className = 'card-status status-pass';
+      modeValueEl.textContent =
+        'Full enforcement — TLS required or delivery refused';
+    } else if (policy.mode === 'testing') {
+      modeStatusEl.textContent = '⚠ testing';
+      modeStatusEl.className = 'card-status status-warn';
+      modeValueEl.textContent =
+        'Monitoring only — TLS not yet enforced';
+    } else if (policy.mode === 'none') {
+      modeStatusEl.textContent = '✗ none';
+      modeStatusEl.className = 'card-status status-fail';
+      modeValueEl.textContent =
+        'MTA-STS disabled';
+    }
+  } else {
+    modeStatusEl.textContent = '— Not configured';
+    modeStatusEl.className = 'card-status status-neutral';
+    modeValueEl.textContent = 'No policy found';
+  }
+
+  let detailsHTML = '';
+  if (policy) {
+    if (policy.mx && policy.mx.length > 0) {
+      detailsHTML += '<div class="detail-row">'
+        + '<span class="detail-label">MX hostnames:</span>'
+        + '<span class="detail-value">'
+        + policy.mx.join(', ') + '</span></div>';
+    }
+    if (policy.max_age) {
+      const days = Math.round(
+        parseInt(policy.max_age, 10) / 86400);
+      detailsHTML += '<div class="detail-row">'
+        + '<span class="detail-label">Cache duration:</span>'
+        + '<span class="detail-value">'
+        + policy.max_age + 's (' + days + ' days)</span>'
+        + '</div>';
+    }
+  }
+  detailsEl.innerHTML = detailsHTML;
+
+  let recHTML = '';
+
+  if (!txtRecord && !policy) {
+    recHTML = '<div class="rec rec-fail">'
+      + '<strong>MTA-STS not configured.</strong> '
+      + 'Follow the setup guide below to add '
+      + 'TLS enforcement for incoming email.'
+      + '</div>';
+  } else if (txtRecord && policyText === 'cors-blocked') {
+    recHTML = '<div class="rec rec-warn">'
+      + '<strong>TXT record confirmed.</strong> '
+      + "Policy file can't be verified from the browser "
+      + 'due to CORS restrictions. If you followed '
+      + 'the setup guide, your configuration is likely correct. '
+      + 'Verify the policy file manually at: '
+      + 'https://mta-sts.' + domain
+      + '/.well-known/mta-sts.txt'
+      + '</div>';
+  } else if (txtRecord && !policy && policyText !== 'cors-blocked') {
+    recHTML = '<div class="rec rec-warn">'
+      + '<strong>TXT record found but policy file missing.</strong> '
+      + 'Host the policy file at '
+      + 'https://mta-sts.' + domain
+      + '/.well-known/mta-sts.txt'
+      + '</div>';
+  } else if (policy && policy.mode === 'testing') {
+    recHTML = '<div class="rec rec-warn">'
+      + '<strong>MTA-STS is in testing mode.</strong> '
+      + 'Check TLS-RPT reports for failures, '
+      + 'then change mode to enforce.'
+      + '</div>';
+  } else if (policy && policy.mode === 'enforce') {
+    recHTML = '<div class="rec rec-pass">'
+      + '<strong>MTA-STS is fully enforced.</strong> '
+      + 'Incoming email requires TLS. '
+      + 'Check TLS-RPT reports monthly.'
+      + '</div>';
+  }
+
+  recEl.innerHTML = recHTML;
+  resultEl.style.display = 'block';
+}
+
+document.getElementById('mta-sts-domain')
+  .addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkMTASTS();
+  });
+  </script>
 </body>
 </html>
