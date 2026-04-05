@@ -1,2 +1,5 @@
-.vercel
-.env*.local
+scripts/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
