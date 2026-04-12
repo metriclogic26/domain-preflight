@@ -86,6 +86,184 @@
     .footer-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text2); max-width: 1200px; margin: 0 auto; }
     .footer-bar a { color: var(--text2); text-decoration: none; }
     .footer-bar a:hover { color: var(--text); }
+
+    .bimi-generator {
+      background: #13151F;
+      border: 1px solid #1E2236;
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .bimi-generator h2 {
+      margin-top: 0;
+      color: #E2E4F0;
+      font-size: 1.1rem;
+    }
+
+    .bimi-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-field label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #8a8fb5;
+    }
+
+    .optional-tag {
+      color: #6C63FF;
+      font-size: 11px;
+      margin-left: 0.5rem;
+    }
+
+    .form-field input {
+      background: #0B0D14;
+      border: 1px solid #1E2236;
+      border-radius: 4px;
+      color: #E2E4F0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 10px 14px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-field input:focus {
+      border-color: #6C63FF;
+    }
+
+    .field-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #8a8fb5;
+    }
+
+    .bimi-output {
+      background: #0B0D14;
+      border: 1px solid #6C63FF;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .output-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #8a8fb5;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .output-record {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #22C55E;
+      word-break: break-all;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      min-height: 2rem;
+    }
+
+    .output-dns-fields {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .dns-field {
+      background: #1A1E2E;
+      border: 1px solid #2A2D3E;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #8a8fb5;
+    }
+
+    .bimi-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .copy-btn {
+      background: #6C63FF;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 8px 16px;
+    }
+
+    .copy-btn:hover { background: #5a52e0; }
+
+    .copy-cf-btn, .copy-nc-btn {
+      background: transparent;
+      border: 1px solid #6C63FF;
+      color: #6C63FF;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 8px 16px;
+    }
+
+    .copy-cf-btn:hover, .copy-nc-btn:hover {
+      background: #6C63FF;
+      color: white;
+    }
+
+    .bimi-note {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+
+    .bimi-note-warn {
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.2);
+      color: #F97316;
+    }
+
+    .bimi-note-pass {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: #22C55E;
+    }
+
+    .copy-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1A1E2E;
+      border: 1px solid #6C63FF;
+      color: #E2E4F0;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      z-index: 9999;
+      transition: opacity 0.3s;
+    }
   </style>
   <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -155,6 +333,103 @@ l=https://yourdomain.com/logo.svg;"</div>
       <div class="dns-block">Type: TXT
 Name: default._bimi
 TTL: Auto</div>
+
+      <section class="bimi-generator" id="bimi-generator">
+        <h2>Generate Your BIMI Record</h2>
+        <p>Fill in your details — get the exact
+        TXT record to paste into your DNS provider.</p>
+
+        <div class="bimi-form">
+
+          <div class="form-field">
+            <label for="bimi-domain">Your domain</label>
+            <input type="text" id="bimi-domain"
+              placeholder="yourdomain.com"
+              spellcheck="false"
+              autocomplete="off" />
+            <span class="field-hint">
+              The domain you send email from
+            </span>
+          </div>
+
+          <div class="form-field">
+            <label for="bimi-logo">SVG logo URL</label>
+            <input type="url" id="bimi-logo"
+              placeholder="https://yourdomain.com/logo.svg"
+              spellcheck="false" />
+            <span class="field-hint">
+              Must be HTTPS. SVG Tiny PS format,
+              square, solid background.
+            </span>
+          </div>
+
+          <div class="form-field">
+            <label for="bimi-vmc">
+              VMC certificate URL
+              <span class="optional-tag">
+                optional — required for Gmail
+              </span>
+            </label>
+            <input type="url" id="bimi-vmc"
+              placeholder="https://yourdomain.com/vmc.pem"
+              spellcheck="false" />
+            <span class="field-hint">
+              Leave blank for Yahoo/Fastmail only.
+              Required for Gmail logo display.
+            </span>
+          </div>
+
+        </div>
+
+        <div class="bimi-output" id="bimi-output">
+
+          <div class="output-label">Your BIMI TXT record</div>
+
+          <div class="output-record" id="bimi-record-value">
+            v=BIMI1; l=https://yourdomain.com/logo.svg;
+          </div>
+
+          <div class="output-dns-fields">
+            <span class="dns-field">Type: TXT</span>
+            <span class="dns-field" id="bimi-name-field">
+              Name: default._bimi
+            </span>
+            <span class="dns-field">TTL: Auto</span>
+          </div>
+
+          <div class="bimi-buttons">
+            <button type="button" class="copy-btn"
+                    onclick="copyBIMIRecord()">
+              Copy record
+            </button>
+            <button type="button" class="copy-cf-btn"
+                    onclick="copyBIMICloudflare()">
+              Copy for Cloudflare →
+            </button>
+            <button type="button" class="copy-nc-btn"
+                    onclick="copyBIMINamecheap()">
+              Copy for Namecheap →
+            </button>
+          </div>
+
+          <div id="bimi-gmail-note"
+               class="bimi-note bimi-note-warn"
+               style="display:none">
+            ⚠ Without a VMC certificate, Gmail will
+            not show your logo. Yahoo and Fastmail
+            will still show it.
+          </div>
+
+          <div id="bimi-gmail-ok"
+               class="bimi-note bimi-note-pass"
+               style="display:none">
+            ✓ VMC included — eligible for Gmail,
+            Yahoo, Apple Mail, and Fastmail logo display.
+          </div>
+
+        </div>
+
+      </section>
 
       <h2>Step 1 — Verify Your DMARC Policy</h2>
       <p>Run <a href="https://domainpreflight.dev/">DNS Preflight</a> on your domain. The DMARC card must show <code>p=quarantine</code> or <code>p=reject</code> — not <code>p=none</code>.</p>
@@ -237,5 +512,106 @@ a=https://yourdomain.com/bimi-vmc.pem"</div>
       <div><a href="https://github.com/metriclogic26/domain-preflight" target="_blank" rel="noopener">Star on GitHub</a> <span> · </span> <span>MIT Licensed</span> <span> · </span> <a href="https://github.com/metriclogic26/domain-preflight/issues/new" target="_blank" rel="noopener">Report issue →</a></div>
     </div>
   </footer>
+  <script>
+function buildBIMIRecord() {
+  const domain = document.getElementById(
+    'bimi-domain').value.trim()
+    .replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+  const logo = document.getElementById(
+    'bimi-logo').value.trim();
+  const vmc = document.getElementById(
+    'bimi-vmc').value.trim();
+
+  let record = 'v=BIMI1;';
+
+  if (logo) {
+    record += ' l=' + logo + ';';
+  } else {
+    record += ' l=https://'
+      + (domain || 'yourdomain.com')
+      + '/logo.svg;';
+  }
+
+  if (vmc) {
+    record += ' a=' + vmc + ';';
+  }
+
+  document.getElementById('bimi-record-value')
+    .textContent = record;
+
+  const nameField = document.getElementById(
+    'bimi-name-field');
+  if (domain) {
+    nameField.textContent = 'Name: default._bimi';
+  }
+
+  const warnEl = document.getElementById(
+    'bimi-gmail-note');
+  const okEl = document.getElementById(
+    'bimi-gmail-ok');
+
+  if (vmc) {
+    warnEl.style.display = 'none';
+    okEl.style.display = 'block';
+  } else {
+    warnEl.style.display = 'block';
+    okEl.style.display = 'none';
+  }
+}
+
+function copyBIMIRecord() {
+  const val = document.getElementById(
+    'bimi-record-value').textContent;
+  navigator.clipboard.writeText(val);
+  showBIMIToast('BIMI record copied ✓');
+}
+
+function copyBIMICloudflare() {
+  const val = document.getElementById(
+    'bimi-record-value').textContent;
+  const out = 'Type: TXT\n'
+    + 'Name: default._bimi\n'
+    + 'Content: ' + val + '\n'
+    + 'TTL: Auto';
+  navigator.clipboard.writeText(out);
+  showBIMIToast('Copied Cloudflare format ✓');
+}
+
+function copyBIMINamecheap() {
+  const val = document.getElementById(
+    'bimi-record-value').textContent;
+  const out = 'Type: TXT Record\n'
+    + 'Host: default._bimi\n'
+    + 'Value: ' + val + '\n'
+    + 'TTL: Automatic';
+  navigator.clipboard.writeText(out);
+  showBIMIToast('Copied Namecheap format ✓');
+}
+
+function showBIMIToast(msg) {
+  const existing = document.getElementById(
+    'bimi-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'bimi-toast';
+  toast.className = 'copy-toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}
+
+['bimi-domain', 'bimi-logo', 'bimi-vmc']
+  .forEach(id => {
+    document.getElementById(id)
+      .addEventListener('input', buildBIMIRecord);
+  });
+
+buildBIMIRecord();
+  </script>
 </body>
 </html>

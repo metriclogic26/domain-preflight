@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPF PermError: Too Many DNS Lookups — Cause and Fix | DomainPreflight</title>
+  <title>SPF PermError: What It Means and How to Fix Too Many DNS Lookups | DomainPreflight</title>
   <meta name="description" content="SPF PermError means your SPF record exceeded 10 DNS lookups or has a syntax error. Receivers treat it as a hard fail. Here's how to diagnose and fix it.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/error/spf-permerror/">
@@ -292,7 +292,7 @@
     <article>
       <p class="hero-label">Errors</p>
       <h1>SPF PermError — Your SPF Record Has Too Many Lookups</h1>
-      <p class="subtitle">SPF PermError means your SPF record exceeded the 10 DNS lookup limit. Receiving servers treat this as a hard failure — your legitimate emails may be rejected or land in spam. The fix is to reduce your lookups by flattening includes into IP addresses.</p>
+      <p class="subtitle">SPF PermError (Permanent Error) means your SPF record is invalid and cannot be evaluated. Receiving mail servers treat it as a hard failure and may reject your email or send it to spam. The most common cause is exceeding the 10 DNS lookup limit — add too many email providers and you hit PermError without any warning.</p>
 
       <section class="spf-counter" id="spf-counter">
         <h2>Count Your SPF Lookups</h2>
