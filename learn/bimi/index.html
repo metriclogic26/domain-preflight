@@ -330,12 +330,14 @@
       </ul>
 
       <h2>What You Need Before Starting</h2>
-      <p>BIMI has hard prerequisites. All four must be in place before you add a BIMI record:</p>
+      <p>BIMI has hard prerequisites. All six must be in place before you add a BIMI record:</p>
       <ol>
         <li><strong>DMARC at p=quarantine or p=reject.</strong> <code>p=none</code> does <em>not</em> qualify. This is the most common blocker. Read <a href="/blog/dmarc-none-vs-quarantine-vs-reject/">none vs quarantine vs reject</a> if you're stuck.</li>
         <li><strong>SPF and DKIM both configured and passing alignment.</strong></li>
-        <li><strong>SVG logo — specific format.</strong> Tiny PS profile, square aspect ratio.</li>
+        <li><strong>SVG logo — specific format.</strong> Tiny PS profile, square aspect ratio, solid background.</li>
+        <li><strong>Logo hosted at a stable HTTPS URL</strong> on your domain.</li>
         <li><strong>Verified Mark Certificate (VMC)</strong> — required for Gmail. Issued by Entrust or DigiCert. Roughly $1,000–1,500/year.</li>
+        <li><strong>BIMI TXT record</strong> at <code>default._bimi.yourdomain.com</code> pointing to your logo (and VMC URL if applicable).</li>
       </ol>
 
       <h2>What a BIMI DNS Record Looks Like</h2>
