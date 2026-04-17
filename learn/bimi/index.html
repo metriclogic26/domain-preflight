@@ -80,6 +80,11 @@
     .internal-links { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--text2); }
     .internal-links a { color: var(--purple); text-decoration: none; }
     .internal-links a:hover { text-decoration: underline; }
+    .bimi-requirements-checklist { margin: 1.5rem 0; padding: 1.15rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; border-left: 3px solid var(--purple); }
+    .bimi-requirements-checklist h2 { margin-top: 0; margin-bottom: 0.65rem; font-size: 1.05rem; }
+    .bimi-requirements-checklist ul { list-style: none; margin: 0 0 0.5rem; padding-left: 0; }
+    .bimi-requirements-checklist li { margin-bottom: 0.45rem; color: var(--text2); font-size: 0.9rem; }
+    .bimi-checklist-label { margin: 0.85rem 0 0 !important; font-size: 0.88rem; color: var(--text); font-weight: 600; line-height: 1.55; }
     footer { border-top: 1px solid var(--border); background: var(--surface); }
     .footer-inner { max-width: 1200px; margin: 0 auto; padding: 1.25rem 1.5rem; }
     .footer-disclaimer { color: var(--text2); font-size: 0.75rem; line-height: 1.5; margin-bottom: 1rem; }
@@ -295,6 +300,20 @@
       <p class="hero-label">Guide</p>
       <h1>BIMI: How to Show Your Brand Logo in Gmail and Apple Mail</h1>
       <p class="subtitle">BIMI (Brand Indicators for Message Identification) puts your logo next to your emails in Gmail, Apple Mail, and Yahoo. It's the strongest visual trust signal in email. And it requires proper DMARC enforcement to work — which means it's only available to senders who've done authentication correctly.</p>
+
+      <section class="bimi-requirements-checklist" aria-labelledby="bimi-checklist-heading">
+        <h2 id="bimi-checklist-heading">BIMI Requirements Checklist</h2>
+        <ul>
+          <li>□ DMARC at p=quarantine or p=reject</li>
+          <li>□ SPF and DKIM both passing alignment</li>
+          <li>□ SVG logo — Tiny PS profile, square, solid background</li>
+          <li>□ Logo hosted at stable HTTPS URL</li>
+          <li>□ VMC certificate — required for Gmail</li>
+          <li>□ BIMI TXT record at default._bimi.yourdomain.com</li>
+        </ul>
+        <p class="bimi-checklist-label">All six must be in place before BIMI<br>will show your logo in Gmail.</p>
+      </section>
+
       <p class="learn-meta">Updated <time datetime="2026-03-31">March 31, 2026</time></p>
 
       <p>You want the logo in the inbox. Gmail won't show it until you've done the boring stuff first — enforced <a href="/glossary/dmarc-policy/">DMARC policy</a>, aligned <a href="/glossary/dmarc/">SPF and DKIM</a>, a legal logo file, and usually a paid certificate. This guide is the checklist. Use <a href="https://domainpreflight.dev/">DNS Preflight</a> to prove the DNS side before you spend money on a VMC.</p>
