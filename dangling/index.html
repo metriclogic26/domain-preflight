@@ -210,6 +210,13 @@
     .how-to-use { max-width: 1200px; margin: 2rem auto 0; padding: 0 1.5rem 2rem; margin-top: 2rem; }
     .how-to-use-label { font-size: 0.7rem; letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; color: var(--purple); margin-bottom: 0.5rem; }
     .how-to-use-steps { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin: 0 0 0.5rem 1.25rem; padding: 0; }
+    .provider-guides { max-width: 1200px; margin: 0 auto 1rem; padding: 0 1.5rem 2rem; }
+    .provider-guides-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; }
+    .provider-guides h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.6rem; }
+    .provider-guides ul { margin: 0.25rem 0 0 1.1rem; color: var(--text2); }
+    .provider-guides li { margin-bottom: 0.4rem; font-size: 0.85rem; }
+    .provider-guides a { color: var(--purple); text-decoration: none; }
+    .provider-guides a:hover { text-decoration: underline; }
     .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--bg3); border: 1px solid var(--border); padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem; z-index: 1000; transform: translateY(100px); opacity: 0; transition: transform 0.25s, opacity 0.25s; }
     .toast.show { transform: translateY(0); opacity: 1; }
   </style>
@@ -280,6 +287,19 @@
       <li>Click Scan Domain. We pull hostnames from cert logs.</li>
       <li>Fix or delete risky CNAMEs — or claim the cloud resource so you own it again.</li>
     </ol>
+  </section>
+
+  <section class="provider-guides">
+    <div class="provider-guides-card">
+      <h2>Provider-Specific Guides</h2>
+      <ul>
+        <li><a href="/dangling/github-pages/">GitHub Pages subdomain takeover guide</a></li>
+        <li><a href="/dangling/heroku/">Heroku subdomain takeover guide</a></li>
+        <li><a href="/dangling/netlify/">Netlify subdomain takeover guide</a></li>
+        <li><a href="/dangling/s3/">AWS S3 bucket takeover guide</a></li>
+        <li><a href="/dangling/azure/">Azure resource takeover guide</a></li>
+      </ul>
+    </div>
   </section>
 
   <footer>
