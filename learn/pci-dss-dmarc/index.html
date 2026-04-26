@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PCI DSS v4.0 DMARC Requirements — Compliance Checklist — DomainPreflight</title>
+  <title>PCI DSS v4.0 DMARC Requirements — Configuration Checklist | DomainPreflight</title>
   <meta name="description" content="PCI DSS v4.0 requires email authentication controls for organisations that handle payment data. DMARC p=reject is now effectively required. Here's exactly what to implement and how to verify it.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://domainpreflight.dev/learn/pci-dss-dmarc/">
@@ -12,13 +12,13 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="27fc19d2-1ff5-4478-946a-b96cc7d5daf8"></script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"Article","headline":"PCI DSS v4.0 and DMARC — What You Need to Be Compliant","description":"PCI DSS v4.0 requires email authentication controls for organisations that handle payment data. DMARC p=reject is now effectively required. Here's exactly what to implement and how to verify it.","datePublished":"2026-03-31","dateModified":"2026-03-31","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/learn/pci-dss-dmarc/"}}
+  {"@context":"https://schema.org","@type":"Article","headline":"PCI DSS v4.0 and DMARC — What You Need to Know","description":"PCI DSS v4.0 Requirement 5.4.1 requires anti-phishing controls. DMARC p=reject is the standard implementation. Here's what to configure and how to verify it.","datePublished":"2026-03-31","dateModified":"2026-03-31","author":{"@type":"Organization","name":"MetricLogic"},"publisher":{"@type":"Organization","name":"DomainPreflight","logo":{"@type":"ImageObject","url":"https://domainpreflight.dev/favicon.png"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://domainpreflight.dev/learn/pci-dss-dmarc/"}}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"HowTo","name":"Meet PCI DSS v4.0 email authentication with DMARC","description":"Verify SPF, DKIM, and DMARC at p=reject with reporting, review aggregate data for alignment failures, fix third-party senders, and document evidence for auditors.","estimatedCost":{"@type":"MonetaryAmount","currency":"USD","value":"0"},"supply":{"@type":"HowToSupply","name":"DNS and security program ownership"},"tool":[{"@type":"HowToTool","name":"DomainPreflight","url":"https://domainpreflight.dev/"},{"@type":"HowToTool","name":"DMARC Report Analyzer","url":"https://domainpreflight.dev/dmarc/"}],"step":[{"@type":"HowToStep","position":1,"name":"Run DNS Preflight","url":"https://domainpreflight.dev/learn/pci-dss-dmarc/#step1","text":"Step 1 Run DNS Preflight → confirm SPF, DKIM, DMARC all pass"},{"@type":"HowToStep","position":2,"name":"Confirm p=reject","url":"https://domainpreflight.dev/learn/pci-dss-dmarc/#step2","text":"Step 2 Confirm DMARC shows p=reject — not p=none or p=quarantine"},{"@type":"HowToStep","position":3,"name":"Enable aggregate reporting","url":"https://domainpreflight.dev/learn/pci-dss-dmarc/#step3","text":"Step 3 Confirm rua= is set → you're receiving aggregate reports"},{"@type":"HowToStep","position":4,"name":"Review reports for alignment","url":"https://domainpreflight.dev/learn/pci-dss-dmarc/#step4","text":"Step 4 Open DomainPreflight DMARC Report Analyzer → verify no alignment failures in recent reports"},{"@type":"HowToStep","position":5,"name":"Align every sender","url":"https://domainpreflight.dev/learn/pci-dss-dmarc/#step5","text":"Step 5 Check all third-party senders are aligned — see DMARC provider fix guides"},{"@type":"HowToStep","position":6,"name":"Document audit evidence","url":"https://domainpreflight.dev/learn/pci-dss-dmarc/#step6","text":"Step 6 Document results — screenshot DNS Preflight health score for audit evidence"}]}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does PCI DSS v4.0 require DMARC?","acceptedAnswer":{"@type":"Answer","text":"Yes — Requirement 5.4.1 requires anti-phishing controls. DMARC p=reject is the standard implementation. p=none does not satisfy the requirement."}},{"@type":"Question","name":"When did PCI DSS v4.0 become mandatory?","acceptedAnswer":{"@type":"Answer","text":"PCI DSS v4.0 became fully mandatory in March 2025. All organisations handling payment card data must comply."}},{"@type":"Question","name":"Is DMARC p=quarantine enough for PCI DSS?","acceptedAnswer":{"@type":"Answer","text":"p=quarantine provides partial protection but p=reject is the recommended implementation. Auditors increasingly expect p=reject for full compliance."}},{"@type":"Question","name":"How do I prove DMARC compliance to an auditor?","acceptedAnswer":{"@type":"Answer","text":"Screenshot your DNS Preflight results showing p=reject, provide sample aggregate reports showing no failures, and document your regular monitoring process."}},{"@type":"Question","name":"What happens if a third-party sender breaks DMARC alignment?","acceptedAnswer":{"@type":"Answer","text":"Emails from that sender will be rejected under p=reject. Fix alignment for all senders before moving to p=reject — use the DMARC provider fix guides."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does PCI DSS v4.0 require DMARC?","acceptedAnswer":{"@type":"Answer","text":"Yes — Requirement 5.4.1 requires anti-phishing controls. DMARC p=reject is the standard implementation. p=none does not satisfy the requirement."}},{"@type":"Question","name":"When did PCI DSS v4.0 become mandatory?","acceptedAnswer":{"@type":"Answer","text":"PCI DSS v4.0 became fully mandatory in March 2025. All organisations handling payment card data must comply."}},{"@type":"Question","name":"Is DMARC p=quarantine enough for PCI DSS?","acceptedAnswer":{"@type":"Answer","text":"p=quarantine provides partial protection but p=reject is the recommended implementation. Consult your QSA for your specific requirements."}},{"@type":"Question","name":"How do I prove DMARC compliance to an auditor?","acceptedAnswer":{"@type":"Answer","text":"Screenshot your DNS Preflight results showing p=reject, provide sample aggregate reports showing no failures, and document your regular monitoring process. Your QSA determines what evidence is sufficient."}},{"@type":"Question","name":"What happens if a third-party sender breaks DMARC alignment?","acceptedAnswer":{"@type":"Answer","text":"Emails from that sender will be rejected under p=reject. Fix alignment for all senders before moving to p=reject — use the DMARC provider fix guides."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://domainpreflight.dev/"},{"@type":"ListItem","position":2,"name":"Learn","item":"https://domainpreflight.dev/learn/"},{"@type":"ListItem","position":3,"name":"PCI DSS v4.0 DMARC","item":"https://domainpreflight.dev/learn/pci-dss-dmarc/"}]}
@@ -116,7 +116,8 @@
     </nav>
     <article>
       <p class="hero-label">Guide</p>
-      <h1>PCI DSS v4.0 and DMARC — What You Need to Be Compliant</h1>
+      <h1>PCI DSS v4.0 and DMARC — What Requirement 5.4.1 Expects</h1>
+      <p>This guide covers DMARC configuration relevant to PCI DSS v4.0 Requirement 5.4.1. It is not legal or compliance advice. Always verify requirements with your QSA (Qualified Security Assessor) before an audit.</p>
       <p class="subtitle">PCI DSS v4.0 became fully mandatory in March 2025. It includes specific requirements for anti-phishing controls — and DMARC p=reject is the standard way to meet them. If your organisation handles payment card data, this is no longer optional.</p>
       <p class="learn-meta">Updated <time datetime="2026-03-31">March 31, 2026</time></p>
 
@@ -132,7 +133,7 @@
       </ul>
       <p><code>p=none</code> does not satisfy the requirement. Watching without enforcement isn't an anti-phishing control. See <a href="/blog/dmarc-p-none-still-a-problem/">why p=none still hurts</a> and <a href="/blog/dmarc-none-vs-quarantine-vs-reject/">when to leave it</a>.</p>
 
-      <h2>The Full Compliance Checklist</h2>
+      <h2>DMARC Configuration Checklist for PCI DSS</h2>
       <p>PCI DSS v4.0 email authentication checklist:</p>
       <ul class="checklist">
         <li>□ SPF record published and passing</li>
@@ -191,9 +192,9 @@
         <h3>When did PCI DSS v4.0 become mandatory?</h3>
         <p>PCI DSS v4.0 became fully mandatory in March 2025. All organisations handling payment card data must comply.</p>
         <h3>Is DMARC p=quarantine enough for PCI DSS?</h3>
-        <p>p=quarantine provides partial protection but p=reject is the recommended implementation. Auditors increasingly expect p=reject for full compliance.</p>
-        <h3>How do I prove DMARC compliance to an auditor?</h3>
-        <p>Screenshot your DNS Preflight results showing p=reject, provide sample aggregate reports showing no failures, and document your regular monitoring process.</p>
+        <p>p=quarantine provides partial protection but p=reject is the recommended implementation. Consult your QSA for your specific requirements.</p>
+        <h3>How do I document DMARC configuration for a PCI DSS audit?</h3>
+        <p>Screenshot your DNS Preflight results showing p=reject, provide sample aggregate reports showing no failures, and document your regular monitoring process. Your QSA determines what evidence is sufficient.</p>
         <h3>What happens if a third-party sender breaks DMARC alignment?</h3>
         <p>Emails from that sender will be rejected under p=reject. Fix alignment for all senders before moving to p=reject — use the DMARC provider fix guides.</p>
       </section>
