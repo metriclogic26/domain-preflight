@@ -56,14 +56,6 @@ python3 -m http.server 3000
 
 Open http://localhost:3000
 
-## Part of MetricLogic
-
-| Suite | What it does |
-|---|---|
-| ConfigClarity.dev | Server & DevOps audit tools |
-| DomainPreflight.dev | Domain security & email authentication |
-| PackageFix.dev | Dependency vulnerability scanner |
-
 ## License
 
 MIT © MetricLogic — the moat is the live data fetch, not the code.
