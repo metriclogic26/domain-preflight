@@ -1,15 +1,19 @@
+> **⚠️ This project is no longer actively maintained.**
+> The live site has been taken offline.
+> The code remains available under the MIT license
+> for anyone who wishes to fork and self-host.
+
+---
+
 # DomainPreflight
 
-Find security risks hiding in your domain —
-before attackers do.
+Find security risks hiding in your domain — before attackers do.
 
-DomainPreflight is a free, browser-based suite
-of domain security and email authentication tools.
-No signup. No backend. Nothing leaves your browser.
+DomainPreflight is a free, browser-based suite of domain security and email authentication tools. No signup. No backend. Nothing leaves your browser.
 
 ## Live
 
-**[domainpreflight.dev](https://domainpreflight.dev)**
+~~domainpreflight.dev~~ *(offline)*
 
 ## Tools
 
@@ -19,38 +23,31 @@ No signup. No backend. Nothing leaves your browser.
 | **Email Deliverability** | IP blacklist checks, AbuseIPDB reputation, email header analyzer |
 | **WHOIS / Expiry** | Domain expiry countdown, registrar info, risk tiers |
 | **Dangling Records** | Subdomain takeover detection via certificate transparency logs |
-| **Typosquat Monitor** | Lookalike domain detection with live DNS resolution |
+| **Typosquat Monitor** | Lookalike domain detection with live DNS rn |
 | **DMARC Report Analyzer** | Paste XML aggregate reports — get visual breakdown instantly |
 | **DNS Propagation** | Check propagation across 5 resolvers in real time |
 
 ## Why DomainPreflight?
 
-Most tools are reactive — you use them
-when email is already bouncing or a
-subdomain has already been taken over.
+Most tools are reactive — you use them when email is already bouncing or a subdomain has already been taken over.
 
 DomainPreflight is the proactive check:
 
-- **Dangling Records** — browser-based subdomain
-  takeover detection. No CLI, no Python install.
-  Pulls from cert logs + can-i-take-over-xyz fingerprints.
-- **Typosquat Monitor** — browser version of dnstwist.
-  Generates lookalikes, checks which ones resolve live.
-- **Alignment Engine** — detects provider-specific
-  DMARC alignment failures for 10 ESPs including
-  SendGrid, Mailgun, Microsoft 365, Google Workspace.
-- **Copy-paste fixes** — every audit ships the exact
-  DNS record to paste. Not just a grade.
+- **Dangling Records** — browser-based subdomain takeover detection. No CLI, no Python install. Pulls from cert logs + can-i-take-over-xyz fingerprints.
+- **Typosquat Monitor** — browser version of dnstwist. Generates lookalikes, checks which ones resolve live.
+- **Alignment Engine** — detects provider-specific DMARC alignment failures for 10 ESPs including SendGrid, Mailgun, Microsoft 365, Google Workspace.
+- **Copy-paste fixes** — every audit ships the exact DNS record to paste. Not just a grade.
 
 ## Stack
 
 - Vanilla HTML/CSS/JS — zero frameworks
 - DNS-over-HTTPS (Cloudflare DoH)
 - Cloudflare Worker for IP reputation proxy
-- No backend, no database, no tracking
+- No backend, no datking
 - Deployed on Vercel
 
 ## Run Locally
+
 ```bash
 git clone https://github.com/metriclogic26/domain-preflight.git
 cd domain-preflight
@@ -63,11 +60,10 @@ Open http://localhost:3000
 
 | Suite | What it does |
 |---|---|
-| [ConfigClarity.dev](https://configclarity.dev) | Server & DevOps audit tools |
-| [DomainPreflight.dev](https://domainpreflight.dev) | Domain security & email authentication |
-| [PackageFix.dev](https://packagefix.dev) | Dependency vulnerability scanner |
+| ConfigClarity.dev | Server & DevOps audit tools |
+| DomainPreflight.dev | Domain security & email authentication |
+| PackageFix.dev | Dependency vulnerability scanner |
 
 ## License
 
-MIT © MetricLogic —
-the moat is the live data fetch, not the code.
+MIT © MetricLogic — the moat is the live data fetch, not the code.
